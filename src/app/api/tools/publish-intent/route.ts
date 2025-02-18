@@ -7,36 +7,49 @@ import { getAllSupportedTokens, getDefuseAssetId, getTokenBySymbol, isTokenSuppo
 import { CrossChainSwapParams, createTokenDiffIntent, IntentMessage, IntentStatus,
   PublishIntentRequest, PublishIntentResponse, QuoteRequest, QuoteResponse,
   CrossChainSwapAndWithdrawParams, NativeWithdrawIntent} from "../../../../../near-intent/src/types/intents";
-
+import { ensurePublicKeyRegistered, pollIntentStatus, publishIntent } from "../../../../../near-intent/src/actions/crossChainSwap";
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const accountId = searchParams.get('accountId');
-    const exact_amount_in = searchParams.get('exact_amount_in');
-    const defuse_asset_identifier_in = searchParams.get('defuse_asset_identifier_in');
-    // const defuse_asset_identifier_out = searchParams.get('defuse_asset_identifier_out');
-    // const function_access_key = searchParams.get('function_access_key');
+    const signature = searchParams.get('signature');
+    const publicKey = searchParams.get('publicKey');
+    const messageString = searchParams.get('message');
+    const recipient = searchParams.get('receiverId');
+    const nonce = searchParams.get('nonce');
 
-    if (!accountId || !exact_amount_in || !defuse_asset_identifier_in) {
+    if (!signature || !publicKey || !messageString || !recipient || !nonce || !nonce) {
+      console.log('Missing parameters:', { signature, publicKey, messageString, recipient, nonce });
+      console.log('Nonce length:', nonce);
       return NextResponse.json({ error: 'some required parameters are missing' }, { status: 400 });
     }
 
-    const params: CrossChainSwapAndWithdrawParams = {
-      destination_address: accountId,
-      exact_amount_in: exact_amount_in,
-      defuse_asset_identifier_in: defuse_asset_identifier_in,
-      defuse_asset_identifier_out: defuse_asset_identifier_in,
-    };
+    console.log('Received parameters:', { signature, publicKey, messageString, recipient, nonce }, nonce.length);
 
-    console.log('Params:', params);
+    await ensurePublicKeyRegistered(publicKey);
 
-    const transactionPayload = await withdrawFromDefuse(params);
+    // Publish intent
+    const intent = await publishIntent({
+        quote_hashes: [], // Empty for withdrawals
+        signed_data: {
+            payload: {
+                message: messageString,
+                nonce: nonce,
+                recipient
+            },
+            standard: "nep413",
+            signature: `ed25519:${signature}`,
+            public_key: `${publicKey}`
+        }
+    });
+    console.log('Intent:', intent);
 
-    console.log('Transaction payload:', transactionPayload);
-
-
-
+    if (intent.status === "OK") {
+        const finalStatus = await pollIntentStatus(intent.intent_hash);
+        return NextResponse.json(finalStatus);
+    }
+    return NextResponse.json(intent);
+    
     // const config = {
     //   networkId: 'mainnet',
     //   keyStore: new keyStores.BrowserLocalStorageKeyStore(),
@@ -98,7 +111,7 @@ export async function GET(request: Request) {
     //       ],
     //     };
 
-    return NextResponse.json({ transactionPayload });
+    return NextResponse.json({ transactionPayload: "transactionPayload" });
 
     // const intentMessage = {
     //   signer_id: accountId,

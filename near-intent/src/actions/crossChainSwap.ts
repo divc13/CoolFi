@@ -104,7 +104,7 @@ export const depositIntoDefuse = async (tokenIds: string[], amount: bigint, near
         accountId: settings.accountId
     });
 
-    // const publicKey = await nearConnection.connection.signer.getPublicKey(settings.accountId, settings.networkId);
+    const publicKey = await nearConnection.connection.signer.getPublicKey(settings.accountId, settings.networkId);
 
     var transaction = null;
     if(contractId === "wrap.near")
@@ -118,10 +118,10 @@ export const depositIntoDefuse = async (tokenIds: string[], amount: bigint, near
 
     return transaction;
 
-    // for (const tx of transaction) {
-    //     const result = await sendNearTransaction(nearConnection, settings.accountId, publicKey, contractId, tx);
-    //     console.log("Transaction result:", result);
-    // }
+    for (const tx of transaction) {
+        const result = await sendNearTransaction(nearConnection, settings.accountId, publicKey, contractId, tx);
+        console.log("Transaction result:", result);
+    }
 }
 
 
@@ -140,7 +140,7 @@ async function getBalances(
     return tokenBalances;
 }
 
-async function pollIntentStatus(intentHash: string): Promise<IntentStatus> {
+export async function pollIntentStatus(intentHash: string): Promise<IntentStatus> {
     const startTime = Date.now();
 
     while (Date.now() - startTime < MAX_POLLING_TIME_MS) {
@@ -328,321 +328,6 @@ export async function crossChainSwap(params: CrossChainSwapParams): Promise<any>
 
     return intent;
 }
-// const crossChainSwapTemplate = `Respond with a JSON markdown block containing only the extracted values. Use null for any values that cannot be determined.
-
-// Example response:
-// \`\`\`json
-// {
-//             "defuse_asset_identifier_in": "NEAR",
-//             "defuse_asset_identifier_out": "USDC,
-//             "exact_amount_in": "1000",
-//             "quote_id": "00000000-0000-0000-0000-000000000000", // OPTIONAL. default will be generated randomly
-//             "min_deadline_ms": "60000" // OPTIONAL. default 120_000ms / 2min
-//             "network": "near"
-//         }
-// \`\`\`
-
-// {{recentMessages}}
-
-// Given the recent messages and wallet information below:
-
-// {{walletInfo}}
-
-// Extract the following information about the requested token swap:
-// - defuse_asset_identifier_in: The input token ID
-// - defuse_asset_identifier_out: The output token ID
-// - exact_amount_in: The amount to swap
-
-// Respond with a JSON markdown block containing only the extracted values. Use null for any values that cannot be determined. The result should be a valid JSON object with the following schema:
-// \`\`\`json
-// {
-//     "defuse_asset_identifier_in": string | null,
-//     "defuse_asset_identifier_out": string | null,
-//     "exact_amount_in": string | null,
-//     "network": string | null
-// }
-// \`\`\``;
-
-
-// export const executeCrossChainSwap: Action = {
-//     name: "NEAR_CROSS_CHAIN_SWAP",
-//     description: "Swap tokens between NEAR and other supported chains",
-//     similes: [
-//         "swap NEAR tokens for tokens on other chains",
-//         "perform cross-chain token exchange from NEAR",
-//         "exchange NEAR tokens across different blockchains"
-//     ],
-//     examples: [
-//         [
-//             {
-//                 user: "user1",
-//                 content: {
-//                     text: "Swap 10 NEAR for ETH"
-//                 }
-//             }
-//         ],
-//         [
-//             {
-//                 user: "user2",
-//                 content: {
-//                     text: "Exchange 5 NEAR to USDC on Base"
-//                 }
-//             }
-//         ],
-//         [
-//             {
-//                 user: "user3",
-//                 content: {
-//                     text: "Swap 100 USDC for NEAR"
-//                 }
-//             }
-//         ]
-//     ] as ActionExample[][],
-//     validate: async (runtime: IAgentRuntime, message: Memory) => {
-//         console.log("Message:", message);
-//         return true;
-//     },
-//     handler: async (
-//         runtime: IAgentRuntime,
-//         message: Memory,
-//         state: State,
-//         _options: { [key: string]: unknown },
-//         callback?: HandlerCallback
-//     ): Promise<any> => {
-//         if (!state) {
-//             state = await runtime.composeState(message);
-//         }
-
-//         const swapContext = composeContext({
-//             state,
-//             template: crossChainSwapTemplate,
-//         });
-
-//         const response = await generateObjectDeprecated({
-//             runtime,
-//             context: swapContext,
-//             modelClass: ModelClass.LARGE
-//         });
-
-//         console.log("Response:", response);
-//         const responseObject = response as CrossChainSwapParams;
-//         if (!responseObject.defuse_asset_identifier_in || !responseObject.defuse_asset_identifier_out
-//              || !responseObject.exact_amount_in) {
-//             console.log("Missing required parameters, skipping swap");
-
-//             const responseMsg = {
-//                 text: "I need to have the input token, output token, and amount to perform the swap",
-//             };
-//             callback?.(responseMsg);
-//             return true;
-//         }
-//         if (!isTokenSupported(responseObject.defuse_asset_identifier_in) ||
-//             !isTokenSupported(responseObject.defuse_asset_identifier_out)) {
-//             console.log("Invalid asset identifiers provided");
-
-//             const responseMsg = {
-//                 text: `Invalid tokens provided. Supported tokens are: ${getAllSupportedTokens().join(', ')}`,
-//             };
-//             callback?.(responseMsg);
-//             return true;
-//         }
-
-//         try {
-//             const intent = await crossChainSwap(runtime, message, state, responseObject);
-//             const txHashes = intent.data?.hash;
-//             const responseMsg = {
-//                 text: `Swap completed successfully! Transaction hashes: ${txHashes}`,
-//             };
-
-//             callback?.(responseMsg);
-//             return true;
-//         } catch (error) {
-//             const responseMsg = {
-//                 text: `Error during cross-chain swap: ${error instanceof Error ? error.message : String(error)}`,
-//             };
-//             callback?.(responseMsg);
-//         }
-//     }
-// } as Action;
-
-
-
-// const crossChainSwapAndWithdrawTemplate = `Respond with a JSON markdown block containing only the extracted values. Use null for any values that cannot be determined.
-
-// Example response:
-// \`\`\`json
-// {
-//             "defuse_asset_identifier_in": "NEAR",
-//             "defuse_asset_identifier_out": "USDC,
-//             "exact_amount_in": "1000",
-//             "quote_id": "00000000-0000-0000-0000-000000000000", // OPTIONAL. default will be generated randomly
-//             "min_deadline_ms": "60000", // OPTIONAL. default 120_000ms / 2min
-//             "destination_address": "0x1234567890abcdef",
-//             "network": "base"
-//         }
-// \`\`\`
-
-// {{recentMessages}}
-
-// Given the recent messages and wallet information below:
-
-// {{walletInfo}}
-
-// Extract the following information about the requested token swap:
-// - defuse_asset_identifier_in: The input token ID
-// - defuse_asset_identifier_out: The output token ID
-// - exact_amount_in: The amount to swap
-// - destination_address: The address to withdraw to
-
-// Respond with a JSON markdown block containing only the extracted values. Use null for any values that cannot be determined. The result should be a valid JSON object with the following schema:
-// \`\`\`json
-// {
-//     "defuse_asset_identifier_in": string | null,
-//     "defuse_asset_identifier_out": string | null,
-//     "exact_amount_in": string | null,
-//     "destination_address": string | null,
-//     "network": string | null
-// }
-// \`\`\``;
-
-
-
-// export const executeCrossChainSwapAndWithdraw: Action = {
-//     name: "WITHDRAW_NEAR_CROSS_CHAIN_SWAP",
-//     description: "Swap tokens between NEAR and other supported chains, then withdraw to a different address on a specific network",
-//     similes: [
-//         "swap NEAR tokens for tokens on other chains, then withdraw to an address",
-//         "perform cross-chain token exchange from NEAR, then withdraw to an address",
-//         "exchange NEAR tokens across different blockchains, then withdraw to an address on a specific network"
-//     ],
-//     examples: [
-//         [
-//             {
-//                 user: "user1",
-//                 content: {
-//                     text: "Swap 10 NEAR for ETH, then withdraw to an address on Ethereum"
-//                 }
-//             }
-//         ],
-//         [
-//             {
-//                 user: "user2",
-//                 content: {
-//                     text: "Exchange 5 NEAR to USDC on Base, then withdraw to an address on Base"
-//                 }
-//             }
-//         ],
-//         [
-//             {
-//                 user: "user3",
-//                 content: {
-//                     text: "Swap 100 USDC for NEAR, then withdraw to an address on Base"
-//                 }
-//             }
-//         ]
-//     ] as ActionExample[][],
-//     validate: async (runtime: IAgentRuntime, message: Memory) => {
-//         console.log("Message:", message);
-//         return true;
-//     },
-//     handler: async (
-//         runtime: IAgentRuntime,
-//         message: Memory,
-//         state: State,
-//         _options: { [key: string]: unknown },
-//         callback?: HandlerCallback
-//     ): Promise<any> => {
-//         if (!state) {
-//             state = await runtime.composeState(message);
-//         }
-
-//         const swapContextAndWithdraw = composeContext({
-//             state,
-//             template: crossChainSwapAndWithdrawTemplate,
-//         });
-
-//         const response = await generateObjectDeprecated({
-//             runtime,
-//             context: swapContextAndWithdraw,
-//             modelClass: ModelClass.LARGE
-//         });
-
-//         console.log("Response CrossChainSwapAndWithdrawParams:", response);
-//         const responseObject = response as CrossChainSwapAndWithdrawParams;
-
-//         if (!responseObject.defuse_asset_identifier_in || !responseObject.defuse_asset_identifier_out
-//              || !responseObject.exact_amount_in || !responseObject.destination_address) {
-//             console.log("Missing required parameters, skipping swap and withdraw");
-
-//             const responseMsg = {
-//                 text: "I need to have the input token, output token, amount, and destination address to perform the swap and withdraw",
-//             };
-//             callback?.(responseMsg);
-//             return true;
-//         }
-
-//         if (!isTokenSupported(responseObject.defuse_asset_identifier_in) ||
-//             !isTokenSupported(responseObject.defuse_asset_identifier_out)) {
-//             console.log("Invalid asset identifiers provided");
-
-//             const responseMsg = {
-//                 text: `Invalid tokens provided. Supported tokens are: ${getAllSupportedTokens().join(', ')}`,
-//             };
-//             callback?.(responseMsg);
-//             return true;
-//         }
-
-//         try {
-//             const intent = await crossChainSwap(runtime, message, state, responseObject);
-//             const withdrawIntent = await withdrawFromDefuse(runtime, message, state, responseObject);
-//             const txHashes = [intent.data?.hash, withdrawIntent.data?.hash].join(", ");
-//             const responseMsg = {
-//                 text: `Swap completed successfully! Transaction hashes: ${txHashes}`,
-//             };
-
-//             callback?.(responseMsg);
-//             return true;
-//         } catch (error) {
-//             console.error("Error during cross-chain swap and withdraw:", error);
-//             const responseMsg = {
-//                 text: `Error during cross-chain swap and withdraw: ${error instanceof Error ? error.message : String(error)}`,
-//             };
-//             callback?.(responseMsg);
-//         }
-//     }
-// } as Action;
-
-
-// interface RuntimeSettings {
-//     networkId: string;
-//     nodeUrl: string;
-//     accountId: string;
-//     secretKey: string;
-//     defuseContractId: string;
-// }
-
-// function getRuntimeSettings(runtime: IAgentRuntime): RuntimeSettings {
-//     const accountId = runtime.getSetting("NEAR_ADDRESS");
-//     if (!accountId) {
-    //         throw new Error("NEAR_ADDRESS not configured");
-    //     }
-    
-    //     const secretKey = runtime.getSetting("NEAR_WALLET_SECRET_KEY");
-    //     if (!secretKey) {
-//         throw new Error("NEAR_WALLET_SECRET_KEY not configured");
-//     }
-
-//     return {
-//         networkId: runtime.getSetting("NEAR_NETWORK") || "testnet",
-//         nodeUrl: runtime.getSetting("NEAR_RPC_URL") || "https://rpc.testnet.near.org",
-//         accountId: runtime.getSetting("NEAR_ADDRESS") || "",
-//         secretKey: runtime.getSetting("NEAR_WALLET_SECRET_KEY") || "",
-//         defuseContractId: runtime.getSetting("DEFUSE_CONTRACT_ID") || "intents.near"
-//     };
-// }
-
-// /// Returns set of public keys registered for given account
-// fn public_keys_of(&self, account_id: &AccountId) -> HashSet<PublicKey>;
 
 async function addPublicKeyToIntents(publicKey: string): Promise<void> {
 
@@ -686,7 +371,7 @@ async function getPublicKeysOf(accountId: string): Promise<Set<string>> {
     return new Set(result);
 }
 
-async function ensurePublicKeyRegistered(publicKey: string): Promise<void> {
+export async function ensurePublicKeyRegistered(publicKey: string): Promise<void> {
     const existingKeys = await getPublicKeysOf(settings.accountId);
     if (!existingKeys.has(publicKey)) {
         console.log(`Public key ${publicKey} not found, registering...`);
@@ -699,14 +384,15 @@ async function ensurePublicKeyRegistered(publicKey: string): Promise<void> {
 
 export async function withdrawFromDefuse(params: CrossChainSwapAndWithdrawParams): Promise<any> {
     try {
-        const keyStore = new keyStores.InMemoryKeyStore();
-        const keyPair = utils.KeyPair.fromString(settings.secretKey as KeyPairString);
-        await keyStore.setKey(settings.networkId, settings.accountId, keyPair);
+        // const keyStore = new keyStores.InMemoryKeyStore();
+        // const keyPair = utils.KeyPair.fromString(settings.secretKey as KeyPairString);
+        // await keyStore.setKey(settings.networkId, settings.accountId, keyPair);
 
         const network = params.network || "near";
 
         // Generate nonce using crypto
         const nonce = new Uint8Array(crypto.randomBytes(32));
+        const nonceStr = Buffer.from(nonce).toString("base64");
 
         // Get token details and defuse asset ID
         const token = getTokenBySymbol(params.defuse_asset_identifier_out);
@@ -715,23 +401,23 @@ export async function withdrawFromDefuse(params: CrossChainSwapAndWithdrawParams
             throw new Error(`Token ${params.defuse_asset_identifier_out} not found`);
         }
 
-        const nearConnection = await connect({
-            networkId: settings.networkId,
-            keyStore,
-            nodeUrl: settings.nodeUrl,
-        });
+        // const nearConnection = await connect({
+        //     networkId: settings.networkId,
+        //     keyStore,
+        //     nodeUrl: settings.nodeUrl,
+        // });
 
         // Check balances
-        const tokenBalances = await getBalances([token], nearConnection.connection.provider, network);
-        console.log("Token balances:", tokenBalances);
+        // const tokenBalances = await getBalances([token], nearConnection.connection.provider, network);
+        // console.log("Token balances:", tokenBalances);
 
         const defuseAssetIdentifierOut = getDefuseAssetId(token, network);
         const defuseAssetOutAddrs = defuseAssetIdentifierOut.replace('nep141:', '');
 
-        const tokenBalance = tokenBalances[defuseAssetIdentifierOut];
-        if (tokenBalance === undefined) {
-            throw new Error(`No balance found for token ${defuseAssetIdentifierOut}`);
-        }
+        // const tokenBalance = tokenBalances[defuseAssetIdentifierOut];
+        // if (tokenBalance === undefined) {
+        //     throw new Error(`No balance found for token ${defuseAssetIdentifierOut}`);
+        // }
 
         const amountInBigInt = convertAmountToDecimals(params.exact_amount_in, token);
 
@@ -755,51 +441,51 @@ export async function withdrawFromDefuse(params: CrossChainSwapAndWithdrawParams
                 memo: "",
                 deposit: (storage_deposit).toString()
             }]
-
-            // intents: [{
-            //     intent: "native_withdraw",
-            //     receiver_id: params.destination_address,
-            //     amount: params.exact_amount_in,
-            // }]
         };
 
         console.log("Intent message:", intentMessage);
 
+        // const messageString = encodeURIComponent(JSON.stringify(intentMessage));
         const messageString = JSON.stringify(intentMessage);
         const recipient = "intents.near";
         // const recipient = settings.accountId;
 
         // Sign the message
-        const { signature, publicKey } = await signMessage(keyPair, {
+        // const { signature, publicKey } = await signMessage(keyPair, {
+        //     message: messageString,
+        //     recipient,
+        //     nonce
+        // });
+        return {
             message: messageString,
             recipient,
-            nonce
-        });
-
-        // Ensure public key is registered
-        await ensurePublicKeyRegistered(`ed25519:${publicKey}`);
-
-        // Publish intent
-        const intent = await publishIntent({
-            quote_hashes: [], // Empty for withdrawals
-            signed_data: {
-                payload: {
-                    message: messageString,
-                    nonce: Buffer.from(nonce).toString('base64'),
-                    recipient
-                },
-                standard: "nep413",
-                signature: `ed25519:${signature}`,
-                public_key: `ed25519:${publicKey}`
-            }
-        });
-
-        if (intent.status === "OK") {
-            const finalStatus = await pollIntentStatus(intent.intent_hash);
-            return finalStatus;
+            nonceStr
         }
 
-        return intent;
+        // // Ensure public key is registered
+        // await ensurePublicKeyRegistered(`ed25519:${publicKey}`);
+
+        // // Publish intent
+        // const intent = await publishIntent({
+        //     quote_hashes: [], // Empty for withdrawals
+        //     signed_data: {
+        //         payload: {
+        //             message: messageString,
+        //             nonce: Buffer.from(nonce).toString('base64'),
+        //             recipient
+        //         },
+        //         standard: "nep413",
+        //         signature: `ed25519:${signature}`,
+        //         public_key: `ed25519:${publicKey}`
+        //     }
+        // });
+
+        // if (intent.status === "OK") {
+        //     const finalStatus = await pollIntentStatus(intent.intent_hash);
+        //     return finalStatus;
+        // }
+
+        // return intent;
     } catch (error) {
         console.error("Error in withdrawFromDefuse:", error);
         throw error;
