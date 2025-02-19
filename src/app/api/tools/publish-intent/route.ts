@@ -25,18 +25,20 @@ export async function GET(request: Request) {
 
     const signatureBuffer = bs58.encode(Buffer.from(signature, "base64"));
     const publicKeyBuffer = bs58.encode(Buffer.from(cleaned, "base64"));
+    const messageStr = decodeURIComponent(JSON.stringify(messageString));
+
 
     // Publish intent
     const intent = await publishIntent({
         quote_hashes: [], // Empty for withdrawals
         signed_data: {
             payload: {
-                message: messageString,
+                message: messageStr,
                 nonce: nonce,
                 recipient
             },
             standard: "nep413",
-            signature: `ed25519:${signatureBuffer}`,
+            signature: `ed25519:${signature}`,
             public_key: `${publicKey}`
         }
     });
