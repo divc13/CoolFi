@@ -14,6 +14,9 @@ importers:
       '@dao-xyz/borsh':
         specifier: ^5.2.3
         version: 5.2.3
+      bs58:
+        specifier: ^6.0.0
+        version: 6.0.0
       near-api-js:
         specifier: ^5.0.1
         version: 5.0.1
@@ -989,6 +992,9 @@ packages:
     engines: {node: '>=4.5.0'}
     deprecated: use 3.0.0 instead, safe-buffer has been merged and release for compatability
 
+  base-x@5.0.0:
+    resolution: {integrity: sha512-sMW3VGSX1QWVFA6l8U62MLKz29rRfpTlYdCqLdpLo1/Yd4zZwSbnUaDfciIAowAqvq7YFnWq9hrhdg1KYgc1lQ==}
+
   binary-extensions@2.3.0:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
     engines: {node: '>=8'}
@@ -1024,6 +1030,9 @@ packages:
 
   bs58@4.0.0:
     resolution: {integrity: sha512-/jcGuUuSebyxwLLfKrbKnCJttxRf9PM51EnHTwmFKBxl4z1SGkoAhrfd6uZKE0dcjQTfm6XzTP8DPr1tzE4KIw==}
+
+  bs58@6.0.0:
+    resolution: {integrity: sha512-PD0wEnEYg6ijszw/u8s+iI3H17cTymlrwkKhDhPZq+Sokl3AU4htyBFTjAeNAlCCmg0f53g6ih3jATyCKftTfw==}
 
   bundle-name@4.1.0:
     resolution: {integrity: sha512-tjwM5exMg6BGRI+kNmTntNsvdZS1X8BFYS6tnJ2hdH0kVxM6/eVZ2xy+FqStSWvYmtfFMDLIxurorHwDKfDz5Q==}
@@ -4187,6 +4196,8 @@ snapshots:
     dependencies:
       safe-buffer: 5.2.1
 
+  base-x@5.0.0: {}
+
   binary-extensions@2.3.0: {}
 
   bn.js@4.12.1: {}
@@ -4232,6 +4243,10 @@ snapshots:
   bs58@4.0.0:
     dependencies:
       base-x: 2.0.6
+
+  bs58@6.0.0:
+    dependencies:
+      base-x: 5.0.0
 
   bundle-name@4.1.0:
     dependencies:

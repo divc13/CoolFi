@@ -8,6 +8,7 @@ import { CrossChainSwapParams, createTokenDiffIntent, IntentMessage, IntentStatu
   PublishIntentRequest, PublishIntentResponse, QuoteRequest, QuoteResponse,
   CrossChainSwapAndWithdrawParams, NativeWithdrawIntent} from "../../../../../near-intent/src/types/intents";
 import { ensurePublicKeyRegistered, pollIntentStatus, publishIntent } from "../../../../../near-intent/src/actions/crossChainSwap";
+import bs58 from 'bs58';
 
 export async function GET(request: Request) {
   try {
@@ -18,7 +19,7 @@ export async function GET(request: Request) {
     const recipient = searchParams.get('receiverId');
     const nonce = searchParams.get('nonce');
 
-    if (!signature || !publicKey || !messageString || !recipient || !nonce || !nonce) {
+    if (!signature || !publicKey || !messageString || !recipient || !nonce) {
       console.log('Missing parameters:', { signature, publicKey, messageString, recipient, nonce });
       console.log('Nonce length:', nonce);
       return NextResponse.json({ error: 'some required parameters are missing' }, { status: 400 });
@@ -27,6 +28,11 @@ export async function GET(request: Request) {
     console.log('Received parameters:', { signature, publicKey, messageString, recipient, nonce }, nonce.length);
 
     await ensurePublicKeyRegistered(publicKey);
+    const prefix = "ed25519:";
+    const cleaned = publicKey.startsWith(prefix) ? publicKey.slice(prefix.length) : publicKey;
+
+    const signatureBuffer = bs58.encode(Buffer.from(signature, "base64"));
+    const publicKeyBuffer = bs58.encode(Buffer.from(cleaned, "base64"));
 
     // Publish intent
     const intent = await publishIntent({
@@ -38,7 +44,7 @@ export async function GET(request: Request) {
                 recipient
             },
             standard: "nep413",
-            signature: `ed25519:${signature}`,
+            signature: `ed25519:${signatureBuffer}`,
             public_key: `${publicKey}`
         }
     });

@@ -228,8 +228,8 @@ export async function GET() {
                                                     },
                                                     nonce: {
                                                         type: "string",
-                                                        description: "The unique identifier for the transaction"
-                                                    }
+                                                        description: "The unique identifier for the transaction."
+                                                    },
 
                                                     // actions: {
                                                     //     type: "array",
@@ -369,9 +369,9 @@ export async function GET() {
                             in: "query",
                             required: true,
                             schema: {
-                                type: "string"
+                                type: "string",
                             },
-                            description: "The unique nonce value from the intent message. This must match the nonce used in the signing process."
+                            description: "The unique nonce value from the intent message. This must match the nonce used in the signing process just converted into base64 string (Buffer.from(nonce).toString('base64'))."
                         }
                     ],
                     responses: {
