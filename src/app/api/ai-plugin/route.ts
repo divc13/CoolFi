@@ -454,6 +454,10 @@ export async function GET() {
                                                 type: "string",
                                                 description: "The user's account details",
                                             },
+                                            satoshi: {
+                                                type: "string",
+                                                description: "The user's number of satoshi details",
+                                            },
                                         },
                                     },
                                 },
