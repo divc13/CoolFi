@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { WalletProvider } from '../../../../../near-intent/src';
+import { WalletProvider } from "../../../near-intent/providers/wallet"
 
 export async function GET(request: Request) {
   try {
