@@ -90,7 +90,7 @@ export async function uncompressedHexPointToBtcAddress(
 export async function generateBtcAddress({
   accountId,
   path = '',
-  isTestnet = true,
+  isTestnet = false,
   addressType = 'segwit'
 }) {
   const childPublicKey = await deriveChildPublicKey(

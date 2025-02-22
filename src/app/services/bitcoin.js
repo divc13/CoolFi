@@ -16,16 +16,16 @@ export class Bitcoin {
 
   deriveAddress = async (accountId, derivation_path) => {
     const { address, publicKey } = await generateBtcAddress({
-      accountId,
+      accountId: accountId,
       path: derivation_path,
-      isTestnet: true,
+      isTestnet: this.networkId === 'testnet' ? true : false,
       addressType: 'segwit'
     });
     return { address, publicKey };
   }
 
   getUtxos = async ({ address }) => {
-    const bitcoinRpc = `https://blockstream.info/${this.networkId === 'testnet' ? 'testnet' : ''}/api`;
+    const bitcoinRpc = `https://blockstream.info${this.networkId === 'testnet' ? '/testnet' : ''}/api`;
     try {
       const utxos = await fetchJson(`${bitcoinRpc}/address/${address}/utxo`);
       return utxos;
@@ -46,7 +46,7 @@ export class Bitcoin {
     utxos.sort((a, b) => b.value - a.value);
     utxos = [utxos[0]];
 
-    const psbt = await constructPsbt(address, utxos, to, amount, this.networkId)
+    const psbt = await constructPsbt(address, utxos, to, amount, this.networkId);
     if (!psbt) return
 
     return { utxos, psbt };
@@ -60,6 +60,7 @@ export class Bitcoin {
     publicKey,
     attachedDeposit = 1,
   }) => {
+    var obj;
     const keyPair = {
       publicKey: Buffer.from(publicKey, 'hex'),
       sign: async (transactionHash) => {
@@ -69,13 +70,15 @@ export class Bitcoin {
         if (isNaN(value)) {
           throw new Error(`Invalid value for UTXO at index ${transactionHash}: ${utxo.value}`);
         }
+        console.log("HELLLLOOOOOO", transactionHash);
 
         const payload = Object.values(ethers.getBytes(transactionHash));
 
         // Sign the payload using MPC
         const args = { request: { payload, path, key_version: 0, } };
 
-        const { big_r, s } = await wallet.callMethod({
+        // const { big_r, s } = 
+        obj = await wallet.callMethod({
           contractId: MPC_CONTRACT,
           method: 'sign',
           args,
@@ -84,19 +87,20 @@ export class Bitcoin {
         });
 
         // Reconstruct the signature
-        const rHex = big_r.affine_point.slice(2); // Remove the "03" prefix
-        let sHex = s.scalar;
+        // const rHex = big_r.affine_point.slice(2); // Remove the "03" prefix
+        // let sHex = s.scalar;
 
-        // Pad s if necessary
-        if (sHex.length < 64) {
-          sHex = sHex.padStart(64, '0');
-        }
+        // // Pad s if necessary
+        // if (sHex.length < 64) {
+        //   sHex = sHex.padStart(64, '0');
+        // }
 
-        const rBuf = Buffer.from(rHex, 'hex');
-        const sBuf = Buffer.from(sHex, 'hex');
+        // const rBuf = Buffer.from(rHex, 'hex');
+        // const sBuf = Buffer.from(sHex, 'hex');
 
-        // Combine r and s
-        return Buffer.concat([rBuf, sBuf]);
+        // // Combine r and s
+        // return Buffer.concat([rBuf, sBuf]);
+        return Buffer.alloc(64);
       },
     };
 
@@ -112,16 +116,65 @@ export class Bitcoin {
       })
     );
 
-    psbt.finalizeAllInputs(); // Finalize the PSBT
+    return obj;
 
-    return psbt;  // Return the generated signature
+    // psbt.finalizeAllInputs(); // Finalize the PSBT
+
+    // return psbt;  // Return the generated signature
   }
 
+  // requestSignatureToMPC = async ({
+  //     wallet,
+  //     path,
+  //     psbt,
+  //     utxos,
+  //     publicKey,
+  //     attachedDeposit = 1,
+  // }) => {
+  //     const utxo = utxos[0];
+  //     const value = utxo.value;
+  //     const inputIndex = 0;
+  //     // const sighashTypes = [bitcoin.Transaction.SIGHASH_ALL];
+
+  //     const { hash, sighashType } = psbt.getHashAndSighashTypePSBT(
+  //       inputIndex,
+  //       Buffer.from(publicKey, 'hex'),
+  //     );
+
+  //     if (!hash) {
+  //       throw new Error('Failed to generate transaction hash for signing');
+  //     }
+
+  //     const payload = Object.values(ethers.getBytes(hash));
+  
+  //     // Get signature components from MPC contract
+  //     const args = { 
+  //       request: { 
+  //         payload, 
+  //         path, 
+  //         key_version: 0 
+  //       } 
+  //     };
+
+  //     // Call MPC contract and return the signature object
+  //     const signatureObject = await wallet.callMethod({
+  //       contractId: MPC_CONTRACT,
+  //       method: 'sign',
+  //       args,
+  //       gas: '250000000000000',
+  //       deposit: attachedDeposit,
+  //     });
+
+
+  //     return signatureObject;
+  // };
+
+
   reconstructSignedTransaction = async ({
-    psbt,
-    utxos,
-    publicKey,
-    signature,
+    psbt: psbt,
+    utxos: utxos,
+    publicKey: publicKey,
+    signature: signature,
   }) => {
     const keyPair = {
       publicKey: Buffer.from(publicKey, "hex"),
@@ -138,16 +191,42 @@ export class Bitcoin {
         const { big_r, s } = signature;
 
         // Reconstruct the signature
-        const rHex = big_r.affine_point.slice(2); // Remove the "03" prefix
+        let rHex = big_r.affine_point.slice(2); // Remove the "03" prefix
         let sHex = s.scalar;
 
         // Pad s if necessary
         if (sHex.length < 64) {
           sHex = sHex.padStart(64, "0");
         }
+        if (rHex.length < 64) {
+          rHex = rHex.padStart(64, "0");
+        }
 
         const rBuf = Buffer.from(rHex, "hex");
         const sBuf = Buffer.from(sHex, "hex");
+
+        // const derSequenceLength = rBuf.length + sBuf.length + 4; // +4 for type and length bytes
+        // const sign = Buffer.alloc(derSequenceLength + 2); // +2 for sequence header
+        
+        // let position = 0;
+        // sign[position++] = 0x30; // DER sequence
+        // sign[position++] = derSequenceLength;
+        
+        // // R value
+        // sign[position++] = 0x02; // Integer
+        // sign[position++] = rBuf.length;
+        // rBuf.copy(sign, position);
+        // position += rBuf.length;
+        
+        // // S value
+        // sign[position++] = 0x02; // Integer
+        // sign[position++] = sBuf.length;
+        // sBuf.copy(sign, position);
+        // position += sBuf.length;
+        
+        // // Add SIGHASH_ALL
+        // return Buffer.concat([sign, Buffer.from([0x01])]);
+
 
         // Combine r and s
         return Buffer.concat([rBuf, sBuf]);
@@ -186,13 +265,33 @@ export class Bitcoin {
     });
   };
 
+  reconstructSignedTransactionFromCallback = async (signature, from, utxos, to, amount, publicKey) => {
+    // const { from, to, amount, utxos, publicKey } = JSON.parse(
+    //   sessionStorage.getItem("btc_transaction")
+    // );
+
+    console.log("HELOOO ", {signature, publicKey, from, utxos, to, amount});
+
+    const psbt = await constructPsbt(from, utxos, to, amount, this.networkId);
+    console.log(psbt);
+
+    return await this.reconstructSignedTransaction({
+      psbt: psbt,
+      utxos: utxos,
+      publicKey: publicKey,
+      signature: signature,
+    });
+  };
+
   broadcastTX = async (signedTransaction) => {
     // broadcast tx
-    const bitcoinRpc = `https://blockstream.info/${this.networkId === 'testnet' ? 'testnet' : ''}/api`;
+    const bitcoinRpc = `https://blockstream.info${this.networkId === 'testnet' ? '/testnet' : ''}/api`;
     const res = await fetch(`${bitcoinRpc}/tx`, {
       method: 'POST',
       body: signedTransaction.extractTransaction().toHex(),
     });
+    console.log(res);
+    console.log(signedTransaction.extractTransaction().toHex());
     if (res.status === 200) {
       const hash = await res.text();
       return hash
@@ -203,7 +302,7 @@ export class Bitcoin {
 }
 
 async function getFeeRate(networkId, blocks = 6) {
-  const bitcoinRpc = `https://blockstream.info/${networkId === 'testnet' ? 'testnet' : ''}/api`;
+  const bitcoinRpc = `https://blockstream.info${networkId === 'testnet' ? '/testnet' : ''}/api`;
   const rate = await fetchJson(`${bitcoinRpc}/fee-estimates`);
   return rate[blocks].toFixed(0);
 }
@@ -240,7 +339,7 @@ async function constructPsbt(
 
       if (scriptHex.startsWith('76a914')) {
         console.log('legacy');
-        const bitcoinRpc = `https://blockstream.info/${networkId === 'testnet' ? 'testnet' : ''}/api`;
+        const bitcoinRpc = `https://blockstream.info${networkId === 'testnet' ? '/testnet' : ''}/api`;
         const nonWitnessUtxo = await fetch(`${bitcoinRpc}/tx/${utxo.txid}/hex`).then(result => result.text())
 
         console.log('nonWitnessUtxo hex:', nonWitnessUtxo)
@@ -308,7 +407,7 @@ async function constructPsbt(
 };
 
 async function fetchTransaction(networkId, transactionId) {
-  const bitcoinRpc = `https://blockstream.info/${networkId === 'testnet' ? 'testnet' : ''}/api`;
+  const bitcoinRpc = `https://blockstream.info${networkId === 'testnet' ? '/testnet' : ''}/api`;
 
   const data = await fetchJson(`${bitcoinRpc}/tx/${transactionId}`);
   const tx = new bitcoinJs.Transaction();

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { WalletProvider } from "../../../near-intent/providers/wallet"
-import { Bitcoin } from '../../../services/bitcoin'
+import { WalletProvider } from "@/app/near-intent/providers/wallet"
+import { Bitcoin } from '@/app/services/bitcoin'
 import bs58 from 'bs58';
 
 export async function GET(request: Request) {
@@ -12,12 +12,11 @@ export async function GET(request: Request) {
     }
 
     // const path = debounce("bitcoin-1", 500);
-    console.log("path: ", path);
     const path = "bitcoin-1";
 
-    const BTC = new Bitcoin("testnet");
+    const BTC = new Bitcoin("mainnet");
     const { address, publicKey } = await BTC.deriveAddress(
-      "law1912.testnet",
+      accountId,
       path
     );
 

@@ -1,34 +1,75 @@
 import { NextResponse } from 'next/server';
 import { withdrawFromDefuse }  from "@/app/near-intent/actions/crossChainSwap"
 import { CrossChainSwapAndWithdrawParams} from "@/app/near-intent/types/intents";
+import { Bitcoin } from '@/app/services/bitcoin';
+import { Wallet } from '@/app/services/near-wallet';
+import { MPC_CONTRACT } from '@/app/services/kdf/mpc';
 
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const accountId = searchParams.get('accountId');
-    const exact_amount_in = searchParams.get('exact_amount_in');
-    const defuse_asset_identifier_in = searchParams.get('defuse_asset_identifier_in');
+    const exact_amount_in = searchParams.get('amount_in_satoshi');
+    const receiverId = searchParams.get('receiverId');
     // const defuse_asset_identifier_out = searchParams.get('defuse_asset_identifier_out');
     // const function_access_key = searchParams.get('function_access_key');
 
-    if (!accountId || !exact_amount_in || !defuse_asset_identifier_in) {
+    if (!accountId || !exact_amount_in) {
       return NextResponse.json({ error: 'some required parameters are missing' }, { status: 400 });
     }
 
-    const params: CrossChainSwapAndWithdrawParams = {
-      destination_address: accountId,
-      exact_amount_in: exact_amount_in,
-      defuse_asset_identifier_in: defuse_asset_identifier_in,
-      defuse_asset_identifier_out: defuse_asset_identifier_in,
-    };
+    const path = "bitcoin-1";
 
-    console.log('Params:', params);
+    const BTC = new Bitcoin("mainnet");
+    const { address, publicKey } = await BTC.deriveAddress(
+      accountId,
+      path
+    );
 
-    const transactionPayload = await withdrawFromDefuse(params);
+    const balance = await BTC.getBalance({ address });
+    const amount = Number(exact_amount_in);
 
-    console.log('Transaction payload:', transactionPayload);
+    if (balance < amount) {
+      return NextResponse.json({ error: 'insufficient balance' }, { status: 400 });
+    }
+    
 
+    const wallet = new Wallet({networkId: "mainnet", createAccessKeyFor: MPC_CONTRACT});
+
+    const { psbt, utxos } = await BTC.createTransaction({
+      from: address,
+      to: receiverId,
+      amount,
+    });
+    console.log("PART 1 DONE!!!!");
+    
+    const TransactionToSign = await BTC.requestSignatureToMPC({
+      wallet,
+      path,
+      psbt,
+      utxos,
+      publicKey,
+    });
+
+    // const payload = [{
+    //   receiverId:"0.drop.proxy.mintbase.near",
+    //   actions:[{
+    //     type:"FunctionCall",
+    //     params:{
+    //       methodName:"mint",
+    //       args:{
+    //         metadata:"{\"media\":\"C6iWEOxKqUHJ2eAr5_3i0jyiYPLCcpUdoxRvM38xViM\",\"creatorAddress\":\"aurora-ahghara.near\",\"title\":\"\",\"description\":\"\"}",
+    //         nft_contract_id:"drops.mintbase1.near"
+    //       },
+    //       gas:"200000000000000",
+    //       deposit:"13500000000000000000000"
+    //     }
+    //   }]
+    // }]
+
+    console.log(TransactionToSign);
+    // const txHash = await BTC.broadcastTX(signedTransaction);
 
 
     // const config = {
@@ -92,7 +133,13 @@ export async function GET(request: Request) {
     //       ],
     //     };
 
-    return NextResponse.json(transactionPayload);
+    console.log(psbt.toBase64());
+
+    const transactionData = JSON.stringify({pbst: btoa(psbt.toBase64()), utxos: utxos, receiverId: receiverId, amount: amount});
+
+    console.log(transactionData);
+
+    return NextResponse.json({ transactionPayload: encodeURI(JSON.stringify(TransactionToSign)), transactionData: transactionData });
 
     // const intentMessage = {
     //   signer_id: accountId,

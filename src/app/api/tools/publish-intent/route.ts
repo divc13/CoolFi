@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { ensurePublicKeyRegistered, pollIntentStatus, publishIntent } from "../../../near-intent/actions/crossChainSwap";
+import { ensurePublicKeyRegistered, pollIntentStatus, publishIntent } from "@/app/near-intent/actions/crossChainSwap";
 import bs58 from 'bs58';
 
 export async function GET(request: Request) {
@@ -38,8 +38,8 @@ export async function GET(request: Request) {
                 recipient
             },
             standard: "nep413",
-            signature: `ed25519:${signature}`,
-            public_key: `${publicKey}`
+            signature: `ed25519:${signatureBuffer}`,
+            public_key: `${publicKeyBuffer}`
         }
     });
     console.log('Intent:', intent);

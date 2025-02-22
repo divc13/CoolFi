@@ -447,7 +447,7 @@ export async function withdrawFromDefuse(params: CrossChainSwapAndWithdrawParams
 
         const messageString = encodeURIComponent(JSON.stringify(intentMessage));
         // const messageString = JSON.stringify(intentMessage);
-        const recipient = "intents.near";
+        const recipient = JSON.stringify("intents.near");
         // const recipient = settings.accountId;
 
         // Sign the message
@@ -458,7 +458,7 @@ export async function withdrawFromDefuse(params: CrossChainSwapAndWithdrawParams
         // });
         return {
             message: messageString,
-            recipient,
+            // recipient,
             nonceStr
         }
 

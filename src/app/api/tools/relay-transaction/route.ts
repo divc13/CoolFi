@@ -1,34 +1,104 @@
 import { NextResponse } from 'next/server';
 import { withdrawFromDefuse }  from "@/app/near-intent/actions/crossChainSwap"
 import { CrossChainSwapAndWithdrawParams} from "@/app/near-intent/types/intents";
-
+import { Bitcoin } from '@/app/services/bitcoin';
+import { Wallet } from '@/app/services/near-wallet';
+import { MPC_CONTRACT } from '@/app/services/kdf/mpc';
+import * as bitcoinJs from 'bitcoinjs-lib';
+import { providers } from "near-api-js";
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const accountId = searchParams.get('accountId');
-    const exact_amount_in = searchParams.get('exact_amount_in');
-    const defuse_asset_identifier_in = searchParams.get('defuse_asset_identifier_in');
-    // const defuse_asset_identifier_out = searchParams.get('defuse_asset_identifier_out');
-    // const function_access_key = searchParams.get('function_access_key');
+    // const utxos = searchParams.get('utxos');
+    // const signature = searchParams.get('signature');
+    // const publicKey = searchParams.get('publicKey');
+    const accountId = searchParams.get('account_id');
+    const data = searchParams.get('data');
+    const transactionHash = searchParams.get('transactionHashes');
 
-    if (!accountId || !exact_amount_in || !defuse_asset_identifier_in) {
+    if (!data || !transactionHash || !accountId) {
       return NextResponse.json({ error: 'some required parameters are missing' }, { status: 400 });
     }
+    console.log("data", data);
+    console.log("transactionHash", transactionHash);
+    console.log("accountId", accountId);
+    console.log(JSON.parse(data));
+    const jdata = JSON.parse(data);
+    const npbst = atob(jdata.pbst);
+    const nutxos = jdata.utxos;
+    console.log("npbst", npbst);
+    console.log("nutxos", nutxos);
+    const pbst = bitcoinJs.Psbt.fromBase64(npbst);
+    const utxos =  nutxos;
+    const receiverId = jdata.receiverId;
+    const amount = jdata.amount;
 
-    const params: CrossChainSwapAndWithdrawParams = {
-      destination_address: accountId,
-      exact_amount_in: exact_amount_in,
-      defuse_asset_identifier_in: defuse_asset_identifier_in,
-      defuse_asset_identifier_out: defuse_asset_identifier_in,
-    };
+    // const near = new providers.JsonRpcProvider("https://rpc.mainnet.near.org");
+    // const txDetails = await near.txStatus(transactionHash, accountId);
+    // console.log(JSON.stringify(txDetails, null, 2));
 
-    console.log('Params:', params);
+    // const signatureBuffer = Buffer.from(signature, "base64");
 
-    const transactionPayload = await withdrawFromDefuse(params);
+    // // First 32 bytes → big_r
+    // const big_r = signatureBuffer.slice(0, 32).toString("hex");
 
-    console.log('Transaction payload:', transactionPayload);
+    // // Last 32 bytes → s
+    // const s = signatureBuffer.slice(32, 64).toString("hex");
+    const BTC = new Bitcoin("mainnet");
+    const path = "bitcoin-1";
 
+    const wallet = new Wallet({networkId: "mainnet", createAccessKeyFor: MPC_CONTRACT});
+    const { address, publicKey } = await BTC.deriveAddress(
+      accountId,
+      path
+    );
+
+    const successValue = await wallet.getTransactionResult(transactionHash, accountId);
+    const jsonString = Buffer.from(successValue, 'base64').toString('utf-8');
+
+    // Step 2: Parse JSON
+    const parsed = JSON.parse(jsonString).Ok;
+    if (!parsed) {
+       return NextResponse.json({ error: 'invalid signature' }, { status: 400 });
+    }
+    const big_r = parsed.big_r;
+    const s = parsed.s;
+    const rs = {big_r, s};
+
+    console.log({npbst, nutxos, publicKey, rs, parsed, receiverId, amount});
+
+    const new_pbst = await BTC.reconstructSignedTransactionFromCallback(rs, address, utxos, receiverId, amount, publicKey);
+    const txHash = await BTC.broadcastTX(new_pbst);
+
+
+    // const balance = await BTC.getBalance({ address });
+    // const amount = Number(exact_amount_in);
+
+    // if (balance < amount) {
+    //   return NextResponse.json({ error: 'insufficient balance' }, { status: 400 });
+    // }
+    
+
+    // const wallet = new Wallet({networkId: "mainnet", createAccessKeyFor: MPC_CONTRACT});
+
+    // const { psbt, utxos } = await BTC.createTransaction({
+    //   from: address,
+    //   to: receiverId,
+    //   amount,
+    // });
+    // console.log("PART 1 DONE!!!!");
+    
+    // const TransactionToSign = await BTC.requestSignatureToMPC({
+    //   wallet,
+    //   path,
+    //   psbt,
+    //   utxos,
+    //   publicKey,
+    // });
+
+    // console.log(TransactionToSign);
+    // const txHash = await BTC.broadcastTX(signedTransaction);
 
 
     // const config = {
@@ -92,7 +162,7 @@ export async function GET(request: Request) {
     //       ],
     //     };
 
-    return NextResponse.json(transactionPayload);
+    return NextResponse.json({ txHash });
 
     // const intentMessage = {
     //   signer_id: accountId,

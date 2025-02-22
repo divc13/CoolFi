@@ -27,7 +27,10 @@ export async function GET() {
                 1. Retrieve the swap intent message using "/api/tools/swap-crypto".
                 2. Sign the intent using the 'sign-message' tool.
                 3. Publish the signed intent using "/api/tools/publish-intent".
-                Both retrieval and publishing steps are required to complete a swap.`,
+                Both retrieval and publishing steps are required to complete a swap.
+                For Bitcoin Transfers:
+                1. Retrieve the transfer intent message using "/api/tools/transfer-bitcoin".
+                2. Sign the intent using the sign-transaction endpoint. Make sure to add the transactionData for this link you will be making.`,
                 tools: [{ type: "generate-transaction" }, { type: "sign-message" }]
             },
         },
@@ -215,73 +218,18 @@ export async function GET() {
                                     schema: {
                                         type: "object",
                                         properties: {
-                                            transactionPayload: {
-                                                type: "object",
-                                                properties: {
-                                                    message: {
-                                                        type: "string",
-                                                        description: "The message to sign before publishing."
-                                                    },
-                                                    receiverId: {
-                                                        type: "string",
-                                                        description: "The contract's near id"
-                                                    },
-                                                    nonce: {
-                                                        type: "string",
-                                                        description: "The unique identifier for the transaction."
-                                                    },
-
-                                                    // actions: {
-                                                    //     type: "array",
-                                                    //     items: {
-                                                    //         type: "object",
-                                                    //         properties: {
-                                                    //             type: {
-                                                    //                 type: "string",
-                                                    //                 description: "The type of action (e.g., 'Transfer')"
-                                                    //             },
-                                                    //             params: {
-                                                    //                 type: "object",
-                                                    //                 properties: {
-                                                    //                     signer_id: {
-                                                    //                         type: "string",
-                                                    //                         description: "The account of user"
-                                                    //                     },
-                                                    //                     deadline: {
-                                                    //                         type: "string",
-                                                    //                         description: "The deadline to sign the intent"
-                                                    //                     },
-                                                    //                     intents: {
-                                                    //                         type: "array",
-                                                    //                         items: {
-                                                    //                             type: "object",
-                                                    //                             properties: {
-                                                    //                                 intent: {
-                                                    //                                     type: "string",
-                                                    //                                     description: "The intent of the transaction"
-                                                    //                                 },
-                                                    //                                 token: {
-                                                    //                                     type: "string",
-                                                    //                                     description: "The token to transfer"
-                                                    //                                 },
-                                                    //                                 receiver_id: {
-                                                    //                                     type: "string",
-                                                    //                                     description: "The receiver of the tokens"
-                                                    //                                 },
-                                                    //                                 amount: {
-                                                    //                                     type: "string",
-                                                    //                                     description: "The amount of tokens of the input token to transfer"
-                                                    //                                 },
-                                                    //                             }
-                                                    //                         }
-                                                    //                     }
-                                                    //                 }
-                                                    //             }
-                                                    //         }
-                                                    //     }
-                                                    // }
-                                                }
-                                            }
+                                            message: {
+                                                type: "string",
+                                                description: "The message to sign before publishing."
+                                            },
+                                            // receiverId: {
+                                            //     type: "string",
+                                            //     description: "The contract's near id"
+                                            // },
+                                            nonce: {
+                                                type: "string",
+                                                description: "The unique identifier for the transaction."
+                                            },
                                         }
                                     }
                                 }
@@ -457,6 +405,191 @@ export async function GET() {
                                             satoshi: {
                                                 type: "string",
                                                 description: "The user's number of satoshi details",
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        "400": {
+                            description: "Bad request",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "500": {
+                            description: "Server error",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                },
+            },
+            "/api/tools/transfer-bitcoin": {
+                get: {
+                    operationId: "transferBitcoin",
+                    summary: "transfer bitcoin",
+                    description: "Generates transaction to transfer bitcoin to another account, the amount should be in satoshi. After getting the response: 1) Sign the transactionPayload using https://wallet.bitte.ai/sign-transaction endpoint (I want you to make me sign the transaction using this endpoint instead of generate-transaction). Do fill in :transactionData with the data coming in response.",
+                    parameters: [
+                        {
+                            name: "accountId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The NEAR account ID of the user"
+                        },
+                        {
+                            name: "receiverId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "the bitcoin wallet address."
+                        },
+                        {
+                            name: "amount_in_satoshi",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "amount of satoshi to transfer."
+                        },
+                        {
+                            name: "callbackUrl",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: `call https://wallet.bitte.ai/sign-transaction?transactions_data=:transactionPayload&callback_url=http://${PLUGIN_URL}/api/tools/relay-transaction?data=:transactionData . Do fill in transactionData and transactionPayload with all the required params.`
+                        },
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Successful response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            transactionPayload: {
+                                                type: "string",
+                                                description: "Sign this payload and relay it through relayTransaction. This is transactions_data.",
+                                            },
+                                            transactionData: {
+                                                type: "string",
+                                                description: "This transactionData needs to be sent to relayTransaction (no need to sign this)",
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        "400": {
+                            description: "Bad request",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "500": {
+                            description: "Server error",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                },
+            },
+            "/api/tools/relay-transaction": {
+                get: {
+                    operationId: "relayTransaction",
+                    summary: "relay the transactions sent",
+                    description: "This will take the transaction payload and relay it to the bitcoin network. The data and the transaction hash are neccesary and should be given. You get transaction hash after signing which you view on nearblocks.",
+                    parameters: [
+                        {
+                            name: "accountId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "account id of the user who has signed the transaction."
+                        },
+                        {
+                            name: "data",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "data should be taken from the api which got the payload."
+                        },
+                        {
+                            name: "transactionHashes",
+                            in: "query", 
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The transaction hash got from signing the transaction. This is something which you will get on sign-transaction endpoint."
+                        }
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Successful response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            transactionHash: {
+                                                type: "string",
+                                                description: "The transaction hash of the relayed transaction",
                                             },
                                         },
                                     },
