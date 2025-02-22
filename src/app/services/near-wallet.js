@@ -40,22 +40,6 @@ export class Wallet {
       network: { networkId: this.networkId, nodeUrl: `https://rpc.${this.networkId}.pagoda.co` },
       modules: [setupMyNearWallet(), setupHereWallet(), setupMeteorWallet(), setupBitteWallet()]
     });
-
-    // const walletSelector = await this.selector;
-    // const isSignedIn = walletSelector.isSignedIn();
-    // const accountId = isSignedIn ? walletSelector.store.getState().accounts[0].accountId : '';
-
-    // walletSelector.store.observable
-    //   .pipe(
-    //     map(state => state.accounts),
-    //     distinctUntilChanged()
-    //   )
-    //   // .subscribe(accounts => {
-    //   //   const signedAccount = accounts.find((account) => account.active)?.accountId;
-    //   //   accountChangeHook(signedAccount);
-    //   // });
-
-    // return accountId;
   };
 
   /**
@@ -98,7 +82,7 @@ export class Wallet {
 
 
   /**
-   * Makes a call to a contract
+   * Returns the object representing the transaction
    * @param {Object} options - the options for the call
    * @param {string} options.contractId - the contract's account id
    * @param {string} options.method - the method to call
@@ -109,8 +93,6 @@ export class Wallet {
    */
   callMethod = async ({ contractId, method, args = {}, gas = THIRTY_TGAS, deposit = NO_DEPOSIT }) => {
     // Sign a transaction with the "FunctionCall" action
-    // const selectedWallet = await (await this.selector).wallet();
-    // const outcome = await selectedWallet.signAndSendTransaction
     return ([{
       receiverId: contractId,
       actions: [
@@ -125,8 +107,6 @@ export class Wallet {
         },
       ],
     }]);
-
-    // return providers.getTransactionLastResult(outcome);
   };
 
   /**
@@ -135,8 +115,6 @@ export class Wallet {
    * @returns {Promise<JSON.value>} - the result of the transaction
    */
   getTransactionResult = async (txhash, accountId) => {
-    // const walletSelector = await this.selector;
-    // const { network } = walletSelector.options;
     const provider = new providers.JsonRpcProvider({ url: `https://rpc.${this.networkId}.fastnear.com` });
     console.log(provider);
 
@@ -148,9 +126,5 @@ export class Wallet {
         return receipt.outcome.status.SuccessValue;
       }
     }
-    // console.log(transaction.receipts_outcome[transaction.receipts_outcome.length - 1].outcome.status.SuccessValue);
-    // const something = providers.getTransactionLastResult(transaction.receipts_outcome[transaction.receipts_outcome.length - 1].outcome);
-    // console.log(something);
-    // return something;
   };
 }

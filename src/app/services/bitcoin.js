@@ -117,58 +117,7 @@ export class Bitcoin {
     );
 
     return obj;
-
-    // psbt.finalizeAllInputs(); // Finalize the PSBT
-
-    // return psbt;  // Return the generated signature
-  }
-
-  // requestSignatureToMPC = async ({
-  //     wallet,
-  //     path,
-  //     psbt,
-  //     utxos,
-  //     publicKey,
-  //     attachedDeposit = 1,
-  // }) => {
-  //     const utxo = utxos[0];
-  //     const value = utxo.value;
-  //     const inputIndex = 0;
-  //     // const sighashTypes = [bitcoin.Transaction.SIGHASH_ALL];
-
-  //     const { hash, sighashType } = psbt.getHashAndSighashTypePSBT(
-  //       inputIndex,
-  //       Buffer.from(publicKey, 'hex'),
-  //     );
-
-  //     if (!hash) {
-  //       throw new Error('Failed to generate transaction hash for signing');
-  //     }
-
-  //     const payload = Object.values(ethers.getBytes(hash));
-  
-  //     // Get signature components from MPC contract
-  //     const args = { 
-  //       request: { 
-  //         payload, 
-  //         path, 
-  //         key_version: 0 
-  //       } 
-  //     };
-
-  //     // Call MPC contract and return the signature object
-  //     const signatureObject = await wallet.callMethod({
-  //       contractId: MPC_CONTRACT,
-  //       method: 'sign',
-  //       args,
-  //       gas: '250000000000000',
-  //       deposit: attachedDeposit,
-  //     });
-
-
-  //     return signatureObject;
-  // };
-
+  };
 
   reconstructSignedTransaction = async ({
     psbt: psbt,
@@ -204,29 +153,6 @@ export class Bitcoin {
 
         const rBuf = Buffer.from(rHex, "hex");
         const sBuf = Buffer.from(sHex, "hex");
-
-        // const derSequenceLength = rBuf.length + sBuf.length + 4; // +4 for type and length bytes
-        // const sign = Buffer.alloc(derSequenceLength + 2); // +2 for sequence header
-        
-        // let position = 0;
-        // sign[position++] = 0x30; // DER sequence
-        // sign[position++] = derSequenceLength;
-        
-        // // R value
-        // sign[position++] = 0x02; // Integer
-        // sign[position++] = rBuf.length;
-        // rBuf.copy(sign, position);
-        // position += rBuf.length;
-        
-        // // S value
-        // sign[position++] = 0x02; // Integer
-        // sign[position++] = sBuf.length;
-        // sBuf.copy(sign, position);
-        // position += sBuf.length;
-        
-        // // Add SIGHASH_ALL
-        // return Buffer.concat([sign, Buffer.from([0x01])]);
-
 
         // Combine r and s
         return Buffer.concat([rBuf, sBuf]);
