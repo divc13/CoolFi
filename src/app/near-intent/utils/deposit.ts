@@ -3,7 +3,7 @@
 
 import { base64 } from "@scure/base"
 import { settings } from "./environment"
-import { FetchError, ResponseError, type GetNearNep141StorageBalanceBoundsRequest, type GetNearNep141StorageBalanceBoundsResponse, type GetNearNep141StorageBalanceOfRequest, type GetNearNep141StorageBalanceOfResponse, type JSONRPCRequest, type Transaction } from "../types/deposit"
+import { FetchError, ResponseError, type GetNearNep141StorageBalanceBoundsRequest, type GetNearNep141StorageBalanceBoundsResponse, type GetNearNep141StorageBalanceOfRequest, type GetNearNep141StorageBalanceOfResponse, type JSONRPCRequest, type Transaction, type GetDepositAddressResponse, type GetDepositAddressRequest } from "../types/deposit"
 import  * as near from "near-api-js"
 import { AccessKeyView, CodeResult } from "near-api-js/lib/providers/provider"
 import { Near, transactions } from "near-api-js"
@@ -217,7 +217,7 @@ export async function getDepositedBalances(
   return response.json()
 }
 
-async function request(url: string, body: unknown): Promise<Response> {
+export async function request(url: string, body: unknown): Promise<Response> {
     let response: Response
     try {
       response = await fetch(url, {

@@ -356,7 +356,7 @@ export async function GET() {
                             schema: {
                                 type: "string"
                             },
-                            description: "amount to transfer."
+                            description: "amount to transfer. This can be either in bitcoin or satoshi. If possible understand and fill on your own."
                         },
                         {
                             name: "isAmountInBitcoin",
@@ -478,6 +478,104 @@ export async function GET() {
                                             transactionHash: {
                                                 type: "string",
                                                 description: "The transaction hash of the relayed transaction",
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        "400": {
+                            description: "Bad request",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "500": {
+                            description: "Server error",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                },
+            },"/api/tools/transfer-bitcoin-into-defuse": {
+                get: {
+                    operationId: "transferBitcoin",
+                    summary: "transfer bitcoin",
+                    description: "Generates transaction to transfer bitcoin to another account, the amount should be in satoshi. After getting the response: 1) Make a link to https://wallet.bitte.ai/sign-transaction endpoint (I want you to make me sign the transaction using this endpoint instead of generate-transaction). Do fill in :transactionData with the data coming in response.",
+                    parameters: [
+                        {
+                            name: "accountId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The NEAR account ID of the user"
+                        },
+                        {
+                            name: "amount",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "amount to transfer. This can be either in bitcoin or satoshi. If possible understand and fill on your own."
+                        },
+                        {
+                            name: "isAmountInBitcoin",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "'true' if amount is in bitcoin, 'false' if amount is in NEAR. This is very important. But try to fill it on your own."
+                        },
+                        {
+                            name: "callbackUrl",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: `call https://wallet.bitte.ai/sign-transaction?transactions_data=:transactionPayload&callback_url=http://${PLUGIN_URL}/api/tools/relay-transaction?data=:transactionData . Do fill in transactionData and transactionPayload with all the required params.`
+                        },
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Successful response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            transactionPayload: {
+                                                type: "string",
+                                                // description: "payload needs to be signed  and relay it through relayTransaction. This is transactions_data.",
+                                            },
+                                            transactionData: {
+                                                type: "string",
+                                                // description: "This transactionData needs to be sent to relayTransaction (no need to sign this)",
                                             },
                                         },
                                     },
