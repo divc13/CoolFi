@@ -39,7 +39,9 @@ export async function GET() {
                 Both retrieval and publishing steps are required to complete a swap.
                 For Bitcoin Transfers:
                 1. Retrieve the transfer intent message using "/api/tools/transfer-bitcoin".
-                2. Create a link to https://wallet.bitte.ai/sign-transaction/ after putting in the data in the url. Make sure to add the call back url to the link along with payload and the data.`,
+                2. Create a link to https://wallet.bitte.ai/sign-transaction/ after putting in the data in the url. Make sure to add the call back url to the link along with payload and the data.
+                
+                IMPORTANT: sign-message takes in transaction payload which can optionally contain url. Dont miss out on the url.`,
                 tools: [{ type: "generate-transaction" }, { type: "sign-message" }]
             },
         },
