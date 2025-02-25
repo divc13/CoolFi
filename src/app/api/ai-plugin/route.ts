@@ -46,8 +46,14 @@ export async function GET() {
                 For Bitcoin Transfers:
                 1. Retrieve the transfer intent message using "/api/tools/transfer-bitcoin".
                 2. Create a link to https://wallet.bitte.ai/sign-transaction/ after putting in the data in the url. Make sure to add the call back url to the link along with payload and the data.
+
+                Important Rules:
                 
-                IMPORTANT: sign-message takes in transaction payload which can optionally contain url. Dont miss out on the url.`,
+                1. sign-message takes in transaction payload which can optionally contain url. Dont miss out on the url.
+                2. Whenever you take in the amount related to any currency for any purpose, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi.
+                3. If a user asks any operation to be done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}.
+                                
+                `,
                 tools: [{ type: "generate-transaction" }, { type: "sign-message" }]
             },
         },
@@ -657,7 +663,7 @@ export async function GET() {
                                         properties: {
                                             error: {
                                                 type: "string",
-                                                description: "Error message"
+                                                description: "Error message which you can tell user to fix."
                                             }
                                         }
                                     }
@@ -885,35 +891,6 @@ export async function GET() {
                                             message: {
                                                 type: "string",
                                                 description: "The list of blockchains",
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-            "/api/tools/get-user": {
-                get: {
-                    summary: "get user information",
-                    description: "Respond with user account ID",
-                    operationId: "get-user",
-                    responses: {
-                        "200": {
-                            description: "Successful response",
-                            content: {
-                                "application/json": {
-                                    schema: {
-                                        type: "object",
-                                        properties: {
-                                            accountId: {
-                                                type: "string",
-                                                description: "The user's account ID",
-                                            },
-                                            evmAddress: {
-                                                type: "string",
-                                                description: "The user's MPC EVM address",
                                             },
                                         },
                                     },
