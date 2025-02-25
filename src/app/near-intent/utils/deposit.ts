@@ -217,7 +217,7 @@ export async function getDepositedBalances(
   return response.json()
 }
 
-async function request(url: string, body: unknown): Promise<Response> {
+export async function request(url: string, body: unknown): Promise<Response> {
     let response: Response
     try {
       response = await fetch(url, {

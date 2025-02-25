@@ -30,141 +30,11 @@ export async function GET() {
                 Both retrieval and publishing steps are required to complete a swap.
                 For Bitcoin Transfers:
                 1. Retrieve the transfer intent message using "/api/tools/transfer-bitcoin".
-                2. Sign the intent using the sign-transaction endpoint. Make sure to add the transactionData for this link you will be making.`,
+                2. Create a link to https://wallet.bitte.ai/sign-transaction/ after putting in the data in the url. Make sure to add the call back url to the link along with payload and the data.`,
                 tools: [{ type: "generate-transaction" }, { type: "sign-message" }]
             },
         },
         paths: {
-            // "/api/tools/swap-crypto": {
-            //     get: {
-            //         operationId: "swapCrypto",
-            //         summary: "Swap the crpto based on user inputss",
-            //         description: "The user will give the input and the output crypto and the amount to swap",
-            //         parameters: [
-            //             {
-            //                 name: "accountId",
-            //                 in: "query",
-            //                 required: true,
-            //                 schema: {
-            //                     type: "string"
-            //                 },
-            //                 description: "The NEAR account ID of the user"
-            //             },
-            //             {
-            //                 name: "exact_amount_in",
-            //                 in: "query",
-            //                 required: true,
-            //                 schema: {
-            //                     type: "string"
-            //                 },
-            //                 description: "The amount of input crypto which user wants to swap"
-            //             },
-            //             {
-            //                 name: "defuse_asset_identifier_in",
-            //                 in: "query",
-            //                 required: true,
-            //                 schema: {
-            //                     type: "string"
-            //                 },
-            //                 description: "The input crypto which user wants to swap"
-            //             },
-            //             {
-            //                 name: "defuse_asset_identifier_out",
-            //                 in: "query",
-            //                 required: true,
-            //                 schema: {
-            //                     type: "string"
-            //                 },
-            //                 description: "The output crypto which user wants to receive from the swap"
-            //             },
-            //             {
-            //                 name: "function_access_key",
-            //                 in: "query",
-            //                 required: true,
-            //                 schema: {
-            //                     type: "string"
-            //                 },
-            //                 description: "A function access key in browser local storage to call functions in order to look at user balance (this wont and cannot be used to transfer funds from the user account)"
-            //             },
-            //         ],
-            //         responses: {
-            //             "200": {
-            //                 description: "Successful response",
-            //                 content: {
-            //                     "application/json": {
-            //                         schema: {
-            //                             type: "object",
-            //                             properties: {
-            //                                 intents: {
-            //                                     type: "object",
-            //                                     properties: {
-            //                                         receiverId: {
-            //                                             type: "string",
-            //                                             description: "The user's NEAR account ID"
-            //                                         },
-            //                                         actions: {
-            //                                             type: "array",
-            //                                             items: {
-            //                                                 type: "object",
-            //                                                 properties: {
-            //                                                     type: {
-            //                                                         type: "string",
-            //                                                         description: "The type of action (e.g., 'Transfer', 'Withdraw')"
-            //                                                     },
-            //                                                     params: {
-            //                                                         type: "object",
-            //                                                         properties: {
-            //                                                             deposit: {
-            //                                                                 type: "string",
-            //                                                                 description: "The amount to transfer/withdraw in yoctoNEAR"
-            //                                                             }
-            //                                                         }
-            //                                                     }
-            //                                                 }
-            //                                             }
-            //                                         }
-            //                                     }
-            //                                 }
-            //                             }
-            //                         }
-            //                     }
-            //                 }
-            //             },
-            //             "400": {
-            //                 description: "Bad request",
-            //                 content: {
-            //                     "application/json": {
-            //                         schema: {
-            //                             type: "object",
-            //                             properties: {
-            //                                 error: {
-            //                                     type: "string",
-            //                                     description: "Error message"
-            //                                 }
-            //                             }
-            //                         }
-            //                     }
-            //                 }
-            //             },
-            //             "500": {
-            //                 description: "Error response",
-            //                 content: {
-            //                     "application/json": {
-            //                         schema: {
-            //                             type: "object",
-            //                             properties: {
-            //                                 error: {
-            //                                     type: "string",
-            //                                     description: "Error message"
-            //                                 }
-            //                             }
-            //                         }
-            //                     }
-            //                 }
-            //             }
-            //         }
-            //     },
-            // },
             "/api/tools/swap-crypto": {
                 get: {
                     operationId: "swapCrypto",
@@ -452,7 +322,7 @@ export async function GET() {
                 get: {
                     operationId: "transferBitcoin",
                     summary: "transfer bitcoin",
-                    description: "Generates transaction to transfer bitcoin to another account, the amount should be in satoshi. After getting the response: 1) Sign the transactionPayload using https://wallet.bitte.ai/sign-transaction endpoint (I want you to make me sign the transaction using this endpoint instead of generate-transaction). Do fill in :transactionData with the data coming in response.",
+                    description: "Generates transaction to transfer bitcoin to another account, the amount should be in satoshi. After getting the response: 1) Make a link to https://wallet.bitte.ai/sign-transaction endpoint (I want you to make me sign the transaction using this endpoint instead of generate-transaction). Do fill in :transactionData with the data coming in response.",
                     parameters: [
                         {
                             name: "accountId",
@@ -470,16 +340,34 @@ export async function GET() {
                             schema: {
                                 type: "string"
                             },
-                            description: "the bitcoin wallet address."
+                            description: "This receiverId can be bitcoin address or it can be NEAR account ID of the recepient."
                         },
                         {
-                            name: "amount_in_satoshi",
+                            name: "isReceiverIdNearAccount",
                             in: "query",
                             required: true,
                             schema: {
                                 type: "string"
                             },
-                            description: "amount of satoshi to transfer."
+                            description: "'true' if receiverId is NEAR account ID, 'false' if receiverId is bitcoin address. If possible understand and fill on your own. (eg for near account is user.near)"
+                        },
+                        {
+                            name: "amount",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "amount to transfer. This can be either in bitcoin or satoshi. If possible understand and fill on your own."
+                        },
+                        {
+                            name: "isAmountInBitcoin",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "'true' if amount is in bitcoin, 'false' if amount is in NEAR. This is very important. But try to fill it on your own."
                         },
                         {
                             name: "callbackUrl",
@@ -501,11 +389,11 @@ export async function GET() {
                                         properties: {
                                             transactionPayload: {
                                                 type: "string",
-                                                description: "Sign this payload and relay it through relayTransaction. This is transactions_data.",
+                                                // description: "payload needs to be signed  and relay it through relayTransaction. This is transactions_data.",
                                             },
                                             transactionData: {
                                                 type: "string",
-                                                description: "This transactionData needs to be sent to relayTransaction (no need to sign this)",
+                                                // description: "This transactionData needs to be sent to relayTransaction (no need to sign this)",
                                             },
                                         },
                                     },
@@ -551,7 +439,7 @@ export async function GET() {
                 get: {
                     operationId: "relayTransaction",
                     summary: "relay the transactions sent",
-                    description: "This will take the transaction payload and relay it to the bitcoin network. The data and the transaction hash are neccesary and should be given. You get transaction hash after signing which you view on nearblocks.",
+                    description: "This will take the transaction payload and relay it to the bitcoin network. The data and the transaction hash are neccesary and should be given.",
                     parameters: [
                         {
                             name: "accountId",
@@ -592,6 +480,104 @@ export async function GET() {
                                             transactionHash: {
                                                 type: "string",
                                                 description: "The transaction hash of the relayed transaction",
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        "400": {
+                            description: "Bad request",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "500": {
+                            description: "Server error",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                },
+            },"/api/tools/transfer-bitcoin-into-defuse": {
+                get: {
+                    operationId: "transferBitcoin",
+                    summary: "transfer bitcoin",
+                    description: "Generates transaction to transfer bitcoin to another account, the amount should be in satoshi. After getting the response: 1) Make a link to https://wallet.bitte.ai/sign-transaction endpoint (I want you to make me sign the transaction using this endpoint instead of generate-transaction). Do fill in :transactionData with the data coming in response.",
+                    parameters: [
+                        {
+                            name: "accountId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The NEAR account ID of the user"
+                        },
+                        {
+                            name: "amount",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "amount to transfer. This can be either in bitcoin or satoshi. If possible understand and fill on your own."
+                        },
+                        {
+                            name: "isAmountInBitcoin",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "'true' if amount is in bitcoin, 'false' if amount is in NEAR. This is very important. But try to fill it on your own."
+                        },
+                        {
+                            name: "callbackUrl",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: `call https://wallet.bitte.ai/sign-transaction?transactions_data=:transactionPayload&callback_url=http://${PLUGIN_URL}/api/tools/relay-transaction?data=:transactionData . Do fill in transactionData and transactionPayload with all the required params.`
+                        },
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Successful response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            transactionPayload: {
+                                                type: "string",
+                                                // description: "payload needs to be signed  and relay it through relayTransaction. This is transactions_data.",
+                                            },
+                                            transactionData: {
+                                                type: "string",
+                                                // description: "This transactionData needs to be sent to relayTransaction (no need to sign this)",
                                             },
                                         },
                                     },
