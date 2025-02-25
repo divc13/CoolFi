@@ -34,9 +34,10 @@ export async function get_token_data(accountId: string) {
   try {
     // Fetch tokens (excluding NEAR)
     const tokenResponse = await axios.get(`https://api.fastnear.com/v1/account/${accountId}/ft`);
-
+    console.log(tokenResponse.data);
     // Fetch NEAR balance
     const nearResponse = await axios.get(`https://api.nearblocks.io/v1/account/${accountId}`);
+    console.log(nearResponse.data);
 
     const tokens = tokenResponse.data.tokens || [];
     const nearBalance = nearResponse.data.account[0]?.amount || "0";
@@ -89,8 +90,9 @@ export async function get_token_data(accountId: string) {
           (parseFloat(t.balance) / 10 ** t.decimals) * (tokenPrices[t.cgId]?.usd || 0),
       }))
       .filter((t: any) => t.amountUSD > 0); // Remove tokens with 0 USD balance
+      console.log("tokensWithUSD", tokensWithUSD);
 
-    return Response.json(tokensWithUSD, { status: 200 });
+    return tokensWithUSD;
   } catch (error) {
     console.error("Error fetching balances:", error);
     return Response.json({ error: "Internal server error" }, { status: 500 });
@@ -99,9 +101,6 @@ export async function get_token_data(accountId: string) {
 
 export async function GET(request: Request) {
   try {
-
-      const mbMetadataHeader = (await headers()).get('mb-metadata');
-        console.log(mbMetadataHeader);
 
     const { searchParams } = new URL(request.url);
     const accountId = searchParams.get('accountId');
@@ -123,6 +122,7 @@ export async function GET(request: Request) {
 
     const balance = await BTC.getBalance({ address });
     const accountDetails = await get_token_data(accountId);
+    console.log("Account Details: ", accountDetails);
     return NextResponse.json({accountDetails : accountDetails, satoshi: balance}, { status: 200 });
   } catch (error) {
     console.error('Error generating NEAR account details:', error);

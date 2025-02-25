@@ -1,6 +1,4 @@
 import { NextResponse } from 'next/server';
-import { withdrawFromDefuse }  from "@/app/near-intent/actions/crossChainSwap"
-import { CrossChainSwapAndWithdrawParams} from "@/app/near-intent/types/intents";
 import { Bitcoin } from '@/app/services/bitcoin';
 import { Wallet } from '@/app/services/near-wallet';
 import { MPC_CONTRACT } from '@/app/services/kdf/mpc';
