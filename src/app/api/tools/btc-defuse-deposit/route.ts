@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { withdrawFromDefuse }  from "@/app/near-intent/actions/crossChainSwap"
+import { CrossChainSwapAndWithdrawParams} from "@/app/near-intent/types/intents";
 import { Bitcoin } from '@/app/services/bitcoin';
 import { Wallet } from '@/app/services/near-wallet';
 import { MPC_CONTRACT } from '@/app/services/kdf/mpc';
@@ -43,34 +45,18 @@ export async function GET(request: Request) {
       ]
     });
 
-    if (deposit_address == null) {
-        return NextResponse.json({ error: 'Failed to generate deposit address' }, { status: 401 });   
-    }
-    
     var recepient = (await deposit_address.json()).result.address;
-
-    if (recepient == null) {
-        return NextResponse.json({ error: 'Failed to generate recepient address' }, { status: 402 });   
-    }
 
     const { address, publicKey } = await BTC.deriveAddress(
       accountId,
       path
     );
 
-    if (address == null || publicKey == null) {
-        return NextResponse.json({ error: 'Failed to get derived address or public Key' }, { status: 403 });   
-    }
-
     const balance = await BTC.getBalance({ address });
-    if (balance == null) {
-        return NextResponse.json({ error: 'Failed to get balance' }, { status: 404 });   
-    }
-
     const amount = Number(exact_amount_in);
 
     if (balance < amount) {
-      return NextResponse.json({ error: 'insufficient balance' }, { status: 405 });
+      return NextResponse.json({ error: 'insufficient balance' }, { status: 400 });
     }
 
     const wallet = new Wallet({networkId: "mainnet", createAccessKeyFor: MPC_CONTRACT});
@@ -82,10 +68,7 @@ export async function GET(request: Request) {
       to: recepient,
       amount,
     });
-
-    if (psbt == null || utxos == null) {
-        return NextResponse.json({ error: 'Failed to create transaction' }, { status: 406 });   
-    }
+    console.log("PART 1 DONE!!!!");
     
     const TransactionToSign = await BTC.requestSignatureToMPC({
       wallet,
@@ -96,17 +79,15 @@ export async function GET(request: Request) {
     });
 
     console.log(TransactionToSign);
-    if (TransactionToSign == null) {
-        return NextResponse.json({ error: 'Failed to get transaction load' }, { status: 407 });
-    }
 
     const transactionData = JSON.stringify({pbst: btoa(psbt.toBase64()), utxos: utxos, receiverId: recepient, amount: amount});
+
     console.log(transactionData);
 
     return NextResponse.json({ transactionPayload: encodeURI(JSON.stringify(TransactionToSign)), transactionData: transactionData });
 
   } catch (error) {
-    console.error('Error generating BTC transaction payload:', error);
-    return NextResponse.json({ error: 'Failed to generate BTC transaction payload' }, { status: 500 });
+    console.error('Error generating NEAR account details:', error);
+    return NextResponse.json({ error: 'Failed to generate NEAR account details' }, { status: 500 });
   }
 }
