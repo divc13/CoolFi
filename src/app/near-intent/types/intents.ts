@@ -148,5 +148,6 @@ export interface CrossChainSwapAndWithdrawParams {
     defuse_asset_identifier_in: string;
     defuse_asset_identifier_out: string;
     destination_address: string;
+    accountId: string;
     network?: string;
 }

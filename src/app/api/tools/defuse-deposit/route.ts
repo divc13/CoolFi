@@ -20,12 +20,12 @@ function convertBigIntToString(jsonArray:any) {
     ));
 }
 
-const depositIntoDefuse = async (tokenIds: string[], amount: bigint) : Promise<Transaction["NEAR"][]> => {
+const depositIntoDefuse = async (tokenIds: string[], amount: bigint, accountId: string) : Promise<Transaction["NEAR"][]> => {
     const contractId = tokenIds[0].replace('nep141:', '');
 
     const nep141balance = await getNearNep141StorageBalance({
         contractId,
-        accountId: settings.accountId
+        accountId: accountId
     });
 
     var transaction = null;
@@ -46,12 +46,12 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const tokenInName = searchParams.get('tokenIn');
     const amount = searchParams.get('amount');
+    const accountId = searchParams.get('accountId');
 
     if (tokenInName === null || amount === null) {
         return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
     }
 
-    const accountId = settings.accountId;
     const network = "near";
 
     if (!accountId) {
@@ -83,7 +83,7 @@ export async function GET(request: Request) {
 
     const amountInBigInt = convertAmountToDecimals(amount, defuseTokenIn);
     
-    var transactions: Transaction["NEAR"][] = await depositIntoDefuse([defuseAssetIdIn], amountInBigInt);
+    var transactions: Transaction["NEAR"][] = await depositIntoDefuse([defuseAssetIdIn], amountInBigInt, accountId);
     transactions = await convertBigIntToString(transactions);
     return NextResponse.json({ transactions });
 

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import tokenData from "@/app/near-intent/config/tokens.json";
 
 export async function GET() {
+
     const pluginData = {
         openapi: "3.1.0",
         info: {

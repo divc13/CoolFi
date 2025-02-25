@@ -16,7 +16,7 @@ export async function GET(request: Request) {
     const tokenInName = searchParams.get('tokenIn');
     const tokenOutName = searchParams.get('tokenOut');
     const amountIn = searchParams.get('amountIn');
-    const accountId = settings.accountId;
+    const accountId = searchParams.get('accountId');
 
     if (!accountId) {
         throw new Error("NEAR_ADDRESS not configured");
@@ -91,7 +91,7 @@ export async function GET(request: Request) {
     };
     
     const intentMessage: IntentMessage = {
-        signer_id: settings.accountId,
+        signer_id: accountId,
         deadline: new Date(Date.now() + 300000).toISOString(),
         intents: [createTokenDiffIntent(
             quote[best_quote_index].defuse_asset_identifier_in,

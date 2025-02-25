@@ -7,12 +7,13 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const signature = searchParams.get('signature');
+    const accountId = searchParams.get('accountId');
     const publicKey = searchParams.get('publicKey');
     const messageString = searchParams.get('message');
     const recipient = searchParams.get('receiverId');
     const nonce = searchParams.get('nonce');
 
-    if (!signature || !publicKey || !messageString || !recipient || !nonce) {
+    if (!signature || !publicKey || !messageString || !recipient || !nonce || !accountId) {
       console.log('Missing parameters:', { signature, publicKey, messageString, recipient, nonce });
       console.log('Nonce length:', nonce);
       return NextResponse.json({ error: 'some required parameters are missing' }, { status: 400 });
@@ -24,7 +25,7 @@ export async function GET(request: Request) {
     const nonceStr = nonce;
     // const nonceStr = Buffer.from(nonce, "base64").toString();
 
-    await ensurePublicKeyRegistered(publicKey);
+    await ensurePublicKeyRegistered(publicKey, accountId);
     
     // const prefix = "ed25519:";
     // const cleaned = publicKey.startsWith(prefix) ? publicKey.slice(prefix.length) : publicKey;
@@ -53,8 +54,8 @@ export async function GET(request: Request) {
             public_key: `${publicKey}`
         }
     });
+    
     console.log('Intent:', intent);
-
 
     if (intent.status === "OK") {
         const finalStatus = await pollIntentStatus(intent.intent_hash);

@@ -3,6 +3,9 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   const mbMetadataHeader = (await headers()).get('mb-metadata');
+
+    console.log(mbMetadataHeader);
+
   const mbMetadata: { accountId: string; evmAddress: string } | undefined =
     mbMetadataHeader && JSON.parse(mbMetadataHeader);
 
