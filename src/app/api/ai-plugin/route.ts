@@ -655,7 +655,7 @@ export async function GET() {
                             },
                         },
                         "400": {
-                            description: "Bad request, display this error message which you get in response to the user.",
+                            description: "Bad request",
                             content: {
                                 "application/json": {
                                     schema: {
@@ -841,119 +841,7 @@ export async function GET() {
                             },
                         },
                         "400": {
-                            description: "Required params missing, check account id, amount.",
-                            content: {
-                                "application/json": {
-                                    schema: {
-                                        type: "object",
-                                        properties: {
-                                            error: {
-                                                type: "string",
-                                                description: "Error message"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "401": {
-                            description: "Failed to generate deposit address",
-                            content: {
-                                "application/json": {
-                                    schema: {
-                                        type: "object",
-                                        properties: {
-                                            error: {
-                                                type: "string",
-                                                description: "Error message"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "402": {
-                            description: "Failed to generate deposit address",
-                            content: {
-                                "application/json": {
-                                    schema: {
-                                        type: "object",
-                                        properties: {
-                                            error: {
-                                                type: "string",
-                                                description: "Error message"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "403": {
-                            description: "Failed to get derived bitcoin wallet address or its public key",
-                            content: {
-                                "application/json": {
-                                    schema: {
-                                        type: "object",
-                                        properties: {
-                                            error: {
-                                                type: "string",
-                                                description: "Error message"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "404": {
-                            description: "Failed to get balance of the derived bitcoin wallet address",
-                            content: {
-                                "application/json": {
-                                    schema: {
-                                        type: "object",
-                                        properties: {
-                                            error: {
-                                                type: "string",
-                                                description: "Error message"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "405": {
-                            description: "Insufficient balance in the derived bitcoin wallet address",
-                            content: {
-                                "application/json": {
-                                    schema: {
-                                        type: "object",
-                                        properties: {
-                                            error: {
-                                                type: "string",
-                                                description: "Error message"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "406": {
-                            description: "Failed to create transaction",
-                            content: {
-                                "application/json": {
-                                    schema: {
-                                        type: "object",
-                                        properties: {
-                                            error: {
-                                                type: "string",
-                                                description: "Error message"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "407": {
-                            description: "Failed to get transaction load",
+                            description: "Bad request",
                             content: {
                                 "application/json": {
                                     schema: {
@@ -969,7 +857,7 @@ export async function GET() {
                             }
                         },
                         "500": {
-                            description: "Failed to generate bitcoin transaction payload.",
+                            description: "Server error",
                             content: {
                                 "application/json": {
                                     schema: {
