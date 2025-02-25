@@ -26,6 +26,10 @@ export async function GET() {
                 2. Use the 'generate-transaction' tool to execute the transaction.
                 For Depositing Crypto into defuse:
                 1. Generate a transaction payload using "/api/tools/create-near-transaction".
+                For Swapping Crypto in Defuse:
+                1. Retrieve the swap intent message using "/api/tools/swap-crypto".
+                2. Sign the intent using the 'sign-message' tool.
+                3. Publish the signed intent using "/api/tools/publish-intent".
                 
                 For crypto swaps:
                 1. Retrieve the swap intent message using "/api/tools/swap-crypto".
@@ -130,6 +134,112 @@ export async function GET() {
                             }
                         }
                     },
+                },
+            },
+            "/api/tools/defuse-swap": {
+                get: {
+                    operationId: "swapCryptoInDefuse",
+                    summary: "Retrieve a message to swap cryptocurrency.",
+                    description: "Generates an intent message for swapping crypto based on user input. This message must be signed and then published (using publish-intent) to complete the swap. Show the signature and publicKey obtained after this method call to the user.",
+                    parameters: [
+                        {
+                            name: "exact_amount_in",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The amount of input crypto which user wants to swap"
+                        },
+                        {   
+                            name: "tokenIn",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The type of cryptocurrency the user is swapping from."
+                        },
+                        {   
+                            name: "tokenOut",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The type of cryptocurrency the user is swapping from."
+                        },
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Returns the swap intent message.",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            intentMessage: {
+                                                type: "object",
+                                                properties: {
+                                                    message: {
+                                                        type: "string",
+                                                        description: "The message to sign before publishing."
+                                                    },
+                                                    receiverId: {
+                                                        type: "string",
+                                                        description: "The contract's near id"
+                                                    },
+                                                    nonce: {
+                                                        type: "string",
+                                                        description: "The unique identifier for the transaction. This is a base64 string. ",
+                                                        example1 : "HXRpqKa9xCGMpB37KpfQjSinMVQKuN1WF2Au72Pqg9Y=",
+                                                        example2: "zanFCPTWKvvV5oBhL1JnZj4p7cUkqt1+PPff4j6GwLA="
+                                                    },
+                                                }
+                                            },
+                                            netReturns: {
+                                                type: "object",
+                                                additionalProperties: true,
+                                                description: "The net returns of the swap. Show this to user before they sign the message."
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "400": {
+                            description: "Bad request",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "500": {
+                            description: "Error response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 },
             },
             "/api/tools/swap-crypto": {
@@ -261,7 +371,7 @@ export async function GET() {
                             schema: {
                                 type: "string"
                             },
-                            description: "The ed25519 public key from the signing result (signResult.publicKey). This is automatically available after signing - no need to ask the user. DO NOT use the NEAR wallet ID (like 'user.near'). Example format: 'ed25519:HeaBJ3xLgvZacQWmEctTeUqyfSU4SDEnEwckWxd92W2G'. Do not encode or decode any thing by your own."
+                            description: "The ed25519 public key from the signing result (signResult.publicKey). This is automatically available after signing - no need to ask the user. DO NOT use the NEAR wallet ID (like 'user.near'). Example format: 'ed25519:HeaBJ3xLgvZacQWmEctTeUqyfSU4SDEnEwckWxd92W2G'. Do not encode or decode any thing by your own. Take this value from the signResult. Do not default to some example given or user wallet."
                         },
                         {
                             name: "message",
