@@ -51,6 +51,15 @@ export async function GET() {
                     description: "Generates transaction to allow users to deposit their currency into defuse or near intents. Take the crypto currency to be deposied from the user. Also ask for the amount to be deposited. Show the transaction deatails to the user.",
                     parameters: [
                         {
+                            name: "accountId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The NEAR account ID of the user"
+                        },
+                        {
                             name: "tokenIn",
                             in: "query",
                             required: true,
@@ -143,6 +152,15 @@ export async function GET() {
                     summary: "Retrieve a message to swap cryptocurrency.",
                     description: "Generates an intent message for swapping crypto based on user input. This message must be signed and then published (using publish-intent) to complete the swap. Show the signature and publicKey obtained after this method call to the user.",
                     parameters: [
+                        {
+                            name: "accountId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The NEAR account ID of the user"
+                        },
                         {
                             name: "amountIn",
                             in: "query",
