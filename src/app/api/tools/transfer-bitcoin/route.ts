@@ -50,6 +50,7 @@ export async function GET(request: Request) {
     const amount = Number(exact_amount_in);
 
     if (balance < amount) {
+        console.log('insufficient balance');
       return NextResponse.json({ error: 'insufficient balance' }, { status: 400 });
     }
 
