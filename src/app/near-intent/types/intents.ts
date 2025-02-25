@@ -93,6 +93,7 @@ export interface SignedData {
         message: string;  // JSON stringified IntentMessage
         nonce: string;
         recipient: string;
+        callbackUrl?: string;
     };
     public_key: string;
     signature: string;

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { ensurePublicKeyRegistered, pollIntentStatus, publishIntent } from "@/app/near-intent/actions/crossChainSwap";
 import bs58 from 'bs58';
 import { utils } from 'near-api-js';
+import { CHAT_URL, PLUGIN_URL } from '@/app/config';
 
 export async function GET(request: Request) {
   try {
@@ -21,17 +22,19 @@ export async function GET(request: Request) {
 
     console.log('Received parameters:', { signature, publicKey, messageString, recipient, nonce }, nonce.length);
 
-    // for some reason nonce comes as double base64 encoded, decode it once
-    const nonceStr = nonce;
-    // const nonceStr = Buffer.from(nonce, "base64").toString();
+    const transactionPayload = {
+      messageString,
+      nonce: nonce,
+      recipient,
+    };
+    const transactionPayload_str = encodeURIComponent(JSON.stringify(transactionPayload));
 
+    const redirectUrl = `${CHAT_URL}`;
+    const callbackUrl = `${PLUGIN_URL}/api/tools/publish-intent?transactionPayload=${transactionPayload_str}&callbackUrl=${redirectUrl}`;
+
+    const nonceStr = nonce;
     await ensurePublicKeyRegistered(publicKey, accountId);
-    
-    // const prefix = "ed25519:";
-    // const cleaned = publicKey.startsWith(prefix) ? publicKey.slice(prefix.length) : publicKey;
     const signatureBuffer = bs58.encode(Buffer.from(signature, "base64"));
-    // const publicKeyBuffer = bs58.encode(Buffer.from(cleaned, "base64"));
-    // const messageStr = decodeURIComponent(JSON.stringify(messageString));
 
     const msg = JSON.parse(decodeURIComponent(messageString));
     console.log(msg);
@@ -47,7 +50,8 @@ export async function GET(request: Request) {
             payload: {
                 message: messageStr,
                 nonce: nonceStr,
-                recipient
+                recipient,
+                callbackUrl,
             },
             standard: "nep413",
             signature: `ed25519:${signatureBuffer}`,

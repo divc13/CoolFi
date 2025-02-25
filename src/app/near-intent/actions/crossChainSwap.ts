@@ -17,7 +17,7 @@ import { getAllSupportedTokens, getDefuseAssetId, getTokenBySymbol, isTokenSuppo
 import { settings } from "../../config";
 import { getTokenPriceUSD } from "../providers/coingeckoProvider";
 
-const DEFUSE_RPC_URL = settings.defuseRPCUrl;
+const DEFUSE_RPC_URL:string = settings.defuseRPCUrl;
 const POLLING_INTERVAL_MS = settings.polling_interval_ms;
 const MAX_POLLING_TIME_MS = settings.max_polling_time_ms;
 export const FT_MINIMUM_STORAGE_BALANCE_LARGE = "1250000000000000000000";
