@@ -1,5 +1,6 @@
 import { ACCOUNT_ID, PLUGIN_URL } from "@/app/config";
 import { NextResponse } from "next/server";
+import tokenData from "@/app/near-intent/config/tokens.json";
 
 export async function GET() {
     const pluginData = {
@@ -18,11 +19,14 @@ export async function GET() {
             "account-id": ACCOUNT_ID,
             assistant: {
                 name: "CoolFi",
-                description: "A blockchain assistant that provides information, retrieves the user's account ID, interacts with Twitter, creates NEAR transaction payloads, and helps with crypto swaps.",
-                instructions: `You assist with NEAR transactions, blockchain queries, account retrieval, Twitter interactions, and coin flips.
+                description: "A blockchain assistant that provides information, retrieves the user's account ID, interacts with Twitter, creates NEAR transaction payloads, and helps with crypto swaps with tree different apis: deposit, swap and withdraw.",
+                instructions: `You assist with NEAR transactions, blockchain queries, account retrieval, Twitter interactions, and crypto swaps.
                 For blockchain transactions:
                 1. Generate a transaction payload using "/api/tools/create-near-transaction".
                 2. Use the 'generate-transaction' tool to execute the transaction.
+                For Depositing Crypto into defuse:
+                1. Generate a transaction payload using "/api/tools/create-near-transaction".
+                
                 For crypto swaps:
                 1. Retrieve the swap intent message using "/api/tools/swap-crypto".
                 2. Sign the intent using the 'sign-message' tool.
@@ -35,6 +39,99 @@ export async function GET() {
             },
         },
         paths: {
+            "/api/tools/defuse-deposit": {
+                get: {
+                    operationId: "depositIntoDefuse",
+                    summary: "function call for depositing crypto into defuse or near intents.",
+                    description: "Generates transaction to allow users to deposit their currency into defuse or near intents. Take the crypto currency to be deposied from the user. Also ask for the amount to be deposited. Show the transaction deatails to the user.",
+                    parameters: [
+                        {
+                            name: "tokenIn",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: `The token user wants to deposit. If possible understand and fill on your own. Do ask if obsecure. This must be one of the tokens from ${tokenData}. This is only the name of the token.`
+                        },
+                        {
+                            name: "amount",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "the amount to deposit into defuse or near intents."
+                        },
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Successful response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            receiverId: {
+                                                type: "string",
+                                                description: "The receiver's NEAR account ID"
+                                            },
+                                            actions: {
+                                                type: "array",
+                                                items: {
+                                                    type: "object",
+                                                    properties: {
+                                                        type: {
+                                                            type: "string",
+                                                            description: "The type of action (e.g., 'Transfer')"
+                                                        },
+                                                        params: {
+                                                            type: "object",
+                                                            additionalProperties: true,
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        "400": {
+                            description: "Bad request",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "500": {
+                            description: "Server error",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                },
+            },
             "/api/tools/swap-crypto": {
                 get: {
                     operationId: "swapCrypto",
@@ -520,7 +617,9 @@ export async function GET() {
                         }
                     },
                 },
-            },"/api/tools/transfer-bitcoin-into-defuse": {
+            },
+            
+            "/api/tools/transfer-bitcoin-into-defuse": {
                 get: {
                     operationId: "transferBitcoin",
                     summary: "transfer bitcoin",
@@ -673,111 +772,6 @@ export async function GET() {
                     },
                 },
             },
-
-
-
-
-            
-
-
-
-
-
-            "/api/tools/twitter": {
-                get: {
-                    operationId: "getTwitterShareIntent",
-                    summary: "Generate a Twitter share intent URL",
-                    description: "Creates a Twitter share intent URL based on provided parameters",
-                    parameters: [
-                        {
-                            name: "text",
-                            in: "query",
-                            required: true,
-                            schema: {
-                                type: "string"
-                            },
-                            description: "The text content of the tweet"
-                        },
-                        {
-                            name: "url",
-                            in: "query",
-                            required: false,
-                            schema: {
-                                type: "string"
-                            },
-                            description: "The URL to be shared in the tweet"
-                        },
-                        {
-                            name: "hashtags",
-                            in: "query",
-                            required: false,
-                            schema: {
-                                type: "string"
-                            },
-                            description: "Comma-separated hashtags for the tweet"
-                        },
-                        {
-                            name: "via",
-                            in: "query",
-                            required: false,
-                            schema: {
-                                type: "string"
-                            },
-                            description: "The Twitter username to attribute the tweet to"
-                        }
-                    ],
-                    responses: {
-                        "200": {
-                            description: "Successful response",
-                            content: {
-                                "application/json": {
-                                    schema: {
-                                        type: "object",
-                                        properties: {
-                                            twitterIntentUrl: {
-                                                type: "string",
-                                                description: "The generated Twitter share intent URL"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "400": {
-                            description: "Bad request",
-                            content: {
-                                "application/json": {
-                                    schema: {
-                                        type: "object",
-                                        properties: {
-                                            error: {
-                                                type: "string",
-                                                description: "Error message"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "500": {
-                            description: "Error response",
-                            content: {
-                                "application/json": {
-                                    schema: {
-                                        type: "object",
-                                        properties: {
-                                            error: {
-                                                type: "string",
-                                                description: "Error message"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
             "/api/tools/create-near-transaction": {
                 get: {
                     operationId: "createNearTransaction",
@@ -856,142 +850,6 @@ export async function GET() {
                                             error: {
                                                 type: "string",
                                                 description: "Error message"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "500": {
-                            description: "Error response",
-                            content: {
-                                "application/json": {
-                                    schema: {
-                                        type: "object",
-                                        properties: {
-                                            error: {
-                                                type: "string",
-                                                description: "Error message"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "/api/tools/create-evm-transaction": {
-                get: {
-                    operationId: "createEvmTransaction",
-                    summary: "Create EVM transaction",
-                    description: "Generate an EVM transaction payload with specified recipient and amount to be used directly in the generate-evm-tx tool",
-                    parameters: [
-                        {
-                            name: "to",
-                            in: "query",
-                            required: true,
-                            schema: {
-                                type: "string"
-                            },
-                            description: "The EVM address of the recipient"
-                        },
-                        {
-                            name: "amount",
-                            in: "query",
-                            required: true,
-                            schema: {
-                                type: "string"
-                            },
-                            description: "The amount of ETH to transfer"
-                        }
-                    ],
-                    responses: {
-                        "200": {
-                            description: "Successful response",
-                            content: {
-                                "application/json": {
-                                    schema: {
-                                        type: "object",
-                                        properties: {
-                                            evmSignRequest: {
-                                                type: "object",
-                                                properties: {
-                                                    to: {
-                                                        type: "string",
-                                                        description: "Receiver address"
-                                                    },
-                                                    value: {
-                                                        type: "string",
-                                                        description: "Transaction value"
-                                                    },
-                                                    data: {
-                                                        type: "string",
-                                                        description: "Transaction data"
-                                                    },
-                                                    from: {
-                                                        type: "string",
-                                                        description: "Sender address"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "400": {
-                            description: "Bad request",
-                            content: {
-                                "application/json": {
-                                    schema: {
-                                        type: "object",
-                                        properties: {
-                                            error: {
-                                                type: "string",
-                                                description: "Error message"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "500": {
-                            description: "Server error",
-                            content: {
-                                "application/json": {
-                                    schema: {
-                                        type: "object",
-                                        properties: {
-                                            error: {
-                                                type: "string",
-                                                description: "Error message"
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "/api/tools/coinflip": {
-                get: {
-                    summary: "Coin flip",
-                    description: "Flip a coin and return the result (heads or tails)",
-                    operationId: "coinFlip",
-                    responses: {
-                        "200": {
-                            description: "Successful response",
-                            content: {
-                                "application/json": {
-                                    schema: {
-                                        type: "object",
-                                        properties: {
-                                            result: {
-                                                type: "string",
-                                                description: "The result of the coin flip (heads or tails)",
-                                                enum: ["heads", "tails"]
                                             }
                                         }
                                     }

@@ -68,7 +68,6 @@ export const getIntentStatus = async (intentHash: string): Promise<IntentStatus>
     }]);
 };
 
-
 export const getCurrentBlock = async (): Promise<{ blockHeight: number }> => {
     try {
         const networkId = settings.networkId;
@@ -123,7 +122,6 @@ export const depositIntoDefuse = async (tokenIds: string[], amount: bigint, near
         console.log("Transaction result:", result);
     }
 }
-
 
 async function getBalances(
     tokens: (UnifiedToken | SingleChainToken)[],

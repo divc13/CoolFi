@@ -3,9 +3,6 @@ import { DEPLOYMENT_URL } from "vercel-url";
 interface RuntimeSettings {
     networkId: string;
     nodeUrl: string;
-    walletUrl: string;
-    helperUrl: string;
-    explorerUrl: string;
     accountId: string;
     secretKey: string;
     publicKey: string;
@@ -18,11 +15,8 @@ interface RuntimeSettings {
 function getRuntimeSettings(): RuntimeSettings {
 
     return {
-        networkId: process.env.NEAR_NETWORK || "testnet",
-        nodeUrl: process.env.NEAR_RPC_URL || `https://rpc.${process.env.NEAR_NETWORK || "testnet"}.near.org`,
-        walletUrl: `https://${process.env.NEAR_NETWORK || "testnet"}.mynearwallet.com/`,
-        helperUrl: `https://helper.${process.env.NEAR_NETWORK || "testnet"}.near.org`,
-        explorerUrl: `https://${process.env.NEAR_NETWORK || "testnet"}.nearblocks.io`,
+        networkId: "mainnet",
+        nodeUrl: `https://rpc.mainnet.near.org`,
         accountId: process.env.NEAR_ADDRESS || "",
         secretKey: process.env.NEAR_WALLET_SECRET_KEY || "",
         publicKey: process.env.NEAR_WALLET_PUBLIC_KEY || "",
