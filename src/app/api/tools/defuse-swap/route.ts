@@ -8,6 +8,7 @@ import { getQuote } from '@/app/near-intent/actions/crossChainSwap';
 import { getTokenPriceUSD } from '@/app/near-intent/providers/coingeckoProvider';
 import type { IntentMessage } from '@/app/near-intent/types/intents';
 import { createTokenDiffIntent } from '@/app/near-intent/types/intents';
+import crypto from 'crypto';
 
 export async function GET(request: Request) {
   try {
@@ -99,8 +100,21 @@ export async function GET(request: Request) {
             quote[best_quote_index].amount_out
         )]
     };
+
+    const messageString = JSON.stringify(intentMessage);
+    const nonce = new Uint8Array(crypto.randomBytes(32));
+    const recipient = "intents.near";
     
-    return NextResponse.json({intentMessage, returns});
+    return NextResponse.json(
+        {
+            transactionPayload: {
+                messageString, 
+                nonce: Buffer.from(nonce).toString('base64'), 
+                recipient
+            },
+            returns
+        }
+    );
     
   } catch (error) {
     console.error('Error generating NEAR transaction payload:', error);

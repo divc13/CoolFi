@@ -143,7 +143,7 @@ export async function GET() {
                     description: "Generates an intent message for swapping crypto based on user input. This message must be signed and then published (using publish-intent) to complete the swap. Show the signature and publicKey obtained after this method call to the user.",
                     parameters: [
                         {
-                            name: "exact_amount_in",
+                            name: "amountIn",
                             in: "query",
                             required: true,
                             schema: {
@@ -178,7 +178,7 @@ export async function GET() {
                                     schema: {
                                         type: "object",
                                         properties: {
-                                            intentMessage: {
+                                            transactionPayload: {
                                                 type: "object",
                                                 properties: {
                                                     message: {

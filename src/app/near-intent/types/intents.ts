@@ -131,7 +131,7 @@ export const createTokenDiffIntent = (
             [defuse_asset_identifier_out]: exact_amount_out,
             [defuse_asset_identifier_in]: `-${exact_amount_in}`
         }
-    };
+    };  
 };
 
 export interface CrossChainSwapParams {
