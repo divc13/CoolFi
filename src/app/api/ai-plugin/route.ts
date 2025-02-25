@@ -199,6 +199,7 @@ export async function GET() {
                                         properties: {
                                             transactionPayload: {
                                                 type: "object",
+                                                description: "The payload to sign and publish. To take in everything in here, even the callbackUrl",
                                                 properties: {
                                                     message: {
                                                         type: "string",
