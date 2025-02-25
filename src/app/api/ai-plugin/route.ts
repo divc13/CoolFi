@@ -379,6 +379,15 @@ export async function GET() {
                     description: "Finalizes the crypto swap by submitting the signed intent message. The public key should be automatically extracted from the signing result - typically available in the response from the signing process as 'signResult.publicKey'.",
                     parameters: [
                         {
+                            name: "accountId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The NEAR account ID of the user"
+                        },
+                        {
                             name: "signature",
                             in: "query",
                             required: true,

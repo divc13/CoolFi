@@ -30,7 +30,7 @@ export async function GET(request: Request) {
     const transactionPayload_str = encodeURIComponent(JSON.stringify(transactionPayload));
 
     const redirectUrl = `${CHAT_URL}`;
-    const callbackUrl = `${PLUGIN_URL}/api/tools/publish-intent?transactionPayload=${transactionPayload_str}&callbackUrl=${redirectUrl}`;
+    const callbackUrl = `${PLUGIN_URL}/api/tools/publish-intent?accountId=${accountId}&transactionPayload=${transactionPayload_str}&callbackUrl=${redirectUrl}`;
 
     const nonceStr = nonce;
     await ensurePublicKeyRegistered(publicKey, accountId);
