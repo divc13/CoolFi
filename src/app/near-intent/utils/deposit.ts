@@ -2,7 +2,7 @@
 /// https://github.com/defuse-protocol/defuse-sdk/blob/main/src/services/depositService.ts
 
 import { base64 } from "@scure/base"
-import { settings } from "./environment"
+import { settings } from "./../../config"
 import { FetchError, ResponseError, type GetNearNep141StorageBalanceBoundsRequest, type GetNearNep141StorageBalanceBoundsResponse, type GetNearNep141StorageBalanceOfRequest, type GetNearNep141StorageBalanceOfResponse, type JSONRPCRequest, type Transaction } from "../types/deposit"
 import  * as near from "near-api-js"
 import { AccessKeyView, CodeResult } from "near-api-js/lib/providers/provider"

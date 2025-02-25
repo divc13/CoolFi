@@ -42,6 +42,7 @@ export async function GET(request: Request) {
       to: receiverId,
       amount,
     });
+    
     console.log("PART 1 DONE!!!!");
     
     const TransactionToSign = await BTC.requestSignatureToMPC({

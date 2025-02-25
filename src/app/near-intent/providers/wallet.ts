@@ -3,7 +3,7 @@ import { KeyPair, keyStores, connect, Account, utils } from "near-api-js";
 import BigNumber from "bignumber.js";
 import { KeyPairString } from "near-api-js/lib/utils";
 import NodeCache from "node-cache";
-import { settings } from "../utils/environment";
+import { settings } from "../../config";
 
 const PROVIDER_CONFIG = {
     networkId: settings.networkId,

@@ -14,7 +14,7 @@ import { KeyPair } from "near-api-js";
 import { Payload, SignMessageParams } from "../types/intents";
 import { providers } from "near-api-js";
 import { getAllSupportedTokens, getDefuseAssetId, getTokenBySymbol, isTokenSupported, SingleChainToken, UnifiedToken, convertAmountToDecimals } from "../types/tokens";
-import { settings } from "../utils/environment";
+import { settings } from "../../config";
 import { getTokenPriceUSD } from "../providers/coingeckoProvider";
 
 const DEFUSE_RPC_URL = "https://solver-relay-v2.chaindefuser.com/rpc";
@@ -178,7 +178,6 @@ async function signMessage(keyPair: KeyPair, params: SignMessageParams) {
 export async function crossChainSwap(params: CrossChainSwapParams): Promise<any> {
 
     const accountId = params.accountId;
-    settings.accountId = accountId;
     const function_access_key = params.function_access_key;
     const network = params.network || "near";
     var transactions;
@@ -421,6 +420,8 @@ export async function withdrawFromDefuse(params: CrossChainSwapAndWithdrawParams
 
         const amountInBigInt = convertAmountToDecimals(params.exact_amount_in, token);
 
+        console.log(settings.accountId);
+        console.log(defuseAssetOutAddrs);
 
         const nep141balance = await getNearNep141StorageBalance({
             contractId: defuseAssetOutAddrs,
@@ -445,11 +446,10 @@ export async function withdrawFromDefuse(params: CrossChainSwapAndWithdrawParams
 
         console.log("Intent message:", intentMessage);
 
-        const messageString = encodeURIComponent(JSON.stringify(intentMessage));
-        // const messageString = JSON.stringify(intentMessage);
-        const recipient = JSON.stringify("intents.near");
-        // const recipient = settings.accountId;
-
+        const messageString = JSON.stringify(intentMessage);
+        // const messageString = encodeURIComponent(JSON.stringify(intentMessage));
+        const recipient = "intents.near";
+        
         // Sign the message
         // const { signature, publicKey } = await signMessage(keyPair, {
         //     message: messageString,
@@ -458,8 +458,8 @@ export async function withdrawFromDefuse(params: CrossChainSwapAndWithdrawParams
         // });
         return {
             message: messageString,
-            // recipient,
-            nonceStr
+            recipient,
+            nonce: nonceStr
         }
 
         // // Ensure public key is registered

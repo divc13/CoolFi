@@ -169,7 +169,7 @@ export async function GET() {
                 get: {
                     operationId: "swapCrypto",
                     summary: "Retrieve a message to swap cryptocurrency.",
-                    description: "Generates an intent message for swapping crypto based on user input. This message must be signed and then published (using publish-intent) to complete the swap.",
+                    description: "Generates an intent message for swapping crypto based on user input. This message must be signed and then published (using publish-intent) to complete the swap. Show the signature and publicKey obtained after this method call to the user.",
                     parameters: [
                         {
                             name: "accountId",
@@ -189,7 +189,7 @@ export async function GET() {
                             },
                             description: "The amount of input crypto which user wants to swap"
                         },
-                        {
+                        {   
                             name: "defuse_asset_identifier_in",
                             in: "query",
                             required: true,
@@ -222,13 +222,15 @@ export async function GET() {
                                                 type: "string",
                                                 description: "The message to sign before publishing."
                                             },
-                                            // receiverId: {
-                                            //     type: "string",
-                                            //     description: "The contract's near id"
-                                            // },
+                                            receiverId: {
+                                                type: "string",
+                                                description: "The contract's near id"
+                                            },
                                             nonce: {
                                                 type: "string",
-                                                description: "The unique identifier for the transaction."
+                                                description: "The unique identifier for the transaction. This is a base64 string. ",
+                                                example1 : "HXRpqKa9xCGMpB37KpfQjSinMVQKuN1WF2Au72Pqg9Y=",
+                                                example2: "zanFCPTWKvvV5oBhL1JnZj4p7cUkqt1+PPff4j6GwLA="
                                             },
                                         }
                                     }
@@ -283,7 +285,7 @@ export async function GET() {
                             schema: {
                                 type: "string"
                             },
-                            description: "The cryptographic signature generated for the intent message in the form of a hexadecimal string. This is automatically available after signing - no need to ask the user. Example format: 'ed25519:58dqv4nGcXaXE7Hou13b8BKhq466f86EnvKHZJGBK3MPTL4PggFZZ9aNmVnfkH3n1qZi9Q6hGbsTaG8uXTmoGemN'"
+                            description: "The cryptographic signature generated for the intent message in the form of a hexadecimal string. This is automatically available after signing - no need to ask the user.  Example format: 'ed25519:58dqv4nGcXaXE7Hou13b8BKhq466f86EnvKHZJGBK3MPTL4PggFZZ9aNmVnfkH3n1qZi9Q6hGbsTaG8uXTmoGemN'. Do not encode or decode any thing by your own."
                         },
                         {
                             name: "publicKey",
@@ -292,7 +294,7 @@ export async function GET() {
                             schema: {
                                 type: "string"
                             },
-                            description: "The ed25519 public key from the signing result (signResult.publicKey). This is automatically available after signing - no need to ask the user. DO NOT use the NEAR wallet ID (like 'user.near'). Example format: 'ed25519:HeaBJ3xLgvZacQWmEctTeUqyfSU4SDEnEwckWxd92W2G'"
+                            description: "The ed25519 public key from the signing result (signResult.publicKey). This is automatically available after signing - no need to ask the user. DO NOT use the NEAR wallet ID (like 'user.near'). Example format: 'ed25519:HeaBJ3xLgvZacQWmEctTeUqyfSU4SDEnEwckWxd92W2G'. Do not encode or decode any thing by your own."
                         },
                         {
                             name: "message",
@@ -319,7 +321,7 @@ export async function GET() {
                             schema: {
                                 type: "string",
                             },
-                            description: "The unique nonce value from the intent message. This must match the nonce used in the signing process just converted into base64 string (Buffer.from(nonce).toString('base64'))."
+                            description: "The unique nonce value from the intent message. This must match the nonce used in the signing process. This is already a base64 encoded string. Do Not encode it again into base64."
                         }
                     ],
                     responses: {
@@ -685,6 +687,16 @@ export async function GET() {
                     },
                 },
             },
+
+
+
+
+            
+
+
+
+
+
             "/api/tools/twitter": {
                 get: {
                     operationId: "getTwitterShareIntent",

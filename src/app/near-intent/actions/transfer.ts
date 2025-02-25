@@ -1,7 +1,7 @@
 import { connect, keyStores, utils } from "near-api-js";
 import { KeyPairString } from "near-api-js/lib/utils";
 import { utils as nearUtils } from "near-api-js";
-import { settings } from "../utils/environment";
+import { settings } from "../../config";
 
 export async function transferNEAR(
     recipient: string,

@@ -1,5 +1,5 @@
 import axios, { type AxiosRequestConfig } from "axios"
-import { settings } from "../utils/environment"
+import { settings } from "../../config"
 
 const coingeckoApiKey = settings.coingeckoKey ?? ""
 const appOriginUrl = "*"

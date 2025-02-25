@@ -11,7 +11,7 @@ import {
 } from "@ref-finance/ref-sdk";
 
 // import { walletProvider } from "../providers/wallet";
-import { settings } from "../utils/environment";
+import { settings } from "../../config";
 import { KeyPairString } from "near-api-js/lib/utils";
 
 async function checkStorageBalance(

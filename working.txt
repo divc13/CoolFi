@@ -1,0 +1,61 @@
+### WORKING
+
+Intent message: {
+  signer_id: 'dc1312.near',
+  deadline: '2025-02-22T15:41:36.764Z',
+  intents: [
+    {
+      intent: 'ft_withdraw',
+      token: 'wrap.near',
+      receiver_id: 'dc1312.near',
+      amount: '10000000000000000000000',
+      memo: '',
+      deposit: '1250000000000000000000'
+    }
+  ]
+}
+
+Request body: {
+  "id": 1,
+  "jsonrpc": "2.0",
+  "method": "publish_intent",
+  "params": [
+    {
+      "quote_hashes": [],
+      "signed_data": {
+        "payload": {
+          "message": "{\"signer_id\":\"dc1312.near\",\"deadline\":\"2025-02-22T15:41:36.764Z\",\"intents\":[{\"intent\":\"ft_withdraw\",\"token\":\"wrap.near\",\"receiver_id\":\"dc1312.near\",\"amount\":\"10000000000000000000000\",\"memo\":\"\",\"deposit\":\"1250000000000000000000\"}]}",
+          "nonce": "4OQcnPcTG3+xJhppVIRQzl0d1OKW7gzjiSOpiX5t+BU=",
+          "recipient": "intents.near"
+        },
+        "standard": "nep413",
+        "signature": "ed25519:5WAWyP4DQt3Yd5mxFoN9fC7ECugF4LwaxiTthz356UVNW32qmdVBbgGy6FUsbrG6vkSKidTqpejr3he7aDTrFcKG",
+        "public_key": "ed25519:JAZBD6Cym9db9zWjPv6cowibfxaNzYFkKPXJL8KvKebi"
+      }
+    }
+  ]
+}
+
+[{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "method": "publish_intent",
+  "params": [
+    {
+      "quote_hashes": [],
+      "signed_data": {
+        "payload": {
+          "message": "{\"signer_id\":\"dc1312.near\",\"deadline\":\"2025-02-22T15:41:36.764Z\",\"intents\":[{\"intent\":\"ft_withdraw\",\"token\":\"wrap.near\",\"receiver_id\":\"dc1312.near\",\"amount\":\"10000000000000000000000\",\"memo\":\"\",\"deposit\":\"1250000000000000000000\"}]}",
+          "nonce": "4OQcnPcTG3+xJhppVIRQzl0d1OKW7gzjiSOpiX5t+BU=",
+          "recipient": "intents.near"
+        },
+        "standard": "nep413",
+        "signature": "ed25519:5WAWyP4DQt3Yd5mxFoN9fC7ECugF4LwaxiTthz356UVNW32qmdVBbgGy6FUsbrG6vkSKidTqpejr3he7aDTrFcKG",
+        "public_key": "ed25519:JAZBD6Cym9db9zWjPv6cowibfxaNzYFkKPXJL8KvKebi"
+      }
+    }
+  ]
+}]
+
+sbSpQtg3i4ruaWC2D3bwekgxDVZAjTe76UewcxEKzxjNAwq7pU4LmA2G13kXyZQUVatR92XpTBXiJyMcTw7ZevKRKNUYb3LSv8c1c5WWaR4ifbujkzhwZN1i
+
