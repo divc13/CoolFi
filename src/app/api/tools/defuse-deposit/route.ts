@@ -1,6 +1,4 @@
 import { NextResponse } from 'next/server';
-import { parseNearAmount } from 'near-api-js/lib/utils/format';
-import { settings } from '@/app/config';
 import { getTokenBySymbol } from '@/app/near-intent/types/tokens';
 import { convertAmountToDecimals } from '@/app/near-intent/types/tokens';
 import { getNearNep141StorageBalance } from '@/app/near-intent/utils/deposit';
@@ -8,9 +6,7 @@ import { createBatchDepositNearNep141Transaction } from '@/app/near-intent/utils
 import { createBatchDepositNearNativeTransaction } from '@/app/near-intent/utils/deposit'; 
 import { getDefuseAssetId } from '@/app/near-intent/types/tokens';
 import { getAllSupportedTokens } from '@/app/near-intent/types/tokens';
-import { SendTransactionNearParams } from '@/app/near-intent/types/deposit';
 import { Transaction } from '@/app/near-intent/types/deposit';
-import { Action } from '@near-wallet-selector/core';
 
 const FT_MINIMUM_STORAGE_BALANCE_LARGE = "1250000000000000000000";
                   

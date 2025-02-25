@@ -22,21 +22,27 @@ export async function GET() {
                 name: "CoolFi",
                 description: "A blockchain assistant that provides information, retrieves the user's account ID, interacts with Twitter, creates NEAR transaction payloads, and helps with crypto swaps with tree different apis: deposit, swap and withdraw.",
                 instructions: `You assist with NEAR transactions, blockchain queries, account retrieval, Twitter interactions, and crypto swaps.
+                
                 For blockchain transactions:
                 1. Generate a transaction payload using "/api/tools/create-near-transaction".
                 2. Use the 'generate-transaction' tool to execute the transaction.
-                For Depositing Crypto into defuse:
-                1. Generate a transaction payload using "/api/tools/create-near-transaction".
-                For Swapping Crypto in Defuse:
-                1. Retrieve the swap intent message using "/api/tools/swap-crypto".
-                2. Sign the intent using the 'sign-message' tool.
-                3. Publish the signed intent using "/api/tools/publish-intent".
                 
-                For crypto swaps:
-                1. Retrieve the swap intent message using "/api/tools/swap-crypto".
+                For Depositing Crypto into defuse or Near Intents:
+                1. For all cryptocurrencies in ${tokenData} other than bitcoin, Generate a transaction payload using "/api/tools/defuse-deposit".
+                2. If the crytocurrency to deposit in defuse or near intents is bitcoin or satoshi, then use "/api/tools/btc-defuse-deposit" to genrate transaction payload which is then relayed through "/api/tools/relay-transaction"
+                
+                For Swapping Crypto in Defuse or Near Intents:
+                1. Retrieve the swap intent message using "/api/tools/defuse-swap".
                 2. Sign the intent using the 'sign-message' tool.
                 3. Publish the signed intent using "/api/tools/publish-intent".
                 Both retrieval and publishing steps are required to complete a swap.
+                
+                For Withdrawing Crypto from Defuse or Near Intents:
+                1. Retrieve the swap intent message using "/api/tools/defuse-withdraw".
+                2. Sign the intent using the 'sign-message' tool.
+                3. Publish the signed intent using "/api/tools/publish-intent".
+                Both retrieval and publishing steps are required to complete a withdrawal.
+
                 For Bitcoin Transfers:
                 1. Retrieve the transfer intent message using "/api/tools/transfer-bitcoin".
                 2. Create a link to https://wallet.bitte.ai/sign-transaction/ after putting in the data in the url. Make sure to add the call back url to the link along with payload and the data.
@@ -268,11 +274,11 @@ export async function GET() {
                     }
                 },
             },
-            "/api/tools/swap-crypto": {
+            "/api/tools/defuse-withdraw": {
                 get: {
-                    operationId: "swapCrypto",
-                    summary: "Retrieve a message to swap cryptocurrency.",
-                    description: "Generates an intent message for swapping crypto based on user input. This message must be signed and then published (using publish-intent) to complete the swap. Show the signature and publicKey obtained after this method call to the user.",
+                    operationId: "defuseWithdraw",
+                    summary: "Withdraws crypto from defuse or near intents.",
+                    description: "Generates an intent message for withdrawing crypto from near intents or defuse based on user input. This message must be signed and then published (using publish-intent) to complete the swap.",
                     parameters: [
                         {
                             name: "accountId",
@@ -764,11 +770,11 @@ export async function GET() {
                 },
             },
             
-            "/api/tools/transfer-bitcoin-into-defuse": {
+            "/api/tools/btc-defuse-deposit": {
                 get: {
-                    operationId: "transferBitcoin",
-                    summary: "transfer bitcoin",
-                    description: "Generates transaction to transfer bitcoin to another account, the amount should be in satoshi. After getting the response: 1) Make a link to https://wallet.bitte.ai/sign-transaction endpoint (I want you to make me sign the transaction using this endpoint instead of generate-transaction). Do fill in :transactionData with the data coming in response.",
+                    operationId: "btcDefuseDeposit",
+                    summary: "Deposits bitcoin into defuse",
+                    description: "Generates transaction to deposit bitcoin into defuse or near intents. After getting the response: 1) Make a link to https://wallet.bitte.ai/sign-transaction endpoint (I want you to make me sign the transaction using this endpoint instead of generate-transaction). Do fill in :transactionData with the data coming in response.",
                     parameters: [
                         {
                             name: "accountId",

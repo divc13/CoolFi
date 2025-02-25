@@ -47,7 +47,6 @@ export async function GET(request: Request) {
 
     var recepient = (await deposit_address.json()).result.address;
 
-
     const { address, publicKey } = await BTC.deriveAddress(
       accountId,
       path
