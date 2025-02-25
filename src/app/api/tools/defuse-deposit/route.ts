@@ -60,7 +60,7 @@ export async function GET(request: Request) {
 
     console.log("Looking up tokens:", { tokenIn: tokenInName, });
 
-    const defuseTokenIn = getTokenBySymbol(tokenInName || "");
+    const defuseTokenIn = getTokenBySymbol(tokenInName);
 
     
     console.log("Found tokens:", {

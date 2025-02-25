@@ -9,7 +9,6 @@ interface RuntimeSettings {
     SLIPPAGE: number;
     defuseContractId: string;
     coingeckoUrl: string;
-    coingeckoKey: string;
 }
 
 function getRuntimeSettings(): RuntimeSettings {
@@ -23,7 +22,6 @@ function getRuntimeSettings(): RuntimeSettings {
         SLIPPAGE: process.env.NEAR_SLIPPAGE ? parseInt(process.env.NEAR_SLIPPAGE) : 1,
         defuseContractId: process.env.DEFUSE_CONTRACT_ID || "intents.near",
         coingeckoUrl: process.env.COINGECKO_API_URL || "",
-        coingeckoKey: process.env.COINGECKO_API_KEY || "",
     };
 }
 

@@ -54,6 +54,7 @@ async function makeRPCRequest<T>(method: string, params: any[]): Promise<T> {
     }
     return data.result;
 }
+
 export const getQuote = async (params: QuoteRequest): Promise<QuoteResponse> => {
     return makeRPCRequest<QuoteResponse>("quote", [params]);
 };
@@ -67,6 +68,12 @@ export const getIntentStatus = async (intentHash: string): Promise<IntentStatus>
         intent_hash: intentHash
     }]);
 };
+
+export function convertBigIntToString(jsonArray:any) {
+    return JSON.parse(JSON.stringify(jsonArray, (_, value) =>
+        typeof value === "bigint" ? value.toString() : value
+    ));
+}
 
 export const getCurrentBlock = async (): Promise<{ blockHeight: number }> => {
     try {
@@ -92,7 +99,6 @@ export const getCurrentBlock = async (): Promise<{ blockHeight: number }> => {
         throw error;
     }
 };
-
 
 // First check the balance of the user, then deposit the tokens if there are any
 export const depositIntoDefuse = async (tokenIds: string[], amount: bigint, nearConnection: Near) => {
@@ -123,7 +129,7 @@ export const depositIntoDefuse = async (tokenIds: string[], amount: bigint, near
     }
 }
 
-async function getBalances(
+export async function getBalances(
     tokens: (UnifiedToken | SingleChainToken)[],
     nearClient: providers.Provider,
     network?: string
