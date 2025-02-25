@@ -62,7 +62,7 @@ export async function GET() {
                 get: {
                     operationId: "depositIntoDefuse",
                     summary: "function call for depositing crypto into defuse or near intents.",
-                    description: "Generates transaction to allow users to deposit their currency into defuse or near intents. Take the crypto currency to be deposied from the user. Also ask for the amount to be deposited. Show the transaction deatails to the user.",
+                    description: `Generates transaction to allow users to deposit their currency into defuse or near intents. Take the crypto currency to be deposied from the user. Also ask for the amount to be deposited. Show the transaction deatails to the user. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}.`,
                     parameters: [
                         {
                             name: "accountId",
@@ -164,7 +164,7 @@ export async function GET() {
                 get: {
                     operationId: "swapCryptoInDefuse",
                     summary: "Retrieve a message to swap cryptocurrency.",
-                    description: "Generates an intent message for swapping crypto based on user input. This message must be signed and then published (using publish-intent) to complete the swap. Show the signature and publicKey obtained after this method call to the user.",
+                    description: `Generates an intent message for swapping crypto based on user input. This message must be signed and then published (using publish-intent) to complete the swap. Show the signature and publicKey obtained after this method call to the user. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}.`,
                     parameters: [
                         {
                             name: "accountId",
@@ -284,7 +284,7 @@ export async function GET() {
                 get: {
                     operationId: "defuseWithdraw",
                     summary: "Withdraws crypto from defuse or near intents.",
-                    description: "Generates an intent message for withdrawing crypto from near intents or defuse based on user input. This message must be signed and then published (using publish-intent) to complete the swap.",
+                    description: `Generates an intent message for withdrawing crypto from near intents or defuse based on user input. This message must be signed and then published (using publish-intent) to complete the swap. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}.`,
                     parameters: [
                         {
                             name: "accountId",
@@ -576,7 +576,7 @@ export async function GET() {
                 get: {
                     operationId: "transferBitcoin",
                     summary: "transfer bitcoin",
-                    description: "Generates transaction to transfer bitcoin to another account, the amount should be in satoshi. After getting the response: 1) Make a link to https://wallet.bitte.ai/sign-transaction endpoint (I want you to make me sign the transaction using this endpoint instead of generate-transaction). Do fill in :transactionData with the data coming in response.",
+                    description: "Generates transaction to transfer bitcoin to another account, the amount should be in satoshi. After getting the response: 1) Make a link to https://wallet.bitte.ai/sign-transaction endpoint (I want you to make me sign the transaction using this endpoint instead of generate-transaction). Do fill in :transactionData with the data coming in response. Take the amount in BTC, and not in satoshi from the users. If the user gives the amount in satoshi, convert it to BTC and then proceed.",
                     parameters: [
                         {
                             name: "accountId",
@@ -780,7 +780,7 @@ export async function GET() {
                 get: {
                     operationId: "btcDefuseDeposit",
                     summary: "Deposits bitcoin into defuse",
-                    description: "Generates transaction to deposit bitcoin into defuse or near intents. After getting the response: 1) Make a link to https://wallet.bitte.ai/sign-transaction endpoint (I want you to make me sign the transaction using this endpoint instead of generate-transaction). Do fill in :transactionData with the data coming in response.",
+                    description: "Generates transaction to deposit bitcoin into defuse or near intents. Take the amount in BTC, and not in satoshi from the users. After getting the response: 1) Make a link to https://wallet.bitte.ai/sign-transaction endpoint (I want you to make me sign the transaction using this endpoint instead of generate-transaction). Do fill in :transactionData with the data coming in response.",
                     parameters: [
                         {
                             name: "accountId",
