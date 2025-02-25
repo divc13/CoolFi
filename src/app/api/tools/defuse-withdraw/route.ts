@@ -6,7 +6,6 @@ import { convertAmountToDecimals } from '@/app/near-intent/types/tokens';
 import { settings } from '@/app/config';
 import { getNearNep141StorageBalance } from '@/app/near-intent/utils/deposit';
 import type { IntentMessage } from '@/app/near-intent/types/intents';
-import { Bitcoin } from '@/app/services/bitcoin';
 
 const FT_MINIMUM_STORAGE_BALANCE_LARGE = settings.ft_minimum_storage_balance_large;
 
@@ -75,24 +74,10 @@ export async function GET(request: Request) {
     if (!accountId || !exact_amount_in || !defuse_asset_identifier_in) {
       return NextResponse.json({ error: 'some required parameters are missing' }, { status: 400 });
     }
-    
-    var destination_address = accountId;
-
-    if (defuse_asset_identifier_in.toUpperCase() == "BTC") {
-      const path = "bitcoin-1";
-      const BTC = new Bitcoin("mainnet");
-      
-      const { address, publicKey } = await BTC.deriveAddress(
-        accountId,
-        path
-      );
-
-      destination_address = address;
-    }
 
     const params: CrossChainSwapAndWithdrawParams = {
       accountId: accountId,
-      destination_address: destination_address,
+      destination_address: accountId,
       exact_amount_in: exact_amount_in,
       defuse_asset_identifier_in: defuse_asset_identifier_in,
       defuse_asset_identifier_out: defuse_asset_identifier_in,
