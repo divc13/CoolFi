@@ -663,7 +663,7 @@ export async function GET() {
                                         properties: {
                                             error: {
                                                 type: "string",
-                                                description: "Error message which you can tell user to fix."
+                                                description: "Error message"
                                             }
                                         }
                                     }
