@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { ensurePublicKeyRegistered, pollIntentStatus, publishIntent } from "@/app/near-intent/actions/crossChainSwap";
 import bs58 from 'bs58';
 import { utils } from 'near-api-js';
-import { CHAT_URL, PLUGIN_URL } from '@/app/config';
 
 export async function GET(request: Request) {
   try {
@@ -22,16 +21,6 @@ export async function GET(request: Request) {
 
     console.log('Received parameters:', { signature, publicKey, messageString, recipient, nonce }, nonce.length);
 
-    const transactionPayload = {
-      messageString,
-      nonce: nonce,
-      recipient,
-    };
-    const transactionPayload_str = encodeURIComponent(JSON.stringify(transactionPayload));
-
-    const redirectUrl = `${CHAT_URL}`;
-    const callbackUrl = `${PLUGIN_URL}/api/tools/publish-intent?accountId=${accountId}&transactionPayload=${transactionPayload_str}&callbackUrl=${redirectUrl}`;
-
     const nonceStr = nonce;
     await ensurePublicKeyRegistered(publicKey, accountId);
     const signatureBuffer = bs58.encode(Buffer.from(signature, "base64"));
@@ -41,7 +30,6 @@ export async function GET(request: Request) {
     const messageStr = JSON.stringify(msg);
 
     console.log(messageStr);
-    // const signatureBuffer = utils.serialize.base_encode(signature)
 
     // Publish intent
     const intent = await publishIntent({
@@ -50,8 +38,7 @@ export async function GET(request: Request) {
             payload: {
                 message: messageStr,
                 nonce: nonceStr,
-                recipient,
-                callbackUrl,
+                recipient
             },
             standard: "nep413",
             signature: `ed25519:${signatureBuffer}`,

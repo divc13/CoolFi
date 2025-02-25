@@ -434,24 +434,6 @@ export async function GET() {
                                 type: "string",
                             },
                             description: "The unique nonce value from the intent message. This must match the nonce used in the signing process. This is already a base64 encoded string. Do Not encode it again into base64."
-                        },
-                        {
-                            name: "transactionPayload",
-                            in: "query",
-                            required: false,
-                            schema: {
-                                type: "string",
-                            },
-                            description: "Dont worry about this too much, just pass it as is if you need to."
-                        },
-                        {
-                            name: "callbackUrl",
-                            in: "query",
-                            required: false,
-                            schema: {
-                                type: "string",
-                            },
-                            description: "Dont worry about this too much, just pass it as is if you need to."
                         }
                     ],
                     responses: {

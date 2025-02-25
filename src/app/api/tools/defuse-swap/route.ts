@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { CHAT_URL, PLUGIN_URL, settings } from '@/app/config';
+import { settings } from '@/app/config';
 import { getTokenBySymbol } from '@/app/near-intent/types/tokens';
 import { convertAmountToDecimals } from '@/app/near-intent/types/tokens';
 import { getDefuseAssetId } from '@/app/near-intent/types/tokens';
@@ -104,25 +104,13 @@ export async function GET(request: Request) {
     const messageString = JSON.stringify(intentMessage);
     const nonce = new Uint8Array(crypto.randomBytes(32));
     const recipient = "intents.near";
-
-    const transactionPayload = {
-        messageString, 
-        nonce: Buffer.from(nonce).toString('base64'), 
-        recipient
-    };
-
-    const transactionPayload_str = encodeURIComponent(JSON.stringify(transactionPayload));
-
-    const redirectUrl = `${CHAT_URL}`;
-    const callbackUrl = `${PLUGIN_URL}/api/tools/publish-intent?accountId=${accountId}&transactionPayload=${transactionPayload_str}&callbackUrl=${redirectUrl}`;
     
     return NextResponse.json(
         {
             transactionPayload: {
                 messageString, 
                 nonce: Buffer.from(nonce).toString('base64'), 
-                recipient,
-                callbackUrl
+                recipient
             },
             returns
         }
