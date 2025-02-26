@@ -24,7 +24,7 @@ async function getTokenPrices(tokenIds: string[]) {
 }
 
 // Handle GET requests
-export async function get_token_data(accountId: string) {
+async function get_token_data(accountId: string) {
 
   if (!accountId) {
     return Response.json({ error: "Missing accountId parameter" }, { status: 400 });
