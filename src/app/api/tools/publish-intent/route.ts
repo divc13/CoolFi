@@ -11,6 +11,7 @@ export async function GET(request: Request) {
     const messageString = searchParams.get('message');
     const recipient = searchParams.get('receiverId');
     const nonce = searchParams.get('nonce');
+    const quote_hash = searchParams.get('quote_hash');
 
     if (!signature || !publicKey || !messageString || !recipient || !nonce || !accountId) {
       console.log('Missing parameters:', { signature, publicKey, messageString, recipient, nonce });
@@ -30,9 +31,10 @@ export async function GET(request: Request) {
 
     console.log(messageStr);
 
+
     // Publish intent
     const intent = await publishIntent({
-        quote_hashes: [], // Empty for withdrawals
+        quote_hashes: !quote_hash ? [] : [quote_hash],
         signed_data: {
             payload: {
                 message: messageStr,
