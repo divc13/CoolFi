@@ -68,6 +68,11 @@ export async function GET(request: Request) {
       to: recepient,
       amount,
     });
+
+    if (!psbt || !utxos) {
+      return NextResponse.json({ error: 'Failed to create bitcoin transaction' }, { status: 400 });
+    }
+    
     console.log("PART 1 DONE!!!!");
     
     const TransactionToSign = await BTC.requestSignatureToMPC({
