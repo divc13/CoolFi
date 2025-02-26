@@ -54,8 +54,11 @@ export async function GET() {
                 3. If a user asks any operation to be done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}.
                                 
                 `,
-                tools: [{ type: "generate-transaction" }, { type: "sign-message" }]
+                tools: [{ type: "generate-transaction" }, { type: "sign-message" }],
+                image: `${PLUGIN_URL}/coolfi.svg`,
+                categories: ["defi"],
             },
+            image: `${PLUGIN_URL}/coolfi.svg`,
         },
         paths: {
             "/api/tools/defuse-deposit": {
