@@ -143,7 +143,7 @@ export default function Composition() {
     .map((asset:any) => ({
       name: asset.label,
       value: ((asset.value / totalValue) * 100).toFixed(2), // Convert to percentage
-      flag: <Image src={asset.icon} width={32} alt={asset.label} />,
+      flag: <Image src={asset.icon} width={32} height={32} alt={asset.label} />,
       color: "hsl(220, 25%, 65%)", // Adjust color shades if needed
     }));
 
