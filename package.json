@@ -71,7 +71,6 @@
     "react-router-dom": "^7.1.5",
     "recharts": "^2.15.1",
     "redoc": "^2.4.0",
-    "styles": "link:@mui/material/styles",
     "tailwind-merge": "^3.0.1",
     "tsup": "^8.3.6",
     "typescript": "^5.7.3",
