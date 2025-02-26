@@ -47,7 +47,7 @@ export async function GET(request: Request) {
     const jsonString = Buffer.from(successValue, 'base64').toString('utf-8');
 
     // Step 2: Parse JSON
-    const parsed = JSON.parse(jsonString).Ok;
+    const parsed = JSON.parse(jsonString);
     if (!parsed) {
        return NextResponse.json({ error: 'invalid signature' }, { status: 400 });
     }
