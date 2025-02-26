@@ -34,7 +34,7 @@ export async function GET(request: Request) {
     var recepient = receiverId;
 
     if (isReceiverIdNearAccount == 'true') {
-      let { address, publicKey } = await BTC.deriveAddress(
+      const { address, publicKey } = await BTC.deriveAddress(
         receiverId,
         path
       );

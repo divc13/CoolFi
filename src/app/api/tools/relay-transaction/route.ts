@@ -1,11 +1,7 @@
 import { NextResponse } from 'next/server';
-import { withdrawFromDefuse }  from "@/app/near-intent/actions/crossChainSwap"
-import { CrossChainSwapAndWithdrawParams} from "@/app/near-intent/types/intents";
 import { Bitcoin } from '@/app/services/bitcoin';
 import { Wallet } from '@/app/services/near-wallet';
-import { MPC_CONTRACT } from '@/app/services/kdf/mpc';
 import * as bitcoinJs from 'bitcoinjs-lib';
-import { providers } from "near-api-js";
 
 export async function GET(request: Request) {
   try {
@@ -23,13 +19,10 @@ export async function GET(request: Request) {
     console.log(JSON.parse(data));
 
     const jdata = JSON.parse(data);
-    const npbst = atob(jdata.pbst);
     const nutxos = jdata.utxos;
 
-    console.log("npbst", npbst);
     console.log("nutxos", nutxos);
     
-    const pbst = bitcoinJs.Psbt.fromBase64(npbst);
     const utxos =  nutxos;
     const receiverId = jdata.receiverId;
     const amount = jdata.amount;
@@ -55,7 +48,7 @@ export async function GET(request: Request) {
     const s = parsed.s;
     const rs = {big_r, s};
 
-    console.log({npbst, nutxos, publicKey, rs, parsed, receiverId, amount});
+    console.log({nutxos, publicKey, rs, parsed, receiverId, amount});
 
     const new_pbst = await BTC.reconstructSignedTransactionFromCallback(rs, address, utxos, receiverId, amount, publicKey);
     const txHash = await BTC.broadcastTX(new_pbst);

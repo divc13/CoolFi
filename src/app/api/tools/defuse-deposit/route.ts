@@ -48,8 +48,6 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
     }
 
-    const network = "near";
-
     if (!accountId) {
         throw new Error("NEAR_ADDRESS not configured");
     }

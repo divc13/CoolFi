@@ -1,31 +1,18 @@
-import { connect, Near } from "near-api-js";
+import { connect } from "near-api-js";
 import { KeyPairString } from "near-api-js/lib/utils/key_pair";
 import { utils } from "near-api-js";
 import { keyStores } from "near-api-js";
-import { createBatchDepositNearNep141Transaction, createBatchDepositNearNativeTransaction, getDepositedBalances,
-    getNearNep141StorageBalance, sendNearTransaction, TokenBalances, FT_DEPOSIT_GAS, FT_TRANSFER_GAS } from "../utils/deposit";
-import * as Borsh from "@dao-xyz/borsh";
-import * as js_sha256 from "js-sha256";
-import crypto from "crypto";
-import { CrossChainSwapParams, createTokenDiffIntent, IntentMessage, IntentStatus,
-     PublishIntentRequest, PublishIntentResponse, QuoteRequest, QuoteResponse,
-     CrossChainSwapAndWithdrawParams, NativeWithdrawIntent} from "../types/intents";
-import { KeyPair } from "near-api-js";
-import { Payload, SignMessageParams } from "../types/intents";
+import { getDepositedBalances, TokenBalances, FT_DEPOSIT_GAS } from "../utils/deposit";
+import { IntentStatus, PublishIntentRequest, PublishIntentResponse, QuoteRequest, QuoteResponse} from "../types/intents";
 import { providers } from "near-api-js";
-import { getAllSupportedTokens, getDefuseAssetId, getTokenBySymbol, isTokenSupported, SingleChainToken, UnifiedToken, convertAmountToDecimals } from "../types/tokens";
+import {SingleChainToken, UnifiedToken } from "../types/tokens";
 import { settings } from "../../config";
-import { getTokenPriceUSD } from "../providers/coingeckoProvider";
 
 const DEFUSE_RPC_URL:string = settings.defuseRPCUrl;
 const POLLING_INTERVAL_MS = settings.polling_interval_ms;
 const MAX_POLLING_TIME_MS = settings.max_polling_time_ms;
 export const FT_MINIMUM_STORAGE_BALANCE_LARGE = "1250000000000000000000";
 
-
-const SWAP_SAFETY_THRESHOLD_PERCENT_ABOVE_1USD = 0.5;
-const SWAP_SAFETY_THRESHOLD_PERCENT_BELOW_1USD = 10;
-const SWAP_SAFETY_THRESHOLD_USD = 1;
 
 async function makeRPCRequest<T>(method: string, params: any[]): Promise<T> {
     const requestBody = {

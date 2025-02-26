@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { ensurePublicKeyRegistered, pollIntentStatus, publishIntent } from "@/app/near-intent/actions/crossChainSwap";
 import bs58 from 'bs58';
-import { utils } from 'near-api-js';
 
 export async function GET(request: Request) {
   try {

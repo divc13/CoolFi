@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { settings } from '@/app/config';
 import { getTokenBySymbol } from '@/app/near-intent/types/tokens';
 import { convertAmountToDecimals } from '@/app/near-intent/types/tokens';
 import { getDefuseAssetId } from '@/app/near-intent/types/tokens';

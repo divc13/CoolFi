@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { Bitcoin } from '@/app/services/bitcoin'
-import { headers } from 'next/headers';
 import axios from "axios";
 import tokensData from "@/app/near-intent/config/tokens.json"; // Import tokens.json directly
 import { settings } from '@/app/config';
