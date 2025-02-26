@@ -92,6 +92,9 @@ importers:
       '@ref-finance/ref-sdk':
         specifier: ^1.4.6
         version: 1.4.6(react@19.0.0)
+      '@roamhq/wrtc':
+        specifier: ^0.8.0
+        version: 0.8.0
       '@scure/base':
         specifier: ^1.2.4
         version: 1.2.4
