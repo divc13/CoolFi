@@ -1,6 +1,6 @@
 import { DataGrid } from '@mui/x-data-grid';
 import { columns, loadCryptoRows } from './gridData';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Box, CircularProgress } from '@mui/material';
 import tokensData from '@/app/near-intent/config/tokens.json';
@@ -11,9 +11,12 @@ export default function CustomizedDataGrid() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  const coinGeckoIds = tokensData.tokens.mainnet.unified_tokens.map(token => token.cgId)
-    .concat(tokensData.tokens.mainnet.single_chain_tokens.map(token => token.cgId));
-
+  const coinGeckoIds = useMemo(() => 
+    tokensData.tokens.mainnet.unified_tokens.map(token => token.cgId)
+      .concat(tokensData.tokens.mainnet.single_chain_tokens.map(token => token.cgId)), 
+    [tokensData]
+  );
+  
   useEffect(() => {
     async function fetchInitialData() {
       try {
