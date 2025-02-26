@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Bitcoin } from '@/app/services/bitcoin';
 import { Wallet } from '@/app/services/near-wallet';
-import * as bitcoinJs from 'bitcoinjs-lib';
+import { MPC_CONTRACT } from '@/app/services/kdf/mpc';
 
 export async function GET(request: Request) {
   try {
@@ -48,7 +48,7 @@ export async function GET(request: Request) {
     const s = parsed.s;
     const rs = {big_r, s};
 
-    console.log({nutxos, publicKey, rs, parsed, receiverId, amount});
+    console.log({ nutxos, publicKey, rs, parsed, receiverId, amount});
 
     const new_pbst = await BTC.reconstructSignedTransactionFromCallback(rs, address, utxos, receiverId, amount, publicKey);
     const txHash = await BTC.broadcastTX(new_pbst);

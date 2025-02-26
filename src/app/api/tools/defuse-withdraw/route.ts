@@ -10,8 +10,7 @@ import { Bitcoin } from '@/app/services/bitcoin';
 
 const FT_MINIMUM_STORAGE_BALANCE_LARGE = settings.ft_minimum_storage_balance_large;
 
-
-export async function withdrawFromDefuse(params: CrossChainSwapAndWithdrawParams): Promise<any> {
+async function withdrawFromDefuse(params: CrossChainSwapAndWithdrawParams): Promise<any> {
     try {
         const nonce = new Uint8Array(crypto.randomBytes(32));
         const nonceStr = Buffer.from(nonce).toString("base64");
