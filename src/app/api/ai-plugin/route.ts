@@ -34,13 +34,13 @@ export async function GET() {
                 For Swapping Crypto in Defuse or Near Intents:
                 1. Retrieve the swap intent message using "/api/tools/defuse-swap".
                 2. Sign the intent using the 'sign-message' tool.
-                3. Publish the signed intent using "/api/tools/publish-intent".
+                3. Publish the signed intent using "/api/tools/publish-intent", Take the public key from the return values of sign-message.
                 Both retrieval and publishing steps are required to complete a swap.
                 
                 For Withdrawing Crypto from Defuse or Near Intents:
                 1. Retrieve the swap intent message using "/api/tools/defuse-withdraw".
                 2. Sign the intent using the 'sign-message' tool.
-                3. Publish the signed intent using "/api/tools/publish-intent".
+                3. Publish the signed intent using "/api/tools/publish-intent, Take the public key from the return values of sign-message".
                 Both retrieval and publishing steps are required to complete a withdrawal.
 
                 For Bitcoin Transfers:
@@ -300,6 +300,15 @@ export async function GET() {
                             schema: {
                                 type: "string"
                             },
+                            description: "The NEAR account ID of the user."
+                        },
+                        {
+                            name: "receiverId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
                             description: "The NEAR account ID of the receiver of funds. This can be the user himself or if specified then someone else."
                         },
                         {
@@ -425,7 +434,7 @@ export async function GET() {
                             schema: {
                                 type: "string"
                             },
-                            description: "The ed25519 public key from the signing result. Example format: 'ed25519:HeaBJ...'. Do not encode or decode any thing by your own. Take this value from the result of sign-message. Do not default to some example given or user wallet."
+                            description: "The ed25519 public key from the signing result. Example format: 'ed25519:HeaBJ...'. Do not encode or decode any thing by your own. Take this value from the result of sign-message. Do not default to some example given or user wallet. This is basically the public key for the user who signed the message."
                         },
                         {
                             name: "message",
