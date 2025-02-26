@@ -45,7 +45,7 @@
     "@tanstack/react-query": "^5.66.8",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
-    "agent-twitter-client": "^0.0.18",
+    "agent-twitter-client": "^0.0.17",
     "axios": "^1.7.9",
     "bech32": "^2.0.0",
     "bignumber": "^1.1.0",
