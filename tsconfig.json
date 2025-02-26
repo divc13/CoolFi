@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ES2017",
     "experimentalDecorators": true,
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -14,6 +14,10 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "emitDecoratorMetadata": true,
+    "useDefineForClassFields": false,
+    "noEmitOnError": false,
+    "noImplicitAny": false,
     "plugins": [
       {
         "name": "next"

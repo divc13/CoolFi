@@ -24,7 +24,7 @@ const depositIntoDefuse = async (tokenIds: string[], amount: bigint, accountId: 
         accountId: accountId
     });
 
-    var transaction = null;
+    var transaction;
     if(contractId === "wrap.near")
     {
         transaction = createBatchDepositNearNativeTransaction(contractId, amount, !(nep141balance >= BigInt(FT_MINIMUM_STORAGE_BALANCE_LARGE)), BigInt(FT_MINIMUM_STORAGE_BALANCE_LARGE), amount > 0n, amount);

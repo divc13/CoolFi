@@ -1,5 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+//   experimental: {
+//     serverComponentsExternalPackages: ["agent-twitter-client"],
+//   },
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals = config.externals || [];
+      config.externals.push("agent-twitter-client");
+    }
+    return config;
+  },
+  images: {
+    domains: ["pbs.twimg.com"], // Allow Twitter-hosted images
+  },
   async headers() {
     return [
       {

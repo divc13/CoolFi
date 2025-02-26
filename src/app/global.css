@@ -1,0 +1,23 @@
+/* Removes the scrollbar */
+
+::-webkit-scrollbar { display: none; }
+html, body { scrollbar-width: none; -ms-overflow-style: none; }
+
+/* Apply smooth scrolling */
+html {
+    scroll-behavior: smooth;
+  }
+  
+/* Example: Styling for all sections */
+section {
+padding: 80px 20px;
+border-bottom: 1px solid #ddd;
+}
+
+/* Highlight active navigation button */
+.active-nav {
+font-weight: bold;
+text-decoration: underline;
+color: #1976d2 !important; /* MUI primary color */
+}
+  
