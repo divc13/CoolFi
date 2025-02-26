@@ -95,6 +95,9 @@ importers:
       '@roamhq/wrtc':
         specifier: ^0.8.0
         version: 0.8.0
+      '@roamhq/wrtc-linux-x64':
+        specifier: ^0.8.1
+        version: 0.8.1
       '@scure/base':
         specifier: ^1.2.4
         version: 1.2.4
@@ -9078,8 +9081,7 @@ snapshots:
   '@roamhq/wrtc-linux-arm64@0.8.1':
     optional: true
 
-  '@roamhq/wrtc-linux-x64@0.8.1':
-    optional: true
+  '@roamhq/wrtc-linux-x64@0.8.1': {}
 
   '@roamhq/wrtc-win32-x64@0.8.0':
     optional: true
