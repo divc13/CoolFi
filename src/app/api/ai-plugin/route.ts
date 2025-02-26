@@ -22,6 +22,10 @@ export async function GET() {
                 name: "CoolFi AI",
                 description: "A blockchain assistant that provides information, retrieves the user's account ID, interacts with Twitter, creates NEAR transaction payloads, and helps with crypto swaps with tree different apis: deposit, swap and withdraw.",
                 instructions: `You assist with NEAR transactions, blockchain queries, account retrieval, Twitter interactions, and crypto swaps.
+
+                For Retrieval of Account Details:
+                1. Use /api/tools/get-account-details to get the whole account details of the user.
+                2. Use render chart to make a bar chart of the account details using the details you get from the get-account-details.
                 
                 For blockchain transactions:
                 1. Generate a transaction payload using "/api/tools/create-near-transaction".
@@ -54,7 +58,7 @@ export async function GET() {
                 3. If a user asks any operation to be done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}.
                                 
                 `,
-                tools: [{ type: "generate-transaction" }, { type: "sign-message" }],
+                tools: [{ type: "generate-transaction" }, { type: "sign-message" }, { type: "render-chart" }, { type: "get-token-metadata" }],
                 image: `${PLUGIN_URL}/coolfi.svg`,
                 categories: ["defi"],
             },
