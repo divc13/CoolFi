@@ -296,7 +296,7 @@ export async function GET() {
                             schema: {
                                 type: "string"
                             },
-                            description: "The NEAR account ID of the user"
+                            description: "The NEAR account ID of the receiver of funds. This can be the user himself or if specified then someone else."
                         },
                         {
                             name: "exact_amount_in",
