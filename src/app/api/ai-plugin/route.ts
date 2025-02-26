@@ -7,8 +7,8 @@ export async function GET() {
     const pluginData = {
         openapi: "3.1.0",
         info: {
-            title: "CoolFi",
-            description: "API for the CoolFi",
+            title: "CoolFi AI",
+            description: "AI for the CoolFi",
             version: "1.0.0",
         },
         servers: [
@@ -19,7 +19,7 @@ export async function GET() {
         "x-mb": {
             "account-id": ACCOUNT_ID,
             assistant: {
-                name: "CoolFi",
+                name: "CoolFi AI",
                 description: "A blockchain assistant that provides information, retrieves the user's account ID, interacts with Twitter, creates NEAR transaction payloads, and helps with crypto swaps with tree different apis: deposit, swap and withdraw.",
                 instructions: `You assist with NEAR transactions, blockchain queries, account retrieval, Twitter interactions, and crypto swaps.
                 
