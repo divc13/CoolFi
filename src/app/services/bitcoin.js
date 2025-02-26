@@ -40,14 +40,14 @@ export class Bitcoin {
 
   createTransaction = async ({ from: address, to, amount }) => {
     let utxos = await this.getUtxos({ address });
-    if (!utxos) return
+    // if (!utxos) return
 
     // Use the utxo with the highest value
     utxos.sort((a, b) => b.value - a.value);
     utxos = [utxos[0]];
 
     const psbt = await constructPsbt(address, utxos, to, amount, this.networkId);
-    if (!psbt) return
+    // if (!psbt) return
 
     return { utxos, psbt };
   }
