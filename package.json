@@ -1,6 +1,6 @@
 {
-  "name": "agent-next-boilerplate",
-  "version": "0.1.0",
+  "name": "coolfi",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "concurrently \"next dev -p 4000\" \"make-agent dev -p 4000\"",
