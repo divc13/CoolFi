@@ -47,7 +47,7 @@ async function withdrawFromDefuse(params: CrossChainSwapAndWithdrawParams): Prom
                 memo: `WITHDRAW_TO:${params.destination_address}`,
                 deposit: (storage_deposit).toString()
             }]
-        };
+          };
         } else {
           intentMessage = {
               signer_id: params.accountId,
@@ -84,21 +84,22 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const accountId = searchParams.get('accountId');
+    const receiverId = searchParams.get('receiverId');
     const exact_amount_in = searchParams.get('exact_amount_in');
     const defuse_asset_identifier_in = searchParams.get('defuse_asset_identifier_in');
 
-    if (!accountId || !exact_amount_in || !defuse_asset_identifier_in) {
+    if (!accountId || !exact_amount_in || !defuse_asset_identifier_in || !receiverId) {
       return NextResponse.json({ error: 'some required parameters are missing' }, { status: 400 });
     }
     
-    var destination_address = accountId;
+    var destination_address = receiverId;
 
     if (defuse_asset_identifier_in.toUpperCase() == "BTC") {
       const path = "bitcoin-1";
       const BTC = new Bitcoin("mainnet");
       
       const { address, publicKey } = await BTC.deriveAddress(
-        accountId,
+        receiverId,
         path
       );
 
@@ -107,7 +108,7 @@ export async function GET(request: Request) {
 
     const params: CrossChainSwapAndWithdrawParams = {
       accountId: accountId,
-      destination_address: destination_address,
+      destination_address: receiverId,
       exact_amount_in: exact_amount_in,
       defuse_asset_identifier_in: defuse_asset_identifier_in,
       defuse_asset_identifier_out: defuse_asset_identifier_in,
