@@ -35,7 +35,7 @@ async function withdrawFromDefuse(params: CrossChainSwapAndWithdrawParams): Prom
 
         // Create intent message
         var intentMessage: IntentMessage;
-        if (params.defuse_asset_identifier_out == "BTC") {
+        if (params.defuse_asset_identifier_out.toUpperCase() == "BTC") {
           intentMessage = {
             signer_id: params.accountId,
             deadline: new Date(Date.now() + 300000).toISOString(), // 5 minutes from now
