@@ -412,7 +412,7 @@ export async function GET() {
                             schema: {
                                 type: "string"
                             },
-                            description: "The cryptographic signature generated for the intent message in the form of a hexadecimal string. This is automatically available after signing - no need to ask the user.  Example format: 'ed25519:58dqv4nGcXaXE7Hou13b8BKhq466f86EnvKHZJGBK3MPTL4PggFZZ9aNmVnfkH3n1qZi9Q6hGbsTaG8uXTmoGemN'. Do not encode or decode any thing by your own."
+                            description: "The cryptographic signature generated for the intent message in the form of a hexadecimal string. This is available after signing from the return params of sign-message - no need to ask the user. Do not encode or decode any thing by your own."
                         },
                         {
                             name: "publicKey",
@@ -421,7 +421,7 @@ export async function GET() {
                             schema: {
                                 type: "string"
                             },
-                            description: "The ed25519 public key from the signing result (signResult.publicKey). This is automatically available after signing - no need to ask the user. DO NOT use the NEAR wallet ID (like 'user.near'). Example format: 'ed25519:HeaBJ3xLgvZacQWmEctTeUqyfSU4SDEnEwckWxd92W2G'. Do not encode or decode any thing by your own. Take this value from the signResult. Do not default to some example given or user wallet."
+                            description: "The ed25519 public key from the signing result. Example format: 'ed25519:HeaBJ...'. Do not encode or decode any thing by your own. Take this value from the result of sign-message. Do not default to some example given or user wallet."
                         },
                         {
                             name: "message",
