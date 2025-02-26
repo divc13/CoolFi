@@ -7,8 +7,8 @@ export async function GET() {
     const pluginData = {
         openapi: "3.1.0",
         info: {
-            title: "Boilerplate",
-            description: "API for the boilerplate",
+            title: "CoolFi",
+            description: "API for the CoolFi",
             version: "1.0.0",
         },
         servers: [
