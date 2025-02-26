@@ -36,7 +36,6 @@ const settings = getRuntimeSettings();
 
 // Set the plugin url in order of BITTE_CONFIG, env, DEPLOYMENT_URL (used for Vercel deployments)
 const PLUGIN_URL = DEPLOYMENT_URL || `${process.env.NEXT_PUBLIC_HOST || 'localhost'}:${process.env.PORT || 4000}`;
-const CHAT_URL = DEPLOYMENT_URL || `${process.env.NEXT_PUBLIC_HOST || 'localhost'}:${process.env.CHAT_PORT || 3000}`;
 
 
 
@@ -48,4 +47,4 @@ if (!PLUGIN_URL) {
 }
 
 
-export { ACCOUNT_ID, PLUGIN_URL, CHAT_URL, settings };
+export { ACCOUNT_ID, PLUGIN_URL, settings };

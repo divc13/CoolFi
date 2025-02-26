@@ -6,7 +6,7 @@
     "dev": "concurrently \"next dev -p 4000\" \"make-agent dev -p 4000\"",
     "dev:agent": "next dev",
     "build": "next build",
-    "build:deploy": "next build && make-agent deploy -u https://agent-next-boilerplate.vercel.app",
+    "build:deploy": "next build && make-agent deploy -u https://coolfi.vercel.app",
     "start": "next start",
     "lint": "next lint"
   },

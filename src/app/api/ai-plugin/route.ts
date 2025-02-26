@@ -1,4 +1,4 @@
-import { ACCOUNT_ID, CHAT_URL, PLUGIN_URL } from "@/app/config";
+import { ACCOUNT_ID, PLUGIN_URL } from "@/app/config";
 import { NextResponse } from "next/server";
 import tokenData from "@/app/near-intent/config/tokens.json";
 
@@ -13,7 +13,7 @@ export async function GET() {
         },
         servers: [
             {
-                url: CHAT_URL,
+                url: PLUGIN_URL,
             },
         ],
         "x-mb": {
