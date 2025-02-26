@@ -242,6 +242,10 @@ export async function GET() {
                                                 type: "object",
                                                 additionalProperties: true,
                                                 description: "The net returns of the swap. Show this to user before they sign the message."
+                                            },
+                                            quote_hash: {
+                                                type: "string",
+                                                description: "quote hash of the best quote index."
                                             }
                                         }
                                     }
@@ -394,7 +398,7 @@ export async function GET() {
                 get: {
                     operationId: "publishIntent",
                     summary: "Publish a signed crypto swap intent.",
-                    description: "Finalizes the crypto swap by submitting the signed intent message. The public key should be automatically extracted from the signing result - typically available in the response from the signing process as 'signResult.publicKey'.",
+                    description: "Finalizes the crypto swap by submitting the signed intent message. The public key should be automatically extracted from the signing result - typically available in the response from the signing process as 'signResult.publicKey'. Get the quote hash from the best quote. This is required for swapping, not for withdrawals.",
                     parameters: [
                         {
                             name: "accountId",
@@ -449,6 +453,15 @@ export async function GET() {
                                 type: "string",
                             },
                             description: "The unique nonce value from the intent message. This must match the nonce used in the signing process. This is already a base64 encoded string. Do Not encode it again into base64."
+                        },
+                        {
+                            name: "quote_hash",
+                            in: "query",
+                            required: false,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "quote hash of the best qoute. Required for swapping, not for withdrawals."
                         }
                     ],
                     responses: {
