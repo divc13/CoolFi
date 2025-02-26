@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-//   experimental: {
-//     serverComponentsExternalPackages: ["agent-twitter-client"],
-//   },
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.externals = config.externals || [];
