@@ -34,18 +34,34 @@ async function withdrawFromDefuse(params: CrossChainSwapAndWithdrawParams): Prom
         const storage_deposit: bigint = (nep141balance > BigInt(FT_MINIMUM_STORAGE_BALANCE_LARGE)) ? 0n : BigInt(FT_MINIMUM_STORAGE_BALANCE_LARGE);
 
         // Create intent message
-        const intentMessage: IntentMessage = {
+        var intentMessage: IntentMessage;
+        if (params.defuse_asset_identifier_out == "BTC") {
+          intentMessage = {
             signer_id: params.accountId,
             deadline: new Date(Date.now() + 300000).toISOString(), // 5 minutes from now
             intents: [{
                 intent: "ft_withdraw",
                 token: defuseAssetOutAddrs,
-                receiver_id: params.destination_address,
+                receiver_id: defuseAssetOutAddrs,
                 amount: amountInBigInt.toString(),
-                memo: "",
+                memo: `WITHDRAW_TO:${params.destination_address}`,
                 deposit: (storage_deposit).toString()
             }]
         };
+        } else {
+          intentMessage = {
+              signer_id: params.accountId,
+              deadline: new Date(Date.now() + 300000).toISOString(), // 5 minutes from now
+              intents: [{
+                  intent: "ft_withdraw",
+                  token: defuseAssetOutAddrs,
+                  receiver_id: params.destination_address,
+                  amount: amountInBigInt.toString(),
+                  memo: "",
+                  deposit: (storage_deposit).toString()
+              }]
+          };
+        }
 
         console.log("Intent message:", intentMessage);
 
