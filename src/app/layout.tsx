@@ -2,6 +2,8 @@
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import "./global.css"; // Ensure this is correctly imported
 import { BitteWalletContextProvider } from "@bitte-ai/react";
+import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const BitteWalletSetup = {
   network: "mainnet",
