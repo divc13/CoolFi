@@ -23,6 +23,9 @@ export async function GET() {
                 description: "A blockchain assistant that provides information, retrieves the user's account ID, interacts with Twitter, creates NEAR transaction payloads, and helps with crypto swaps with tree different apis: deposit, swap and withdraw.",
                 instructions: `You assist with NEAR transactions, blockchain queries, account retrieval, Twitter interactions, and crypto swaps.
 
+                If the request comes from twitter:
+                1. Use /api/twitter/sign-transaction to generate a transaction url and send it to the twitter user.
+
                 For Retrieval of Account Details:
                 1. Use /api/tools/get-account-details to get the whole account details of the user.
                 2. Use render chart to make a bar chart of the account details using the details you get from the get-account-details.
@@ -65,11 +68,122 @@ export async function GET() {
             image: `${PLUGIN_URL}/coolfi.svg`,
         },
         paths: {
+            "/api/twitter/defuse-deposit": {
+                get: {
+                    operationId: "depositIntoDefuseUsingTwitter",
+                    summary: "Generates link for a transaction to allow users to deposit their currency into defuse or near intents, and sends it the users on twitter.",
+                    description: `Generates transaction link to allow users to deposit their currency into defuse or near intents. Take the crypto currency to be deposited and the NEAR account ID of the user. Also ask for the amount to be deposited. Sends the transaction Link formed to the user. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}. FInally reply to the user that you have sent thme the transaction link on twitter direct message`,
+                    parameters: [
+                        {
+                            name: "accountId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The NEAR account ID of the user"
+                        },
+                        {
+                            name: "conversationId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The conversation id of the twitter chat. This is used to identify the user."
+                        },
+                        {
+                            name: "tokenIn",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: `The token user wants to deposit. If possible understand and fill on your own. Do ask if obsecure. This must be one of the tokens from ${tokenData}. This is only the name of the token.`
+                        },
+                        {
+                            name: "amount",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "the amount to deposit into defuse or near intents."
+                        },
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Successful response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            receiverId: {
+                                                type: "string",
+                                                description: "The receiver's NEAR account ID"
+                                            },
+                                            actions: {
+                                                type: "array",
+                                                items: {
+                                                    type: "object",
+                                                    properties: {
+                                                        type: {
+                                                            type: "string",
+                                                            description: "The type of action (e.g., 'Transfer')"
+                                                        },
+                                                        params: {
+                                                            type: "object",
+                                                            additionalProperties: true,
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        "400": {
+                            description: "Bad request",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "500": {
+                            description: "Server error",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                },
+            },
             "/api/tools/defuse-deposit": {
                 get: {
                     operationId: "depositIntoDefuse",
                     summary: "function call for depositing crypto into defuse or near intents.",
-                    description: `Generates transaction to allow users to deposit their currency into defuse or near intents. Take the crypto currency to be deposied from the user. Also ask for the amount to be deposited. Show the transaction deatails to the user. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}.`,
+                    description: `Generates transaction to allow users to deposit their currency into defuse or near intents. Take the crypto currency to be deposited from the user. Also ask for the amount to be deposited. Show the transaction details to the user. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}.`,
                     parameters: [
                         {
                             name: "accountId",
