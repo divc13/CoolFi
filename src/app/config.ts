@@ -3,8 +3,6 @@ import { DEPLOYMENT_URL } from "vercel-url";
 interface RuntimeSettings {
     networkId: string;
     nodeUrl: string;
-    secretKey: string;
-    publicKey: string;
     SLIPPAGE: number;
     defuseContractId: string;
     defuseRPCUrl: string;
@@ -50,8 +48,6 @@ function getRuntimeSettings(): RuntimeSettings {
         max_polling_time_ms: Number(process.env.MAX_POLLING_TIME_MS) || 30000,
         ft_minimum_storage_balance_large: process.env.FT_MINIMUM_STORAGE_BALANCE_LARGE || "1250000000000000000000",
         defuseRPCUrl: process.env.DEFUSE_RPC_URL || "https://solver-relay-v2.chaindefuser.com/rpc",
-        secretKey: process.env.NEAR_WALLET_SECRET_KEY || "",
-        publicKey: process.env.NEAR_WALLET_PUBLIC_KEY || "",
         SLIPPAGE: process.env.NEAR_SLIPPAGE ? parseInt(process.env.NEAR_SLIPPAGE) : 1,
         defuseContractId: process.env.DEFUSE_CONTRACT_ID || "intents.near",
         coingeckoUrl: process.env.COINGECKO_API_URL || "",

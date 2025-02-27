@@ -123,13 +123,8 @@ export async function pollIntentStatus(intentHash: string): Promise<IntentStatus
 
 async function addPublicKeyToIntents(publicKey: string, account_id: string): Promise<void> {
 
-    const keyStore = new keyStores.InMemoryKeyStore();
-    const keyPair = utils.KeyPair.fromString(settings.secretKey as KeyPairString);
-    await keyStore.setKey(settings.networkId, account_id, keyPair);
-
     const nearConnection = await connect({
         networkId: settings.networkId,
-        keyStore,
         nodeUrl: settings.nodeUrl,
     });
 
