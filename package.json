@@ -1,12 +1,12 @@
 {
-  "name": "coolfi",
+  "name": "coolfi-ai",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "concurrently \"next dev -p 4000\" \"make-agent dev -p 4000\"",
     "dev:agent": "next dev",
     "build": "next build",
-    "build:deploy": "next build && vercel --prod && make-agent deploy -u https://coolfi.vercel.app",
+    "build:deploy": "next build && vercel --prod && make-agent deploy -u https://coolfi-ai.vercel.app",
     "start": "next start",
     "lint": "next lint"
   },
