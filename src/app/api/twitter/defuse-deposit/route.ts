@@ -104,23 +104,9 @@ export async function GET(request: Request) {
                 throw ("No args");
             }
             const uint8Array = args instanceof Uint8Array ? args : new Uint8Array(args);
-            console.log();
-
             const decoder = new TextDecoder();
             const jsonString = decoder.decode(uint8Array);
-            console.log(jsonString);
-            const original_args = JSON.parse(jsonString);
-            const new_args = {};
-            new_args["amount"] = original_args["amount"];
-            new_args["msg"] = original_args["msg"];
-            new_args["contract_id"] = original_args["receiver_id"];
-
             params["args"] = JSON.parse(jsonString);
-            console.log(params["args"]);
-            
-
-
-
             mod_action["params"] = params;
             mod_actions.push(mod_action);
         }
@@ -130,10 +116,8 @@ export async function GET(request: Request) {
 
 
     const link = `https://wallet.bitte.ai/sign-transaction?transactions_data=${encodeURI(JSON.stringify(modified_txns))}`  ;
-    console.log(link);
-    // await sendDM(conversationId, link);
 
-    return NextResponse.json({ transactions });
+    return NextResponse.json({ link });
     
   } catch (error) {
     console.error('Error generating NEAR transaction payload:', error);
