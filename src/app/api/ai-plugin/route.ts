@@ -146,9 +146,9 @@ export async function GET() {
                    
                     If there is no mention of twitter, it means the message is from user.if the message starts like This message is from twitter, and provides the conversationId, then it is from twitter. 
 
-                    If the message is not from twitter, Show the transaction details to the user. The link obtained as a result of this operation should be of no use in this case.
+                    If the message is not from twitter, Show the transaction details to the user. Donot use the link in this case. Generate transaction using create near transaction in this case.
                     
-                    If the message is from twitter, then the link generated to sign the transaction must be sent to the user on twitter using the send-message api. You should also send the required description in the message, when you send the link to the user. The transaction object obtained should be of no use in this case.,
+                    If the message is from twitter, then the link generated to sign the transaction must be sent to the user on twitter using the send-message api. You should also send the required description in the message, when you send the link to the user. The transaction object obtained should be of no use in this case.
                     
                     `,
                     parameters: [
@@ -219,7 +219,7 @@ export async function GET() {
                                             },
                                             link: {
                                                 type: "string",
-                                                description: "The link to sign the transaction that should be sendt to twitter"
+                                                description: "The link to sign the transaction that should be send to twitter. Of the message is not from twitter than this link should not be used."
                                             }
                                         },
                                     },
