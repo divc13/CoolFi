@@ -20,8 +20,8 @@ export async function GET() {
             "account-id": ACCOUNT_ID,
             assistant: {
                 name: "CoolFi AI",
-                description: "A blockchain assistant that provides information, retrieves the user's account ID, interacts with Twitter, creates NEAR transaction payloads, and helps with crypto swaps with tree different apis: deposit, swap and withdraw.",
-                instructions: `You assist with NEAR transactions, blockchain queries, account retrieval, Twitter interactions, and crypto swaps.
+                description: "A blockchain assistant that provides information, retrieves the user's account ID, interacts with Twitter, creates NEAR transaction payloads, and helps with crypto swaps with tree different apis: deposit, swap and withdraw. ",
+                instructions: `You assist with NEAR transactions, blockchain queries, account retrieval, Twitter interactions, and crypto swaps.You are provided with the twitter API's and so you can interact with the user on twitter.
 
                 If the request comes from twitter:
                 1. Use /api/twitter/sign-transaction to generate a transaction url and send it to the twitter user.
@@ -72,7 +72,7 @@ export async function GET() {
                 get: {
                     operationId: "depositIntoDefuseUsingTwitter",
                     summary: "Generates link for a transaction to allow users to deposit their currency into defuse or near intents, and sends it the users on twitter.",
-                    description: `Generates transaction link to allow users to deposit their currency into defuse or near intents. Take the crypto currency to be deposited and the NEAR account ID of the user. Also ask for the amount to be deposited. Sends the transaction Link formed to the user. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}. FInally reply to the user that you have sent thme the transaction link on twitter direct message`,
+                    description: `Generates transaction link to allow users to deposit their currency into defuse or near intents. Take the crypto currency to be deposited and the NEAR account ID of the user. Also ask for the amount to be deposited. Sends the transaction Link formed to the user. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}. FInally reply to the user that you have sent thme the transaction link on twitter direct message. This method should be called if the message is from twitter`,
                     parameters: [
                         {
                             name: "accountId",
@@ -179,11 +179,12 @@ export async function GET() {
                     },
                 },
             },
+            
             "/api/tools/defuse-deposit": {
                 get: {
                     operationId: "depositIntoDefuse",
                     summary: "function call for depositing crypto into defuse or near intents.",
-                    description: `Generates transaction to allow users to deposit their currency into defuse or near intents. Take the crypto currency to be deposited from the user. Also ask for the amount to be deposited. Show the transaction details to the user. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}.`,
+                    description: `Generates transaction to allow users to deposit their currency into defuse or near intents. Take the crypto currency to be deposited from the user. Also ask for the amount to be deposited. Show the transaction details to the user. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}. This method should not be called if the message is from twitter.`,
                     parameters: [
                         {
                             name: "accountId",
@@ -281,6 +282,131 @@ export async function GET() {
                     },
                 },
             },
+            "/api/twitter/defuse-swap": {
+                get: {
+                    operationId: "swapCryptoInDefuseUsingTwitter",
+                    summary: "Generate a link to sign message and send to twitter",
+                    description: `Generates an intent message for swapping crypto based on user input. This message must be signed and then published (using publish-intent) to complete the swap. Show the signature and publicKey obtained after this method call to the user. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}. This method must be called only of the message is from `,
+                    parameters: [
+                        {
+                            name: "accountId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The NEAR account ID of the user"
+                        },
+                        {
+                            name: "amountIn",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The amount of input crypto which user wants to swap"
+                        },
+                        {   
+                            name: "tokenIn",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The type of cryptocurrency the user is swapping from."
+                        },
+                        {   
+                            name: "tokenOut",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The type of cryptocurrency the user is swapping from."
+                        },
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Returns the swap intent message.",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            transactionPayload: {
+                                                type: "object",
+                                                description: "The payload to sign and publish. To take in everything in here, even the callbackUrl",
+                                                properties: {
+                                                    message: {
+                                                        type: "string",
+                                                        description: "The message to sign before publishing."
+                                                    },
+                                                    receiverId: {
+                                                        type: "string",
+                                                        description: "The contract's near id"
+                                                    },
+                                                    nonce: {
+                                                        type: "string",
+                                                        description: "The unique identifier for the transaction. This is a base64 string. ",
+                                                        example1 : "HXRpqKa9xCGMpB37KpfQjSinMVQKuN1WF2Au72Pqg9Y=",
+                                                        example2: "zanFCPTWKvvV5oBhL1JnZj4p7cUkqt1+PPff4j6GwLA="
+                                                    },
+                                                    callbackUrl: {
+                                                        type: "string",
+                                                        description: "url to call back on success"
+                                                    },
+                                                }
+                                            },
+                                            netReturns: {
+                                                type: "object",
+                                                additionalProperties: true,
+                                                description: "The net returns of the swap. Show this to user before they sign the message."
+                                            },
+                                            quote_hash: {
+                                                type: "string",
+                                                description: "quote hash of the best quote index."
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "400": {
+                            description: "Bad request",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "500": {
+                            description: "Error response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+            },
+
             "/api/tools/defuse-swap": {
                 get: {
                     operationId: "swapCryptoInDefuse",
