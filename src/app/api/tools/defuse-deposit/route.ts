@@ -79,7 +79,43 @@ export async function GET(request: Request) {
     
     var transactions: Transaction["NEAR"][] = await depositIntoDefuse([defuseAssetIdIn], amountInBigInt, accountId);
     transactions = await convertBigIntToString(transactions);
-    return NextResponse.json({ transactions });
+
+    var modified_txns:any = [];
+    for (var tx of transactions)
+    {
+        var mod_txn = {};
+        mod_txn["receiverId"] = tx.receiverId;
+        mod_txn["signerId"] = accountId;
+        var mod_actions:any = [];
+        for (var action of tx.actions)
+        {
+            console.log(action);
+            var mod_action = {};
+            mod_action["type"] = "FunctionCall";
+            var params:any = {};
+            params["methodName"] = action.functionCall?.methodName;
+            params["deposit"] = action.functionCall?.deposit;
+            params["gas"] = action.functionCall?.gas;
+
+            const args = action.functionCall?.args["data"];
+            if (!args) {
+                throw ("No args");
+            }
+            const uint8Array = args instanceof Uint8Array ? args : new Uint8Array(args);
+            const decoder = new TextDecoder();
+            const jsonString = decoder.decode(uint8Array);
+            params["args"] = JSON.parse(jsonString);
+            mod_action["params"] = params;
+            mod_actions.push(mod_action);
+        }
+        mod_txn["actions"] = mod_actions;
+        modified_txns.push(mod_txn);
+    }
+
+
+    const link = `https://wallet.bitte.ai/sign-transaction?transactions_data=${encodeURI(JSON.stringify(modified_txns))}`  ;
+
+    return NextResponse.json({ transactions , link });
 
     
   } catch (error) {

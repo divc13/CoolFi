@@ -65,118 +65,6 @@ export async function GET() {
             image: `${PLUGIN_URL}/coolfi.svg`,
         },
         paths: {
-            // "/api/twitter/defuse-deposit": {
-            //     get: {
-            //         operationId: "depositIntoDefuseUsingTwitter",
-            //         summary: "Generates link for a transaction to allow users to deposit their currency into defuse or near intents, and sends it the users on twitter.",
-            //         description: `Generates transaction link to allow users to deposit their currency into defuse or near intents. Take the crypto currency to be deposited and the NEAR account ID of the user. Also ask for the amount to be deposited. Sends the transaction Link formed to the user. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}. FInally reply to the user that you have sent thme the transaction link on twitter direct message. This method should be called if the message is from twitter`,
-            //         parameters: [
-            //             {
-            //                 name: "accountId",
-            //                 in: "query",
-            //                 required: true,
-            //                 schema: {
-            //                     type: "string"
-            //                 },
-            //                 description: "The NEAR account ID of the user"
-            //             },
-            //             {
-            //                 name: "conversationId",
-            //                 in: "query",
-            //                 required: true,
-            //                 schema: {
-            //                     type: "string"
-            //                 },
-            //                 description: "The conversation id of the twitter chat. This is used to identify the user."
-            //             },
-            //             {
-            //                 name: "tokenIn",
-            //                 in: "query",
-            //                 required: true,
-            //                 schema: {
-            //                     type: "string"
-            //                 },
-            //                 description: `The token user wants to deposit. If possible understand and fill on your own. Do ask if obsecure. This must be one of the tokens from ${tokenData}. This is only the name of the token.`
-            //             },
-            //             {
-            //                 name: "amount",
-            //                 in: "query",
-            //                 required: true,
-            //                 schema: {
-            //                     type: "string"
-            //                 },
-            //                 description: "the amount to deposit into defuse or near intents."
-            //             },
-            //         ],
-            //         responses: {
-            //             "200": {
-            //                 description: "Successful response",
-            //                 content: {
-            //                     "application/json": {
-            //                         schema: {
-            //                             type: "object",
-            //                             properties: {
-            //                                 receiverId: {
-            //                                     type: "string",
-            //                                     description: "The receiver's NEAR account ID"
-            //                                 },
-            //                                 actions: {
-            //                                     type: "array",
-            //                                     items: {
-            //                                         type: "object",
-            //                                         properties: {
-            //                                             type: {
-            //                                                 type: "string",
-            //                                                 description: "The type of action (e.g., 'Transfer')"
-            //                                             },
-            //                                             params: {
-            //                                                 type: "object",
-            //                                                 additionalProperties: true,
-            //                                             }
-            //                                         }
-            //                                     }
-            //                                 }
-            //                             },
-            //                         },
-            //                     },
-            //                 },
-            //             },
-            //             "400": {
-            //                 description: "Bad request",
-            //                 content: {
-            //                     "application/json": {
-            //                         schema: {
-            //                             type: "object",
-            //                             properties: {
-            //                                 error: {
-            //                                     type: "string",
-            //                                     description: "Error message"
-            //                                 }
-            //                             }
-            //                         }
-            //                     }
-            //                 }
-            //             },
-            //             "500": {
-            //                 description: "Server error",
-            //                 content: {
-            //                     "application/json": {
-            //                         schema: {
-            //                             type: "object",
-            //                             properties: {
-            //                                 error: {
-            //                                     type: "string",
-            //                                     description: "Error message"
-            //                                 }
-            //                             }
-            //                         }
-            //                     }
-            //                 }
-            //             }
-            //         },
-            //     },
-            // },
-
             "/api/tools/send-message": {
                 get: {
                     operationId: "sendMessageOnTwitter",
@@ -254,10 +142,13 @@ export async function GET() {
                 get: {
                     operationId: "depositIntoDefuse",
                     summary: "function call for depositing crypto into defuse or near intents.",
-                    description: `Generates transaction to allow users to deposit their currency into defuse or near intents. Take the crypto currency to be deposited from the user. Also ask for the amount to be deposited. 
-                    If the message is not from twitter, Show the transaction details to the user. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}.
+                    description: `Generates transaction to allow users to deposit their currency into defuse or near intents. Take the crypto currency to be deposited from the user. Also ask for the amount to be deposited. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}.
+                   
+                    If there is no mention of twitter, it means the message is from user.if the message starts like This message is from twitter, and provides the conversationId, then it is from twitter. 
+
+                    If the message is not from twitter, Show the transaction details to the user. The link obtained as a result of this operation should be of no use in this case.
                     
-                    If this message is from twitter, you must take in the conversationId from the user, for the twitter chat. 
+                    If the message is from twitter, then the link generated to sign the transaction must be sent to the user on twitter using the send-message api. You should also send the required description in the message, when you send the link to the user. The transaction object obtained should be of no use in this case.,
                     
                     `,
                     parameters: [
@@ -288,6 +179,15 @@ export async function GET() {
                             },
                             description: "the amount to deposit into defuse or near intents."
                         },
+                        {
+                            name: "conversationId",
+                            in: "query",
+                            required: false,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The conversation id of the twitter chat"
+                        },
                     ],
                     responses: {
                         "200": {
@@ -316,6 +216,10 @@ export async function GET() {
                                                         }
                                                     }
                                                 }
+                                            },
+                                            link: {
+                                                type: "string",
+                                                description: "The link to sign the transaction that should be sendt to twitter"
                                             }
                                         },
                                     },
