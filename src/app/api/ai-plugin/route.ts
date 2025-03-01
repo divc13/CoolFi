@@ -402,6 +402,10 @@ export async function GET() {
                                                 type: "string",
                                                 description: "The link to send to the user on twitter"
                                             },
+                                            return: {
+                                                type: "string",
+                                                description: "Extra information for the swap"
+                                            },
                                         },
                                     }
                                 }
