@@ -450,7 +450,7 @@ export async function GET() {
                 get: {
                     operationId: "swapCryptoInDefuse",
                     summary: "Retrieve a message to swap cryptocurrency.",
-                    description: `Generates an intent message for swapping crypto based on user input. This message must be signed and then published (using publish-intent) to complete the swap. Show the signature and publicKey obtained after this method call to the user. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}.`,
+                    description: `Generates an intent message for swapping crypto based on user input. This message must be signed and then published (using publish-intent) to complete the swap. Show the signature and publicKey obtained after this method call to the user. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}. This method should not be called if the message is from twitter.`,
                     parameters: [
                         {
                             name: "accountId",
@@ -679,7 +679,7 @@ export async function GET() {
                 get: {
                     operationId: "defuseWithdraw",
                     summary: "Withdraws crypto from defuse or near intents.",
-                    description: `Generates an intent message for withdrawing crypto from near intents or defuse based on user input. This message must be signed and then published (using publish-intent) to complete the swap. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}.`,
+                    description: `Generates an intent message for withdrawing crypto from near intents or defuse based on user input. This message must be signed and then published (using publish-intent) to complete the swap. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}. This method should not be called if the message is from twitter.`,
                     parameters: [
                         {
                             name: "accountId",
@@ -891,7 +891,7 @@ export async function GET() {
                 get: {
                     operationId: "publishIntent",
                     summary: "Publish a signed crypto swap intent.",
-                    description: "Finalizes the crypto swap by submitting the signed intent message. The public key should be automatically extracted from the signing result - typically available in the response from the signing process as 'signResult.publicKey'. Get the quote hash from the best quote. This is required for swapping, not for withdrawals.",
+                    description: "Finalizes the crypto swap by submitting the signed intent message. The public key should be automatically extracted from the signing result - typically available in the response from the signing process as 'signResult.publicKey'. Get the quote hash from the best quote. This is required for swapping, not for withdrawals. This method should not be called if the message is from twitter.",
                     parameters: [
                         {
                             name: "accountId",
@@ -1095,7 +1095,7 @@ export async function GET() {
                 get: {
                     operationId: "getAcountDetails",
                     summary: "get user wallet details",
-                    description: "Respond with user wallet details",
+                    description: "Respond with user wallet details. This method should not be called if the message is from twitter.",
                     parameters: [
                         {
                             name: "accountId",
@@ -1282,7 +1282,7 @@ export async function GET() {
                 get: {
                     operationId: "transferBitcoin",
                     summary: "transfer bitcoin",
-                    description: "Generates transaction to transfer bitcoin to another account, the amount should be in satoshi. After getting the response: 1) Make a link to https://wallet.bitte.ai/sign-transaction endpoint (I want you to make me sign the transaction using this endpoint instead of generate-transaction). Do fill in :transactionData with the data coming in response. Take the amount in BTC, and not in satoshi from the users. If the user gives the amount in satoshi, convert it to BTC and then proceed.",
+                    description: "Generates transaction to transfer bitcoin to another account, the amount should be in satoshi. After getting the response: 1) Make a link to https://wallet.bitte.ai/sign-transaction endpoint (I want you to make me sign the transaction using this endpoint instead of generate-transaction). Do fill in :transactionData with the data coming in response. Take the amount in BTC, and not in satoshi from the users. If the user gives the amount in satoshi, convert it to BTC and then proceed. This method should not be called if the message is from twitter.",
                     parameters: [
                         {
                             name: "accountId",
@@ -1486,7 +1486,7 @@ export async function GET() {
                 get: {
                     operationId: "relayTransaction",
                     summary: "relay the transactions sent",
-                    description: "This will take the transaction payload and relay it to the bitcoin network. The data and the transaction hash are neccesary and should be given.",
+                    description: "This will take the transaction payload and relay it to the bitcoin network. The data and the transaction hash are neccesary and should be given. This method should not be called if the message is from twitter.",
                     parameters: [
                         {
                             name: "accountId",
@@ -1570,7 +1570,7 @@ export async function GET() {
             },
             "/api/twitter/btc-defuse-deposit": {
                 get: {
-                    operationId: "btcDefuseDepositUsingDefuse",
+                    operationId: "btcDefuseDepositUsingTwitter",
                     summary: "Deposits bitcoin into defuse",
                     description: `This method should only be called if the query is from twitter. If the query is from twitter, it shall contain the conversation id and explicitly say that this is a message from twitter. If you dont have the user account id, ask for it on twitter using send-message.,
                     Generates transaction link to deposit bitcoin into defuse or near intents. Take the amount in BTC, and not in satoshi from the users. Send the transaction Link along with required description to the user on twitter using send-message api.`,
@@ -1668,7 +1668,7 @@ export async function GET() {
                 get: {
                     operationId: "btcDefuseDeposit",
                     summary: "Deposits bitcoin into defuse",
-                    description: "Generates transaction to deposit bitcoin into defuse or near intents. Take the amount in BTC, and not in satoshi from the users. After getting the response: 1) Make a link to https://wallet.bitte.ai/sign-transaction endpoint (I want you to make me sign the transaction using this endpoint instead of generate-transaction). Do fill in :transactionData with the data coming in response.",
+                    description: "Generates transaction to deposit bitcoin into defuse or near intents. Take the amount in BTC, and not in satoshi from the users. After getting the response: 1) Make a link to https://wallet.bitte.ai/sign-transaction endpoint (I want you to make me sign the transaction using this endpoint instead of generate-transaction). Do fill in :transactionData with the data coming in response. This method should not be called if the message is from twitter.",
                     parameters: [
                         {
                             name: "accountId",
@@ -1768,7 +1768,7 @@ export async function GET() {
                     summary: "get blockchain information",
                     description: `This method should only be called if the query is from twitter. If the query is from twitter, it shall contain the conversation id and explicitly say that this is a message from twitter. If you dont have the user account id, ask for it on twitter using send-message.,
                     Respond with a list of blockchains to the user on twitter using send-message api.`,
-                    operationId: "get-blockchains",
+                    operationId: "get-blockchainsUsingTwitter",
                     responses: {
                         "200": {
                             description: "Successful response",
@@ -1827,8 +1827,8 @@ export async function GET() {
             },
             "/api/twitter/create-near-transaction": {
                 get: {
-                    operationId: "createNearTransaction",
-                    summary: "Create a NEAR transaction payload",
+                    operationId: "createNearTransactionUsingTwitter",
+                    summary: "Create a NEAR transaction link",
                     description: `This method should only be called if the query is from twitter. If the query is from twitter, it shall contain the conversation id and explicitly say that this is a message from twitter. If you dont have the user account id, ask for it on twitter using send-message.,
                     Generates a near transaction link for transferring tokens to another near wallet. Send the transaction Link along with required description to the user on twitter using send-message api.`,
                     parameters: [
@@ -1925,7 +1925,7 @@ export async function GET() {
                 get: {
                     operationId: "createNearTransaction",
                     summary: "Create a NEAR transaction payload",
-                    description: "Generates a NEAR transaction payload for transferring tokens to be used directly in the generate-tx tool",
+                    description: "Generates a NEAR transaction payload for transferring tokens to be used directly in the generate-tx tool. This method should not be called if the message is from twitter.",
                     parameters: [
                         {
                             name: "receiverId",
