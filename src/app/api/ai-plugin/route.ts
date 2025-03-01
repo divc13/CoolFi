@@ -191,7 +191,7 @@ export async function GET() {
                                         properties: {
                                             link: {
                                                 type: "string",
-                                                description: "The link to send to the user on twitter"
+                                                description: "The link to send to the user on twitter. Send this to the user using send-message api along with required description"
                                             },
                                         },
                                     },
@@ -400,7 +400,7 @@ export async function GET() {
                                         properties: {
                                             link: {
                                                 type: "string",
-                                                description: "The link to send to the user on twitter"
+                                                description: "The link to send to the user on twitter. Send this to the user using send-message api along with required description"
                                             },
                                             return: {
                                                 type: "string",
@@ -633,7 +633,7 @@ export async function GET() {
                                         properties: {
                                             link: {
                                                 type: "string",
-                                                description: "The link to send to the user on twitter"
+                                                description: "The link to send to the user on twitter. Send this to the user using send-message api along with required description"
                                             },
                                         },
                                     }
