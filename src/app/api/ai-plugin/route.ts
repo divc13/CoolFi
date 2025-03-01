@@ -25,7 +25,7 @@ export async function GET() {
 
                 For Retrieval of Account Details:
                 1. Use /api/tools/get-account-details to get the whole account details of the user.
-                2. Use render chart to make a bar chart of the account details using the details you get from the get-account-details.
+                2. Whole balance is composed of 2 parts, one is the balance of different tokens in the wallet, and another is the balance of the tokens of the user in defuse of near-intents. 
                 
                 For blockchain transactions:
                 1. Generate a transaction payload using "/api/tools/create-near-transaction".
@@ -58,7 +58,7 @@ export async function GET() {
                 3. If a user asks any operation to be done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}.
                                 
                 `,
-                tools: [{ type: "generate-transaction" }, { type: "sign-message" }, { type: "render-chart" }, { type: "get-token-metadata" }],
+                tools: [{ type: "generate-transaction" }, { type: "sign-message" }, { type: "get-token-metadata" }],
                 image: `${PLUGIN_URL}/coolfi.svg`,
                 categories: ["defi"],
             },
@@ -1014,7 +1014,7 @@ export async function GET() {
                     operationId: "getAcountDetailsUsingTwitter",
                     summary: "get user wallet details",
                     description: `This method should only be called if the query is from twitter. If the query is from twitter, it shall contain the conversation id and explicitly say that this is a message from twitter.  
-                    Respond with user wallet details along with required description to the user on twitter using send-message api. If you dont have the user account id, ask for it on twitter using send-message.`,
+                    Respond with user wallet details along with required description to the user on twitter using send-message api. If you dont have the user account id, ask for it on twitter using send-message. The account details consist of two parts, user wallet details and the balance of the tokens deposited in defuse or near intents. Show their information separately to the users.`,
                     parameters: [
                         {
                             name: "conversationId",
@@ -1043,14 +1043,20 @@ export async function GET() {
                                     schema: {
                                         type: "object",
                                         properties: {
-                                            accountDetails: {
-                                                type: "string",
-                                                description: "The user's account details",
+                                            token_balance_wallet: {
+                                                accountDetails: {
+                                                    type: "string",
+                                                    description: "The user's account details. This contains the details of the amount of different tokens present in user wallet.",
+                                                },
+                                                satoshi: {
+                                                    type: "string",
+                                                    description: "The user's number of satoshi details in the user wallet",
+                                                },
                                             },
-                                            satoshi: {
+                                            token_balance_defuse: {
                                                 type: "string",
-                                                description: "The user's number of satoshi details",
-                                            },
+                                                description: "This is the amount of different tokens deposited into in defuse or near intents. This is different from the wallet balance.",
+                                            }
                                         },
                                     },
                                 },
@@ -1095,7 +1101,7 @@ export async function GET() {
                 get: {
                     operationId: "getAcountDetails",
                     summary: "get user wallet details",
-                    description: "Respond with user wallet details. This method should not be called if the message is from twitter.",
+                    description: "Respond with user wallet details. This method should not be called if the message is from twitter. The account details consist of two parts, user wallet details and the balance of the tokens deposited in defuse or near intents. Show their information separately to the users.",
                     parameters: [
                         {
                             name: "accountId",
@@ -1115,14 +1121,20 @@ export async function GET() {
                                     schema: {
                                         type: "object",
                                         properties: {
-                                            accountDetails: {
-                                                type: "string",
-                                                description: "The user's account details",
+                                            token_balance_wallet: {
+                                                accountDetails: {
+                                                    type: "string",
+                                                    description: "The user's account details. This contains the details of the amount of different tokens present in user wallet.",
+                                                },
+                                                satoshi: {
+                                                    type: "string",
+                                                    description: "The user's number of satoshi details in the user wallet",
+                                                },
                                             },
-                                            satoshi: {
+                                            token_balance_defuse: {
                                                 type: "string",
-                                                description: "The user's number of satoshi details",
-                                            },
+                                                description: "This is the amount of different tokens deposited into in defuse or near intents. This is different from the wallet balance.",
+                                            }
                                         },
                                     },
                                 },
