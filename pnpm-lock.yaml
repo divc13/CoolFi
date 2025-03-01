@@ -204,7 +204,7 @@ importers:
         specifier: ^3.0.1
         version: 3.0.2
       tough-cookie:
-        specifier: ^5.1.1
+        specifier: ^5.1.2
         version: 5.1.2
       tsup:
         specifier: ^8.3.6
@@ -2174,7 +2174,6 @@ packages:
 
   '@roamhq/wrtc-linux-x64@0.8.1':
     resolution: {integrity: sha512-I9oWG7b4uvWO1IOR/aF34n+ID6TKVuSs0jd19h5KdhfRtw7FFh9xxuwN9rONPxLVa6fS0q+MCZgAf8Scz89L8Q==}
-    cpu: [x64]
     os: [linux]
 
   '@roamhq/wrtc-win32-x64@0.8.0':
