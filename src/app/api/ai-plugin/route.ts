@@ -1763,68 +1763,6 @@ export async function GET() {
                     },
                 },
             },
-            "/api/twitter/get-blockchains": {
-                get: {
-                    summary: "get blockchain information",
-                    description: `This method should only be called if the query is from twitter. If the query is from twitter, it shall contain the conversation id and explicitly say that this is a message from twitter. If you dont have the user account id, ask for it on twitter using send-message.,
-                    Respond with a list of blockchains to the user on twitter using send-message api.`,
-                    operationId: "get-blockchains",
-                    responses: {
-                        "200": {
-                            description: "Successful response",
-                            content: {
-                                "application/json": {
-                                    schema: {
-                                        type: "object",
-                                        properties: {
-                                            message: {
-                                                type: "string",
-                                                description: "The list of blockchains",
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-            "/api/tools/get-blockchains": {
-                get: {
-                    summary: "get blockchain information",
-                    description: "Respond with a list of blockchains",
-                    operationId: "get-blockchains",
-                    parameters: [
-                        {
-                            name: "conversationId",
-                            in: "query",
-                            required: true,
-                            schema: {
-                                type: "string"
-                            },
-                            description: "The conversation id of the twitter chat"
-                        },
-                    ],
-                    responses: {
-                        "200": {
-                            description: "Successful response",
-                            content: {
-                                "application/json": {
-                                    schema: {
-                                        type: "object",
-                                        properties: {
-                                            message: {
-                                                type: "string",
-                                                description: "The list of blockchains",
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                },
-            },
             "/api/twitter/create-near-transaction": {
                 get: {
                     operationId: "createNearTransaction",
