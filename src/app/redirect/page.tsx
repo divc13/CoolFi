@@ -11,6 +11,9 @@ export default function FixRedirectPage() {
       const hashParams = new URLSearchParams(window.location.hash.substring(1));
       const queryParams = new URLSearchParams(window.location.search);
 
+      console.log("Hash params:", hashParams);
+      console.log("Query params:", queryParams);
+
       // Convert fragment to query parameters
       // hashParams.forEach((value, key) => {
       //   queryParams.set(key, value);

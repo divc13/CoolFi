@@ -7,6 +7,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const signature = searchParams.get('signature');
     const accountId = searchParams.get('accountId');
+    // const publicKey = "ed25519:JAZBD6Cym9db9zWjPv6cowibfxaNzYFkKPXJL8KvKebi";
     const publicKey = searchParams.get('publicKey');
     const messageString = searchParams.get('message');
     const recipient = searchParams.get('receiverId');

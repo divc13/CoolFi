@@ -5,6 +5,8 @@ import bs58 from 'bs58';
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
+    console.log(searchParams);
+
     const signature = searchParams.get('signature');
     const accountId = searchParams.get('accountId');
     const publicKey = searchParams.get('publicKey');
@@ -27,7 +29,7 @@ export async function GET(request: Request) {
 
     console.log('Received parameters:', { signature, publicKey, messageString, recipient, nonce }, nonce.length);
 
-    const nonceStr = nonce;
+    const nonceStr = decodeURIComponent(nonce);
     await ensurePublicKeyRegistered(publicKey, accountId);
     const signatureBuffer = bs58.encode(Buffer.from(signature, "base64"));
 
@@ -35,8 +37,12 @@ export async function GET(request: Request) {
     // console.log(msg);
     const messageStr = JSON.stringify(messageString);
 
-    console.log({messageStr});
-    console.log({messageString});
+    // const msg = JSON.parse(decodeURIComponent(messageString));
+    // console.log(msg);
+    // const messageStr = JSON.stringify(msg);
+
+    console.log(messageStr);
+    console.log(messageString);
 
 
     // Publish intent

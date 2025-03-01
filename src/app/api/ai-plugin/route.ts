@@ -342,7 +342,7 @@ export async function GET() {
                     operationId: "swapCryptoInDefuseUsingTwitter",
                     summary: "Sends the sign-message link to the user for swapping crypto in defuse or near intents",
                     description: `This method should only be called if the query is from twitter. If the query is from twitter, it shall contain the conversation id and explicitly say that this is a message from twitter.  
-                    Send the sign-message Link along with required description to the user on twitter using send-message api. If you dont have the user account id, ask for it on twitter using send-message.`,
+                    Send the sign-message Link along with required description to the user on twitter using send-message api. If you dont have the user account id, ask for it on twitter using send-message. Donot call publish-intent yourself.`,
                     parameters: [
                         {
                             name: "conversationId",
