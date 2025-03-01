@@ -8,6 +8,8 @@ import { getDefuseAssetId } from '@/app/near-intent/types/tokens';
 import { getAllSupportedTokens } from '@/app/near-intent/types/tokens';
 import { Transaction } from '@/app/near-intent/types/deposit';
 import { sendDM } from '../sendMessage';
+import { PLUGIN_URL } from '@/app/config';
+import {request as REQ} from '@/app/near-intent/utils/deposit';
 
 const FT_MINIMUM_STORAGE_BALANCE_LARGE = "1250000000000000000000";
                   
@@ -114,8 +116,9 @@ export async function GET(request: Request) {
         modified_txns.push(mod_txn);
     }
 
+    const link = `https://wallet.bitte.ai/sign-transaction?transactions_data=${encodeURI(JSON.stringify(modified_txns))}&callback_url=${PLUGIN_URL}`;  ;
 
-    const link = `https://wallet.bitte.ai/sign-transaction?transactions_data=${encodeURI(JSON.stringify(modified_txns))}`  ;
+    console.log({ link });
 
     return NextResponse.json({ link });
     

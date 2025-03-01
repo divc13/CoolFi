@@ -3,6 +3,7 @@ import { Bitcoin } from '@/app/services/bitcoin';
 import { Wallet } from '@/app/services/near-wallet';
 import { MPC_CONTRACT } from '@/app/services/kdf/mpc';
 import { convertBitcoin } from '@/app/services/utils';
+import { PLUGIN_URL } from '@/app/config';
 
 export async function GET(request: Request) {
   try {
@@ -82,6 +83,9 @@ export async function GET(request: Request) {
     const transactionData = JSON.stringify({pbst: btoa(psbt.toBase64()), utxos: utxos, receiverId: recepient, amount: amount});
 
     console.log(transactionData);
+
+    const link = `https://wallet.bitte.ai/sign-transaction?transactions_data=${encodeURI(JSON.stringify(TransactionToSign))}&callbackUrl=${PLUGIN_URL}/relay-transaction?data=${transactionData}`;
+    console.log({link});
 
     return NextResponse.json({ transactionPayload: encodeURI(JSON.stringify(TransactionToSign)), transactionData: transactionData });
 

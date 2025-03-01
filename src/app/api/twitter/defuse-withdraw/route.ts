@@ -3,7 +3,7 @@ import { CrossChainSwapAndWithdrawParams} from "@/app/near-intent/types/intents"
 import crypto from 'crypto';
 import { getTokenBySymbol, getDefuseAssetId } from '@/app/near-intent/types/tokens';
 import { convertAmountToDecimals } from '@/app/near-intent/types/tokens';
-import { settings } from '@/app/config';
+import { PLUGIN_URL, settings } from '@/app/config';
 import { getNearNep141StorageBalance } from '@/app/near-intent/utils/deposit';
 import type { IntentMessage } from '@/app/near-intent/types/intents';
 import { Bitcoin } from '@/app/services/bitcoin';
@@ -65,7 +65,7 @@ async function withdrawFromDefuse(params: CrossChainSwapAndWithdrawParams): Prom
 
         console.log("Intent message:", intentMessage);
 
-        const messageString = JSON.stringify(intentMessage);
+        const messageString = intentMessage;
         const recipient = "intents.near";
  
         return {
@@ -119,6 +119,8 @@ export async function GET(request: Request) {
     const transactionPayload = await withdrawFromDefuse(params);
 
     console.log('Transaction payload:', transactionPayload);
+
+    const link = `https://wallet.bitte.ai/sign-message?message=${encodeURIComponent(JSON.stringify(transactionPayload.messageString))}&nonce=${transactionPayload.nonce}&callbackUrl=${PLUGIN_URL}/redirect?data=${encodeURIComponent(JSON.stringify(transactionPayload))}`;
 
     return NextResponse.json(transactionPayload);
 

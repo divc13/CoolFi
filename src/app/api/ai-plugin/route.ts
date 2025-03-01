@@ -137,7 +137,102 @@ export async function GET() {
                     },
                 },
             },
-            
+            "/api/twitter/defuse-deposit": {
+                get: {
+                    operationId: "depositIntoDefuseUsingTwitter",
+                    summary: "Sends the transaction link to the user for deposit into defuse or near intents",
+                    description: `This method should only be called if the query is from twitter. If the query is from twitter, it shall contain the conversation id and explicitly say that this is a message from twitter.  
+                    Send the transaction Link along with required description to the user on twitter using send-message api. If you dont have the user account id, ask for it on twitter using send-message.`,
+                    parameters: [
+                        {
+                            name: "conversationId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The conversation id of the twitter chat"
+                        },
+                        {
+                            name: "accountId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The NEAR account ID of the user"
+                        },
+                        {
+                            name: "tokenIn",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: `The token user wants to deposit. If possible understand and fill on your own. Do ask if obsecure. This must be one of the tokens from ${tokenData}. This is only the name of the token.`
+                        },
+                        {
+                            name: "amount",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "the amount to deposit into defuse or near intents."
+                        },
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Successful response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            link: {
+                                                type: "string",
+                                                description: "The link to send to the user on twitter"
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        "400": {
+                            description: "Bad request",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "500": {
+                            description: "Server error",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                },
+            },
             "/api/tools/defuse-deposit": {
                 get: {
                     operationId: "depositIntoDefuse",
@@ -242,12 +337,12 @@ export async function GET() {
                     },
                 },
             },
-            "/api/twitter/defuse-deposit": {
+            "/api/twitter/defuse-swap": {
                 get: {
-                    operationId: "depositIntoDefuseUsingTwitter",
-                    summary: "Sends the transaction link to the user for deposit into defuse or near intents",
+                    operationId: "swapCryptoInDefuseUsingTwitter",
+                    summary: "Sends the sign-message link to the user for swapping crypto in defuse or near intents",
                     description: `This method should only be called if the query is from twitter. If the query is from twitter, it shall contain the conversation id and explicitly say that this is a message from twitter.  
-                    Send the transaction Link along with required description to the user on twitter using send-message api. If you dont have the user account id, ask for it on twitter using send-message.`,
+                    Send the sign-message Link along with required description to the user on twitter using send-message api. If you dont have the user account id, ask for it on twitter using send-message.`,
                     parameters: [
                         {
                             name: "conversationId",
@@ -268,27 +363,36 @@ export async function GET() {
                             description: "The NEAR account ID of the user"
                         },
                         {
+                            name: "amountIn",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The amount of input crypto which user wants to swap"
+                        },
+                        {   
                             name: "tokenIn",
                             in: "query",
                             required: true,
                             schema: {
                                 type: "string"
                             },
-                            description: `The token user wants to deposit. If possible understand and fill on your own. Do ask if obsecure. This must be one of the tokens from ${tokenData}. This is only the name of the token.`
+                            description: "The type of cryptocurrency the user is swapping from."
                         },
-                        {
-                            name: "amount",
+                        {   
+                            name: "tokenOut",
                             in: "query",
                             required: true,
                             schema: {
                                 type: "string"
                             },
-                            description: "the amount to deposit into defuse or near intents."
+                            description: "The type of cryptocurrency the user is swapping from."
                         },
                     ],
                     responses: {
                         "200": {
-                            description: "Successful response",
+                            description: "Returns the swap intent message.",
                             content: {
                                 "application/json": {
                                     schema: {
@@ -299,9 +403,9 @@ export async function GET() {
                                                 description: "The link to send to the user on twitter"
                                             },
                                         },
-                                    },
-                                },
-                            },
+                                    }
+                                }
+                            }
                         },
                         "400": {
                             description: "Bad request",
@@ -320,7 +424,7 @@ export async function GET() {
                             }
                         },
                         "500": {
-                            description: "Server error",
+                            description: "Error response",
                             content: {
                                 "application/json": {
                                     schema: {
@@ -335,15 +439,14 @@ export async function GET() {
                                 }
                             }
                         }
-                    },
+                    }
                 },
             },
-            
-            "/api/twitter/defuse-swap": {
+            "/api/tools/defuse-swap": {
                 get: {
-                    operationId: "swapCryptoInDefuseUsingTwitter",
-                    summary: "Generate a link to sign message and send to twitter",
-                    description: `Generates an intent message for swapping crypto based on user input. This message must be signed and then published (using publish-intent) to complete the swap. Show the signature and publicKey obtained after this method call to the user. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}. This method must be called only of the message is from `,
+                    operationId: "swapCryptoInDefuse",
+                    summary: "Retrieve a message to swap cryptocurrency.",
+                    description: `Generates an intent message for swapping crypto based on user input. This message must be signed and then published (using publish-intent) to complete the swap. Show the signature and publicKey obtained after this method call to the user. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}.`,
                     parameters: [
                         {
                             name: "accountId",
@@ -463,13 +566,22 @@ export async function GET() {
                     }
                 },
             },
-
-            "/api/tools/defuse-swap": {
+            "/api/twitter/defuse-withdraw": {
                 get: {
-                    operationId: "swapCryptoInDefuse",
-                    summary: "Retrieve a message to swap cryptocurrency.",
-                    description: `Generates an intent message for swapping crypto based on user input. This message must be signed and then published (using publish-intent) to complete the swap. Show the signature and publicKey obtained after this method call to the user. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}.`,
+                    operationId: "defuseWithdrawUsingTwitter",
+                    summary: "Sends the sign-message link to the user for withdrawing crypto in defuse or near intents",
+                    description: `This method should only be called if the query is from twitter. If the query is from twitter, it shall contain the conversation id and explicitly say that this is a message from twitter.  
+                    Send the sign-message Link along with required description to the user on twitter using send-message api. If you dont have the user account id, ask for it on twitter using send-message.`,
                     parameters: [
+                        {
+                            name: "conversationId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The conversation id of the twitter chat"
+                        },
                         {
                             name: "accountId",
                             in: "query",
@@ -480,7 +592,7 @@ export async function GET() {
                             description: "The NEAR account ID of the user"
                         },
                         {
-                            name: "amountIn",
+                            name: "exact_amount_in",
                             in: "query",
                             required: true,
                             schema: {
@@ -489,16 +601,7 @@ export async function GET() {
                             description: "The amount of input crypto which user wants to swap"
                         },
                         {   
-                            name: "tokenIn",
-                            in: "query",
-                            required: true,
-                            schema: {
-                                type: "string"
-                            },
-                            description: "The type of cryptocurrency the user is swapping from."
-                        },
-                        {   
-                            name: "tokenOut",
+                            name: "defuse_asset_identifier_in",
                             in: "query",
                             required: true,
                             schema: {
@@ -515,40 +618,11 @@ export async function GET() {
                                     schema: {
                                         type: "object",
                                         properties: {
-                                            transactionPayload: {
-                                                type: "object",
-                                                description: "The payload to sign and publish. To take in everything in here, even the callbackUrl",
-                                                properties: {
-                                                    message: {
-                                                        type: "string",
-                                                        description: "The message to sign before publishing."
-                                                    },
-                                                    receiverId: {
-                                                        type: "string",
-                                                        description: "The contract's near id"
-                                                    },
-                                                    nonce: {
-                                                        type: "string",
-                                                        description: "The unique identifier for the transaction. This is a base64 string. ",
-                                                        example1 : "HXRpqKa9xCGMpB37KpfQjSinMVQKuN1WF2Au72Pqg9Y=",
-                                                        example2: "zanFCPTWKvvV5oBhL1JnZj4p7cUkqt1+PPff4j6GwLA="
-                                                    },
-                                                    callbackUrl: {
-                                                        type: "string",
-                                                        description: "url to call back on success"
-                                                    },
-                                                }
-                                            },
-                                            netReturns: {
-                                                type: "object",
-                                                additionalProperties: true,
-                                                description: "The net returns of the swap. Show this to user before they sign the message."
-                                            },
-                                            quote_hash: {
+                                            link: {
                                                 type: "string",
-                                                description: "quote hash of the best quote index."
-                                            }
-                                        }
+                                                description: "The link to send to the user on twitter"
+                                            },
+                                        },
                                     }
                                 }
                             }
@@ -704,6 +778,102 @@ export async function GET() {
                     }
                 },
             },
+            "/api/twitter/publish-intent": {
+                get: {
+                    operationId: "publishIntentUsingTwitter",
+                    summary: "Publish a signed crypto swap intent.",
+                    description: `This method should only be called if the query is from twitter. If the query is from twitter, it shall contain the conversation id and explicitly say that this is a message from twitter. If you dont have the user account id, ask for it on twitter using send-message.
+                    Finalizes the crypto swap by submitting the signed intent message.`,
+                    parameters: [
+                        {
+                            name: "accountId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The NEAR account ID of the user"
+                        },
+                        {
+                            name: "signature",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The cryptographic signature generated for the intent message in the form of a hexadecimal string. This is available after signing from the return params of sign-message - no need to ask the user. Do not encode or decode any thing by your own."
+                        },
+                        {
+                            name: "publicKey",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The ed25519 public key from the signing result. Example format: 'ed25519:HeaBJ...'. Do not encode or decode any thing by your own. Take this value from the result of sign-message. Do not default to some example given or user wallet. This is basically the public key for the user who signed the message."
+                        },
+                        {
+                            name: "data",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The data for which the message was signed. This should be the exact message obtained from the swap API and used in the signing process."
+                        },
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Intent successfully published.",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            accountDetails: {
+                                                type: "string",
+                                                description: "The user's account details",
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        "400": {
+                            description: "Bad request",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "500": {
+                            description: "Server error",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                },
+            },
             "/api/tools/publish-intent": {
                 get: {
                     operationId: "publishIntent",
@@ -826,6 +996,88 @@ export async function GET() {
                     },
                 },
             },
+            "/api/twitter/get-account-details": {
+                get: {
+                    operationId: "getAcountDetailsUsingTwitter",
+                    summary: "get user wallet details",
+                    description: `This method should only be called if the query is from twitter. If the query is from twitter, it shall contain the conversation id and explicitly say that this is a message from twitter.  
+                    Respond with user wallet details along with required description to the user on twitter using send-message api. If you dont have the user account id, ask for it on twitter using send-message.`,
+                    parameters: [
+                        {
+                            name: "conversationId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The conversation id of the twitter chat"
+                        },
+                        {
+                            name: "accountId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The NEAR account ID of the user"
+                        },
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Successful response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            accountDetails: {
+                                                type: "string",
+                                                description: "The user's account details",
+                                            },
+                                            satoshi: {
+                                                type: "string",
+                                                description: "The user's number of satoshi details",
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        "400": {
+                            description: "Bad request",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "500": {
+                            description: "Server error",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                },
+            },
             "/api/tools/get-account-details": {
                 get: {
                     operationId: "getAcountDetails",
@@ -861,6 +1113,121 @@ export async function GET() {
                                         },
                                     },
                                 },
+                            },
+                        },
+                        "400": {
+                            description: "Bad request",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "500": {
+                            description: "Server error",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                },
+            },
+            "/api/twitter/transfer-bitcoin": {
+                get: {
+                    operationId: "transferBitcoinUsingTwitter",
+                    summary: "Sends the sign-transaction link to the user for transfering bitcoin.",
+                    description: `This method should only be called if the query is from twitter. If the query is from twitter, it shall contain the conversation id and explicitly say that this is a message from twitter.  
+                    Send the sign-transaction Link along with required description to the user on twitter using send-message api. If you dont have the user account id, ask for it on twitter using send-message. 
+                    Generates transaction to transfer bitcoin to another account. If the user gives the amount in satoshi, convert it to BTC and then proceed.`,
+                    parameters: [
+                        {
+                            name: "conversationId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The conversation id of the twitter chat"
+                        },
+                        {
+                            name: "accountId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The NEAR account ID of the user"
+                        },
+                        {
+                            name: "receiverId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "This receiverId can be bitcoin address or it can be NEAR account ID of the recepient."
+                        },
+                        {
+                            name: "isReceiverIdNearAccount",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "'true' if receiverId is NEAR account ID, 'false' if receiverId is bitcoin address. If possible understand and fill on your own. (eg for near account is user.near)"
+                        },
+                        {
+                            name: "amount",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "amount to transfer. This can be either in bitcoin or satoshi. If possible understand and fill on your own."
+                        },
+                        {
+                            name: "isAmountInBitcoin",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "'true' if amount is in bitcoin, 'false' if amount is in NEAR/satoshi. This is very important. But try to fill it on your own."
+                        },
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Successful response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            link: {
+                                                type: "string",
+                                                description: "The link to send to the user on twitter"
+                                            },
+                                        },
+                                    }
+                                }
                             },
                         },
                         "400": {
@@ -947,7 +1314,7 @@ export async function GET() {
                             schema: {
                                 type: "string"
                             },
-                            description: "'true' if amount is in bitcoin, 'false' if amount is in NEAR. This is very important. But try to fill it on your own."
+                            description: "'true' if amount is in bitcoin, 'false' if amount is in NEAR/satoshi. This is very important. But try to fill it on your own."
                         },
                         {
                             name: "callbackUrl",
@@ -974,6 +1341,93 @@ export async function GET() {
                                             transactionData: {
                                                 type: "string",
                                                 // description: "This transactionData needs to be sent to relayTransaction (no need to sign this)",
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        "400": {
+                            description: "Bad request",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "500": {
+                            description: "Server error",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                },
+            },
+            "/api/twitter/relay-transaction": {
+                get: {
+                    operationId: "relayTransactionUsingTwitter",
+                    summary: "relay the transactions sent",
+                    description: `This method should only be called if the query is from twitter. If the query is from twitter, it shall contain the conversation id and explicitly say that this is a message from twitter. If you dont have the user account id, ask for it on twitter using send-message.,
+                    This will take the transaction payload and relay it to the bitcoin network. The data and the transaction hash are neccesary and should be given.`,
+                    parameters: [
+                        {
+                            name: "accountId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "account id of the user who has signed the transaction."
+                        },
+                        {
+                            name: "data",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "data should be taken from the api which got the payload."
+                        },
+                        {
+                            name: "transactionHashes",
+                            in: "query", 
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The transaction hash got from signing the transaction. This is something which you will get on sign-transaction endpoint."
+                        }
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Successful response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            transactionHash: {
+                                                type: "string",
+                                                description: "The transaction hash of the relayed transaction",
                                             },
                                         },
                                     },
@@ -1101,7 +1555,102 @@ export async function GET() {
                     },
                 },
             },
-            
+            "/api/twitter/btc-defuse-deposit": {
+                get: {
+                    operationId: "btcDefuseDepositUsingDefuse",
+                    summary: "Deposits bitcoin into defuse",
+                    description: `This method should only be called if the query is from twitter. If the query is from twitter, it shall contain the conversation id and explicitly say that this is a message from twitter. If you dont have the user account id, ask for it on twitter using send-message.,
+                    Generates transaction link to deposit bitcoin into defuse or near intents. Take the amount in BTC, and not in satoshi from the users. Send the transaction Link along with required description to the user on twitter using send-message api.`,
+                    parameters: [
+                        {
+                            name: "conversationId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The conversation id of the twitter chat"
+                        },
+                        {
+                            name: "accountId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The NEAR account ID of the user"
+                        },
+                        {
+                            name: "amount",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "amount to transfer. This can be either in bitcoin or satoshi. If possible understand and fill on your own."
+                        },
+                        {
+                            name: "isAmountInBitcoin",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "'true' if amount is in bitcoin, 'false' if amount is in NEAR. This is very important. But try to fill it on your own."
+                        },
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Successful response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            link: {
+                                                type: "string",
+                                                description: "The link to send to the user on twitter"
+                                            },
+                                        },
+                                    }
+                                }
+                            }
+                        },
+                        "400": {
+                            description: "Bad request",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "500": {
+                            description: "Server error",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                },
+            },
             "/api/tools/btc-defuse-deposit": {
                 get: {
                     operationId: "btcDefuseDeposit",
@@ -1201,10 +1750,11 @@ export async function GET() {
                     },
                 },
             },
-            "/api/tools/get-blockchains": {
+            "/api/twitter/get-blockchains": {
                 get: {
                     summary: "get blockchain information",
-                    description: "Respond with a list of blockchains",
+                    description: `This method should only be called if the query is from twitter. If the query is from twitter, it shall contain the conversation id and explicitly say that this is a message from twitter. If you dont have the user account id, ask for it on twitter using send-message.,
+                    Respond with a list of blockchains to the user on twitter using send-message api.`,
                     operationId: "get-blockchains",
                     responses: {
                         "200": {
@@ -1225,6 +1775,138 @@ export async function GET() {
                         },
                     },
                 },
+            },
+            "/api/tools/get-blockchains": {
+                get: {
+                    summary: "get blockchain information",
+                    description: "Respond with a list of blockchains",
+                    operationId: "get-blockchains",
+                    parameters: [
+                        {
+                            name: "conversationId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The conversation id of the twitter chat"
+                        },
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Successful response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            message: {
+                                                type: "string",
+                                                description: "The list of blockchains",
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            "/api/twitter/create-near-transaction": {
+                get: {
+                    operationId: "createNearTransaction",
+                    summary: "Create a NEAR transaction payload",
+                    description: `This method should only be called if the query is from twitter. If the query is from twitter, it shall contain the conversation id and explicitly say that this is a message from twitter. If you dont have the user account id, ask for it on twitter using send-message.,
+                    Generates a near transaction link for transferring tokens to another near wallet. Send the transaction Link along with required description to the user on twitter using send-message api.`,
+                    parameters: [
+                        {
+                            name: "conversationId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The conversation id of the twitter chat"
+                        },
+                        {
+                            name: "accountId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The NEAR account ID of the user"
+                        },
+                        {
+                            name: "receiverId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The NEAR account ID of the receiver"
+                        },
+                        {
+                            name: "amount",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The amount of NEAR tokens to transfer"
+                        }
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Successful response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            link: {
+                                                type: "string",
+                                                description: "The link to send to the user on twitter"
+                                            },
+                                        },
+                                    }
+                                }
+                            }
+                        },
+                        "400": {
+                            description: "Bad request",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "500": {
+                            description: "Error response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             },
             "/api/tools/create-near-transaction": {
                 get: {

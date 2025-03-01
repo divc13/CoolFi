@@ -8,6 +8,7 @@ import { getTokenPriceUSD } from '@/app/near-intent/providers/coingeckoProvider'
 import type { IntentMessage } from '@/app/near-intent/types/intents';
 import { createTokenDiffIntent } from '@/app/near-intent/types/intents';
 import crypto from 'crypto';
+import { PLUGIN_URL } from '@/app/config';
 
 export async function GET(request: Request) {
   try {
@@ -100,19 +101,30 @@ export async function GET(request: Request) {
         )]
     };
 
-    const messageString = JSON.stringify(intentMessage);
+    const messageString = intentMessage;
     const nonce = new Uint8Array(crypto.randomBytes(32));
     const recipient = "intents.near";
     const qoute_hash = quote[best_quote_index].quote_hash;
+    const transactionPayload = {
+        messageString, 
+        nonce: Buffer.from(nonce).toString('base64'),
+        recipient
+    };
+
+    const data = {
+        messageString,
+        recipient,
+        nonce: Buffer.from(nonce).toString('base64'),
+        quote_hash: qoute_hash
+    }
+
+    const link = `https://wallet.bitte.ai/sign-message?message=${encodeURIComponent(JSON.stringify(messageString))}&nonce=${transactionPayload.nonce}&callbackUrl=${PLUGIN_URL}/redirect?data=${encodeURIComponent(JSON.stringify(data))}`;
+    
+    console.log({link});
     
     return NextResponse.json(
         {
-            transactionPayload: {
-                messageString, 
-                nonce: Buffer.from(nonce).toString('base64'), 
-                recipient
-            },
-            qoute_hash,
+            link,
             returns
         }
     );

@@ -8,10 +8,16 @@ export async function GET(request: Request) {
     const signature = searchParams.get('signature');
     const accountId = searchParams.get('accountId');
     const publicKey = searchParams.get('publicKey');
-    const messageString = searchParams.get('message');
-    const recipient = searchParams.get('receiverId');
-    const nonce = searchParams.get('nonce');
-    const quote_hash = searchParams.get('quote_hash');
+    const data = searchParams.get('data');
+    if (!data) {
+      console.log('Missing parameters:', { data });
+      return NextResponse.json({ error: 'data is missing' }, { status: 400 });
+    }
+    const json_data = JSON.parse(decodeURIComponent(data));
+    const messageString = json_data.messageString;
+    const recipient = json_data.recipient;
+    const nonce = json_data.nonce;
+    const quote_hash = json_data.quote_hash;
 
     if (!signature || !publicKey || !messageString || !recipient || !nonce || !accountId) {
       console.log('Missing parameters:', { signature, publicKey, messageString, recipient, nonce });
@@ -25,11 +31,12 @@ export async function GET(request: Request) {
     await ensurePublicKeyRegistered(publicKey, accountId);
     const signatureBuffer = bs58.encode(Buffer.from(signature, "base64"));
 
-    const msg = JSON.parse(decodeURIComponent(messageString));
-    console.log(msg);
-    const messageStr = JSON.stringify(msg);
+    // const msg = decodeURIComponent(messageString);
+    // console.log(msg);
+    const messageStr = JSON.stringify(messageString);
 
-    console.log(messageStr);
+    console.log({messageStr});
+    console.log({messageString});
 
 
     // Publish intent
