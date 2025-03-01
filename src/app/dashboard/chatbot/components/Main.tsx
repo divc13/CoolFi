@@ -64,22 +64,25 @@ const Main: React.FC = () => {
             </Typography> */}
 
 
-          <BitteAiChat
-            options={{ agentImage: bitteAgent.image, agentName: bitteAgent.name}}
-            agentId={bitteAgent.id}
-            // @ts-expect-error: Wallet is not null
-            wallet={{ near: { wallet } }}
-            apiUrl="/api/chat"
-            historyApiUrl="/api/chat-history"
-            colors={{
-              generalBackground: isDarkMode ? "#0000000" : "background.paper",
-              messageBackground: isDarkMode ? "#0A0A0A" : "#EEEEEE",
-              textColor: isDarkMode ? "#FAFAFA" : "#000000",
-              buttonColor: isDarkMode ? "#000000" : "#999999",
-              borderColor: isDarkMode ? "#444444" : "#D1D5DB",
-            }}
-            welcomeMessageComponent={<WelcomeMessage />}
-          />
+            <BitteAiChat
+              agentId={bitteAgent.id}
+              // @ts-expect-error: Wallet is not null
+              wallet={{ near: { wallet } }}
+              apiUrl="/api/chat"
+              historyApiUrl="/api/chat-history"
+              options={{
+                agentImage: bitteAgent.image,
+                agentName: bitteAgent.name,
+                colors: {
+                  generalBackground: isDarkMode ? "#000000" : "background.paper",
+                  messageBackground: isDarkMode ? "#0A0A0A" : "#EEEEEE",
+                  textColor: isDarkMode ? "#FAFAFA" : "#000000",
+                  buttonColor: isDarkMode ? "#000000" : "#999999",
+                  borderColor: isDarkMode ? "#444444" : "#D1D5DB",
+                },
+                welcomeMessageComponent: <WelcomeMessage />,
+              }}
+            />
         </Box>
       </Paper>
     </Container>

@@ -87,7 +87,7 @@ export async function GET(request: Request) {
     const link = `https://wallet.bitte.ai/sign-transaction?transactions_data=${encodeURI(JSON.stringify(TransactionToSign))}&callbackUrl=${PLUGIN_URL}/relay-transaction?data=${transactionData}`;
     console.log({link});
 
-    return NextResponse.json({ transactionPayload: encodeURI(JSON.stringify(TransactionToSign)), transactionData: transactionData });
+    return NextResponse.json({ link });
 
   } catch (error) {
     console.error('Error generating NEAR account details:', error);
