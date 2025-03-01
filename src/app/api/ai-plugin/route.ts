@@ -592,6 +592,15 @@ export async function GET() {
                             description: "The NEAR account ID of the user"
                         },
                         {
+                            name: "receiverId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The NEAR account ID of the receiver of funds. This can be the user himself or if specified then someone else."
+                        },
+                        {
                             name: "exact_amount_in",
                             in: "query",
                             required: true,

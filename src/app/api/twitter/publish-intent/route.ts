@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { ensurePublicKeyRegistered, pollIntentStatus, publishIntent } from "@/app/near-intent/actions/crossChainSwap";
 import bs58 from 'bs58';
+import { PLUGIN_URL } from '@/app/config';
 
 export async function GET(request: Request) {
   try {
@@ -27,23 +28,18 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'some required parameters are missing' }, { status: 400 });
     }
 
+    const cb_url = `${PLUGIN_URL}/redirect?data=${(JSON.stringify(json_data))}`;
+
     console.log('Received parameters:', { signature, publicKey, messageString, recipient, nonce }, nonce.length);
 
     const nonceStr = decodeURIComponent(nonce);
     await ensurePublicKeyRegistered(publicKey, accountId);
     const signatureBuffer = bs58.encode(Buffer.from(signature, "base64"));
 
-    // const msg = decodeURIComponent(messageString);
-    // console.log(msg);
     const messageStr = JSON.stringify(messageString);
-
-    // const msg = JSON.parse(decodeURIComponent(messageString));
-    // console.log(msg);
-    // const messageStr = JSON.stringify(msg);
 
     console.log(messageStr);
     console.log(messageString);
-
 
     // Publish intent
     const intent = await publishIntent({
@@ -52,7 +48,8 @@ export async function GET(request: Request) {
             payload: {
                 message: messageStr,
                 nonce: nonceStr,
-                recipient
+                recipient,
+                callbackUrl: cb_url,
             },
             standard: "nep413",
             signature: `ed25519:${signatureBuffer}`,

@@ -69,7 +69,7 @@ async function withdrawFromDefuse(params: CrossChainSwapAndWithdrawParams): Prom
         const recipient = "intents.near";
  
         return {
-            message: messageString,
+            messageString: messageString,
             recipient,
             nonce: nonceStr
         }
@@ -120,9 +120,9 @@ export async function GET(request: Request) {
 
     console.log('Transaction payload:', transactionPayload);
 
-    const link = `https://wallet.bitte.ai/sign-message?message=${encodeURIComponent(JSON.stringify(transactionPayload.messageString))}&nonce=${transactionPayload.nonce}&callbackUrl=${PLUGIN_URL}/redirect?data=${encodeURIComponent(JSON.stringify(transactionPayload))}`;
-
-    return NextResponse.json(transactionPayload);
+    const link = `https://wallet.bitte.ai/sign-message?message=${encodeURIComponent(JSON.stringify(transactionPayload.messageString))}&nonce=${transactionPayload.nonce}&recipient=intents.near&callbackUrl=${PLUGIN_URL}/redirect?data=${encodeURIComponent(JSON.stringify(transactionPayload))}`;
+    console.log({link});
+    return NextResponse.json(link);
 
 
   } catch (error) {
