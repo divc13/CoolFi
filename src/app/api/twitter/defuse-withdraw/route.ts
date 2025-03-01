@@ -117,10 +117,11 @@ export async function GET(request: Request) {
     console.log('Params:', params);
 
     const transactionPayload = await withdrawFromDefuse(params);
+    const nonce_to_sign = transactionPayload.nonce;
 
     console.log('Transaction payload:', transactionPayload);
 
-    const link = `https://wallet.bitte.ai/sign-message?message=${encodeURIComponent(JSON.stringify(transactionPayload.messageString))}&nonce=${transactionPayload.nonce}&recipient=intents.near&callbackUrl=${PLUGIN_URL}/redirect?data=${encodeURIComponent(JSON.stringify(transactionPayload))}`;
+    const link = `https://wallet.bitte.ai/sign-message?message=${encodeURIComponent(JSON.stringify(transactionPayload.messageString))}&nonce=${(nonce_to_sign)}&recipient=intents.near&callbackUrl=${PLUGIN_URL}/redirect?data=${encodeURIComponent(JSON.stringify(transactionPayload))}`;
     console.log({link});
     return NextResponse.json({link});
 

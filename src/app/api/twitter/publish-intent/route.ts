@@ -16,7 +16,8 @@ export async function GET(request: Request) {
       console.log('Missing parameters:', { data });
       return NextResponse.json({ error: 'data is missing' }, { status: 400 });
     }
-    const json_data = JSON.parse(decodeURIComponent(data));
+    const json_data = JSON.parse((data));
+    // const json_data = JSON.parse(decodeURIComponent(data));
     const messageString = json_data.messageString;
     const recipient = json_data.recipient;
     const nonce = json_data.nonce;
@@ -28,11 +29,12 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'some required parameters are missing' }, { status: 400 });
     }
 
+    // const nonceStr = decodeURIComponent(nonce);
+    // json_data.nonce = nonceStr;
     const cb_url = `${PLUGIN_URL}/redirect?data=${(JSON.stringify(json_data))}`;
 
     console.log('Received parameters:', { signature, publicKey, messageString, recipient, nonce }, nonce.length);
 
-    const nonceStr = decodeURIComponent(nonce);
     await ensurePublicKeyRegistered(publicKey, accountId);
     const signatureBuffer = bs58.encode(Buffer.from(signature, "base64"));
 
@@ -47,7 +49,7 @@ export async function GET(request: Request) {
         signed_data: {
             payload: {
                 message: messageStr,
-                nonce: nonceStr,
+                nonce: json_data.nonce,
                 recipient,
                 callbackUrl: cb_url,
             },
