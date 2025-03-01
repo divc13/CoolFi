@@ -122,7 +122,7 @@ export async function GET(request: Request) {
 
     const link = `https://wallet.bitte.ai/sign-message?message=${encodeURIComponent(JSON.stringify(transactionPayload.messageString))}&nonce=${transactionPayload.nonce}&recipient=intents.near&callbackUrl=${PLUGIN_URL}/redirect?data=${encodeURIComponent(JSON.stringify(transactionPayload))}`;
     console.log({link});
-    return NextResponse.json(link);
+    return NextResponse.json({link});
 
 
   } catch (error) {
