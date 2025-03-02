@@ -10,6 +10,18 @@ import { Transaction } from '@/app/near-intent/types/deposit';
 import { PLUGIN_URL } from '@/app/config';
 import {request as REQ} from '@/app/near-intent/utils/deposit';
 
+const shortenUrlTiny = async (longUrl: string): Promise<string | null> => {
+    const API_URL = `https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`;
+  
+    try {
+      const response = await fetch(API_URL);
+      return await response.text();
+    } catch (error) {
+      console.error("Error shortening URL:", error);
+      return null;
+    }
+  };
+
 const FT_MINIMUM_STORAGE_BALANCE_LARGE = "1250000000000000000000";
                   
 function convertBigIntToString(jsonArray:any) {
@@ -133,10 +145,13 @@ export async function GET(request: Request) {
         link = `https://wallet.bitte.ai/sign-transaction?transactions_data=${encodeURI(JSON.stringify(modified_txns))}&callback_url=${PLUGIN_URL}/status/success`;
     }
 
-
     console.log({ link });
 
-    return NextResponse.json({ link });
+    const sh_link = await shortenUrlTiny(link);
+
+    console.log({ sh_link });
+
+    return NextResponse.json({ sh_link });
     
   } catch (error) {
     console.error('Error generating NEAR transaction payload:', error);

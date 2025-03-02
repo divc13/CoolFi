@@ -99,6 +99,8 @@ export async function GET() {
 
                 Wait for user to sign the message before proceeding to the next step.
                 Only skip steps if explicitly instructed by the user but no need to ask again and again if the user wants to proceed.
+                
+                In Case of a request from Twitter, Do ask for accountId if you dont know it.
 
                 `,
                 tools: [{ type: "generate-transaction" }, { type: "sign-message" }, { type: "get-token-metadata" }],
