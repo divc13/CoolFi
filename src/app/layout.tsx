@@ -9,7 +9,7 @@ const BitteWalletSetup = {
   network: "mainnet",
   callbackUrl: typeof window !== "undefined" ? window.location.origin : "",
   contractAddress: "",
-};
+};  
 
 type WalletProviderProps = {
   children: React.ReactNode;
