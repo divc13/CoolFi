@@ -31,7 +31,7 @@ export async function GET(request: Request) {
 
     // const nonceStr = decodeURIComponent(nonce);
     // json_data.nonce = nonceStr;
-    const cb_url = `${PLUGIN_URL}/redirect?data=${(JSON.stringify(json_data))}`;
+    const cb_url = `${PLUGIN_URL}/twitter/publish-intent?data=${(JSON.stringify(json_data))}`;
 
     console.log('Received parameters:', { signature, publicKey, messageString, recipient, nonce }, nonce.length);
 
@@ -63,9 +63,9 @@ export async function GET(request: Request) {
 
     if (intent.status === "OK") {
         const finalStatus = await pollIntentStatus(intent.intent_hash);
-        return NextResponse.json(finalStatus);
+        return NextResponse.json({finalStatus}, {status: 200});
     }
-    return NextResponse.json(intent);
+    return NextResponse.json({intent}, {status: 400});
 
   } catch (error) {
     console.error('Error generating NEAR account details:', error);

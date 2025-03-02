@@ -116,7 +116,7 @@ export async function GET(request: Request) {
         modified_txns.push(mod_txn);
     }
 
-    const link = `https://wallet.bitte.ai/sign-transaction?transactions_data=${encodeURI(JSON.stringify(modified_txns))}&callback_url=${PLUGIN_URL}`;  ;
+    const link = `https://wallet.bitte.ai/sign-transaction?transactions_data=${encodeURI(JSON.stringify(modified_txns))}&callback_url=${PLUGIN_URL}/status/success`;
 
     console.log({ link });
 

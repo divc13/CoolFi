@@ -53,7 +53,7 @@ export async function GET(request: Request) {
     const new_pbst = await BTC.reconstructSignedTransactionFromCallback(rs, address, utxos, receiverId, amount, publicKey);
     const txHash = await BTC.broadcastTX(new_pbst);
 
-    return NextResponse.json({ txHash });
+    return NextResponse.json({ txHash }, {status: 200});
 
   } catch (error) {
     console.error('Error generating NEAR account details:', error);

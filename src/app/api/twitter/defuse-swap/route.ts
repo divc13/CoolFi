@@ -114,13 +114,13 @@ export async function GET(request: Request) {
     const data = {
         messageString,
         recipient,
-        nonce: (Buffer.from(nonce).toString('base64')),
+        nonce: encodeURIComponent(Buffer.from(nonce).toString('base64')),
         quote_hash: qoute_hash
     }
 
     console.log (Buffer.from(nonce).toString('base64'));
 
-    const link = `https://wallet.bitte.ai/sign-message?message=${encodeURIComponent(JSON.stringify(messageString))}&nonce=${(transactionPayload.nonce)}&recipient=intents.near&callbackUrl=${PLUGIN_URL}/redirect?data=${encodeURIComponent(JSON.stringify(data))}`;
+    const link = `https://wallet.bitte.ai/sign-message?message=${encodeURIComponent(JSON.stringify(messageString))}&nonce=${(transactionPayload.nonce)}&recipient=intents.near&callbackUrl=${PLUGIN_URL}/twitter/publish-intent?data=${encodeURIComponent(JSON.stringify(data))}`;
     
     console.log({link});
     

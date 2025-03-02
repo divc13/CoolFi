@@ -37,6 +37,7 @@ export default function layout({
         >
           <Stack
             spacing={2}
+            
             sx={{
                 contain: "inline-size",
               alignItems: 'center',

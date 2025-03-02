@@ -1,4 +1,5 @@
 import { DEPLOYMENT_URL } from "vercel-url";
+import "dotenv/config";
 
 interface RuntimeSettings {
     networkId: string;
@@ -37,6 +38,7 @@ function getRuntimeSettings(): RuntimeSettings {
 
     for (const envVar of requiredEnvVars) {
         if (!process.env[envVar]) {
+            console.log(`Missing environment variable: ${envVar}`);
             throw new Error(`Missing environment variable: ${envVar}`);
         }
     }

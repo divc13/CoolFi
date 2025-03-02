@@ -51,7 +51,7 @@ export async function GET(request: Request)
             return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
         }
 
-        await sendDM(conversationId, message);
+        // await sendDM(conversationId, message);
 
         return NextResponse.json({}, { status: 200 });
 

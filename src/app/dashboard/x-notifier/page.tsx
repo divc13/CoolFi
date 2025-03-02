@@ -26,7 +26,7 @@ export default function CryptoUpdates() {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
-    <Container maxWidth="md" sx={{ textAlign: "center", py: 4 }}>
+    <Container maxWidth="md" sx={{ textAlign: "center", py: 4, margin: { md: "inherit !important", lg: "0 !important" } }}>
       <Paper
         elevation={4}
         sx={{
