@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import LoadingPage from "../../status/loading/page";
-import { error } from "console";
 
 export default function PublishIntentPage() {
   const [loading, setLoading] = useState(true);
@@ -36,9 +35,18 @@ export default function PublishIntentPage() {
 
         const response = await fetch(newUrl);
         const data = await response.json();
+        const cb_url = data.callback_url;
 
         if (response.status == 200) {
-          router.push("/status/success");
+            
+            if (cb_url)
+            {
+                redirect(cb_url);
+            }
+            else{
+                router.push("/status/success");
+            }
+
         } else {
           router.push("/status/failure");
         }
