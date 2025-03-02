@@ -90,14 +90,6 @@ export default function AppAppBar() {
                   </Button>
                 </Link>
           </Box>
-            {/* <Link href="/home" passHref>
-              <Button variant="outlined" color="info" size="small" sx={{
-                      fontWeight: activeSection === "hero" ? "bold" : "normal",
-                    //   textDecoration: activeSection === id ? "underline" : "none",
-                    }}>
-                CoolFi
-              </Button>
-            </Link> */}
 
             <Box sx={{ display: { xs: "none", md: "flex" } }}>
               {sections.map(({ id, label }) => (
@@ -108,7 +100,6 @@ export default function AppAppBar() {
                     size="small"
                     sx={{
                       fontWeight: activeSection === id ? "bold" : "normal",
-                    //   textDecoration: activeSection === id ? "underline" : "none",
                     }}
                   >
                     {label}

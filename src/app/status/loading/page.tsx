@@ -10,28 +10,6 @@ export default function LoadingPage() {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
 
-
-  // useEffect(() => {
-  //   if (typeof window !== "undefined") {
-  //     // Extract fragment (#accountId=...) from URL
-  //     const hashParams = new URLSearchParams(window.location.hash.substring(1));
-  //     const queryParams = new URLSearchParams(window.location.search);
-
-  //     console.log("Hash params:", hashParams);
-  //     console.log("Query params:", queryParams);
-
-  //     // Convert fragment to query parameters
-  //     // hashParams.forEach((value, key) => {
-  //     //   queryParams.set(key, value);
-  //     // });
-
-  //     // Redirect to the actual API with fixed query parameters
-  //     const newUrl = `/api/twitter/publish-intent?${queryParams}&${hashParams}`;
-  //     console.log("Redirecting to:", newUrl);
-  //     window.location.replace(newUrl);
-  //   }
-  // }, []);
-
   return (<Container 
     maxWidth="sm" 
     className="h-screen flex items-center justify-center"
@@ -50,12 +28,10 @@ export default function LoadingPage() {
           mt: 4,
       }}
     >
-      {/* Loading Spinner */}
       <Box display="flex" justifyContent="center" mb={2}>
         <CircularProgress size={80} color="primary" />
       </Box>
 
-      {/* Loading Message */}
       <Typography variant="h5" fontWeight="bold">
         Loading...
       </Typography>
@@ -64,5 +40,5 @@ export default function LoadingPage() {
       </Typography>
     </Paper>
   </Container>
-  ); // Temporary loading text
+  );
 }

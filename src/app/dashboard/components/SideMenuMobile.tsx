@@ -36,12 +36,6 @@ export default function SideMenuMobile({ open, toggleDrawer }: SideMenuMobilePro
       <Stack sx={{ maxWidth: "70dvw", height: "100%" }}>
         {/* Header */}
         <SideMenuHeader/> 
-        {/* <Stack direction="row" sx={{ p: 2, alignItems: "center", justifyContent: "center" , display: "flex" }}>
-          <Avatar alt="CoolFi Logo" src="/coolfi.png" sx={{ width: 36, height: 36 }} />
-          <Typography component="p" variant="h6" sx={{ ml: 1 }}>
-            CoolFi
-          </Typography>
-        </Stack> */}
         <Divider />
         <Stack sx={{ flexGrow: 1 }}>
           <MenuContent />

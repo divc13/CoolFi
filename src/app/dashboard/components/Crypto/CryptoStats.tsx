@@ -29,7 +29,7 @@ const CryptoStats = ({
         { label: "Max Supply", value: maxSupply },
         { label: "All-Time High", value: `$${allTimeHigh.toLocaleString()}` },
       ].map((metric, index) => (
-        <Grid item xs={12} sm={4} key={index}> {/* ✅ 3 per row */}
+        <Grid item xs={12} sm={4} key={index}>
           <Paper elevation={3} sx={{ minWidth: 120, minHeight: 110, display: "flex", alignItems: "center", justifyContent: "center" }}> 
             <CardContent sx={{ textAlign: "center" }}>
               <Typography variant="subtitle2">{metric.label}</Typography>

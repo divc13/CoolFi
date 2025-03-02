@@ -23,11 +23,6 @@ export default function Header() {
         <NavbarBreadcrumbs />
       </BrowserRouter>
       <Stack direction="row" sx={{ gap: 1 }}>
-        {/* <Search /> */}
-        {/* <CustomDatePicker /> */}
-        {/* <MenuButton showBadge aria-label="Open notifications">
-          <NotificationsRoundedIcon />
-        </MenuButton> */}
         <ColorModeIconDropdown />
       </Stack>
     </Stack>

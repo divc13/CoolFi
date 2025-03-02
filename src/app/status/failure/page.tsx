@@ -28,12 +28,10 @@ export default function FailurePage() {
             mt: 4,
         }}
       >
-        {/* Large Red Cross */}
         <Box display="flex" justifyContent="center" mb={2}>
           <Cancel sx={{ fontSize: 150, color: "red" }} />
         </Box>
 
-        {/* Failure Message */}
         <Typography variant="h4" fontWeight="bold" gutterBottom>
           Failure!
         </Typography>

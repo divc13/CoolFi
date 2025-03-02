@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useState } from "react";
-import { usePathname } from "next/navigation"; // ✅ Correct Hook
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -21,13 +21,11 @@ import MonetizationOnRoundedIcon from "@mui/icons-material/MonetizationOnRounded
 import { useTheme } from "@mui/material/styles";
 import tokensJson from "@/app/near-intent/config/tokens.json";
 
-// ✅ Extract token data dynamically
 const tokens = [
   ...tokensJson.tokens.mainnet.unified_tokens,
   ...tokensJson.tokens.mainnet.single_chain_tokens,
 ];
 
-// ✅ Sort tokens alphabetically
 const coinsList = tokens
   .map(token => ({
     coinGeckoId: token.cgId,
@@ -37,7 +35,7 @@ const coinsList = tokens
   .sort((a, b) => a.name.localeCompare(b.name));
 
 export default function MenuContent() {
-  const pathname = usePathname(); // ✅ Get the current route
+  const pathname = usePathname();
   const theme = useTheme();
   const [coinsOpen, setCoinsOpen] = useState(true);
 
@@ -47,7 +45,6 @@ export default function MenuContent() {
   return (
     <Stack sx={{ flexGrow: 1, p: 1, justifyContent: "space-between" }}>
       <List dense>
-        {/* Home Button */}
         <ListItem disablePadding>
           <Link href="/dashboard/home" passHref legacyBehavior>
             <ListItemButton
@@ -63,23 +60,6 @@ export default function MenuContent() {
           </Link>
         </ListItem>
 
-        {/* Account Page
-        <ListItem disablePadding>
-          <Link href="/dashboard/account" passHref legacyBehavior>
-            <ListItemButton
-              component="a"
-              sx={{
-                backgroundColor: isActive("/dashboard/account") ? theme.palette.action.selected : "inherit",
-                borderRadius: 2,
-              }}
-            >
-              <ListItemIcon><AccountCircleRoundedIcon /></ListItemIcon>
-              <ListItemText primary="Account" />
-            </ListItemButton>
-          </Link>
-        </ListItem> */}
-
-        {/* Swapper AI Page */}
         <ListItem disablePadding>
           <Link href="/dashboard/chatbot" passHref legacyBehavior>
             <ListItemButton
@@ -95,7 +75,6 @@ export default function MenuContent() {
           </Link>
         </ListItem>
 
-        {/* X Notifier Page */}
         <ListItem disablePadding>
           <Link href="/dashboard/x-notifier" passHref legacyBehavior>
             <ListItemButton
@@ -111,7 +90,6 @@ export default function MenuContent() {
           </Link>
         </ListItem>
 
-        {/* Crypto Tab (Moved to Last) */}
         <ListItem disablePadding>
           <ListItemButton onClick={() => setCoinsOpen(!coinsOpen)}>
             <ListItemIcon><MonetizationOnRoundedIcon /></ListItemIcon>

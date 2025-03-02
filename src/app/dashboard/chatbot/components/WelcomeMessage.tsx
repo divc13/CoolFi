@@ -49,11 +49,6 @@ const WelcomeMessage: React.FC = () => {
         CoolFi Assistant
       </Typography>
 
-      {/* Description */}
-      {/* <Typography variant="body1" mt={1} px={4}>
-        Enables seamless cross-chain swaps using NEAR Intents, accepts Bitcoin deposits, 
-        and provides AI-powered swap recommendations to maximize profit.
-      </Typography> */}
         <Typography variant="h6" color="gray">Welcome! How can I assist you today?</Typography>
 
 
@@ -67,7 +62,6 @@ const WelcomeMessage: React.FC = () => {
         }}
         />
 
-      {/* Suggestion Cards */}
       <Grid container spacing={3} justifyContent="center" overflow="hidden">
         {suggestions.map((suggestion, index) => (
           <Grid item xs={12} sm={4} key={index}>
@@ -94,9 +88,6 @@ const WelcomeMessage: React.FC = () => {
                 <Typography variant="h6" fontWeight="600">
                 {suggestion.title}
                 </Typography>
-                {/* <Typography variant="body2" mt={1}>
-                {suggestion.description}
-                </Typography> */}
             </CardContent>
             </Card>
 

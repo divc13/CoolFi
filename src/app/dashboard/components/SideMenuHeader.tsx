@@ -8,7 +8,7 @@ const SideMenuHeader: React.FC = () => {
     return (
       <Box
         sx={{
-          position: "relative",  // Enables absolute positioning inside
+          position: "relative",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",

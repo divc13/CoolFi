@@ -51,7 +51,7 @@ const Main: React.FC = () => {
             <Typography 
                 variant="h5" 
                 fontWeight="bold" 
-                sx={{ color: isDarkMode ? "grey.300" : "grey.900" }} // Adjusts based on theme mode
+                sx={{ color: isDarkMode ? "grey.300" : "grey.900" }}
             >
                 Chat With CoolFi
             </Typography>
@@ -59,9 +59,6 @@ const Main: React.FC = () => {
 
 
         <Box sx={{ height: { xs: "calc(100vh - 120px)", md: "calc(100vh - 190px)" } }}>
-            {/* <Typography variant="h6" fontWeight="600">
-                Chat with CoolFi Assistant
-            </Typography> */}
 
 
             <BitteAiChat

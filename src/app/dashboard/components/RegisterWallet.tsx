@@ -23,7 +23,7 @@ const RegisterWallet: React.FC = () => {
             <Button 
                 variant="outlined" 
                 onClick={handleSignIn} 
-                startIcon={<AccountBalanceWalletIcon />}  // ✅ Adds the wallet icon
+                startIcon={<AccountBalanceWalletIcon />}
             >
             Connect Wallet
             </Button>

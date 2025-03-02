@@ -14,7 +14,7 @@ const CryptoChart = ({ priceData }: { priceData: any[] }) => {
   const theme = useTheme();
 
   const formattedData = priceData.map((d) => ({
-    timestamp: new Date(d.timestamp).getTime(), // ✅ Ensure valid timestamp
+    timestamp: new Date(d.timestamp).getTime(),
     price: d.price,
   }));
 
@@ -54,11 +54,10 @@ const CryptoChart = ({ priceData }: { priceData: any[] }) => {
               border: `1px solid ${theme.palette.divider}`,
               borderRadius: theme.shape.borderRadius,
             }}
-            labelFormatter={(label) => new Date(label).toLocaleString()} // ✅ Show full datetime
+            labelFormatter={(label) => new Date(label).toLocaleString()}
             formatter={(value: any) => [`$${Number(value).toLocaleString()}`, "Price"]}
           />
 
-          {/* ✅ Light glow effect below the line */}
           <defs>
             <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor={theme.palette.primary.main} stopOpacity={0.4} />

@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import type { Tweet } from "agent-twitter-client";
 
-// ✅ Force Node.js runtime (Important for `agent-twitter-client`)
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-let sessionCookies: any = null; // ✅ Store session cookies globally
+let sessionCookies: any = null;
 
 export async function GET(req: NextRequest) {
   try {
-    // ✅ Dynamic import of `agent-twitter-client` inside try-catch
     let Scraper, SearchMode;
     try {
       const twitterClient = await import("agent-twitter-client");
@@ -27,7 +25,6 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Coin name is required" }, { status: 400 });
     }
 
-    // ✅ Initialize scraper
     const scraper = new Scraper();
 
     try {
@@ -39,7 +36,6 @@ export async function GET(req: NextRequest) {
 
         
 
-        // ✅ Perform login and cache session cookies
         await scraper.login(
           process.env.TWITTER_USERNAME!,
           process.env.TWITTER_PASSWORD!,
@@ -54,7 +50,6 @@ export async function GET(req: NextRequest) {
         console.log("✅ Session cookies saved.");
       }
 
-      // ✅ Fetch latest tweets
       const count = 15;
       const query = `${coin}`;
       console.log(`🔍 Searching for latest tweets: "${query}"`);
