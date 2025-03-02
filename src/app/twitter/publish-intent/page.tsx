@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import LoadingPage from "../../status/loading/page";
+import { error } from "console";
 
 export default function PublishIntentPage() {
   const [loading, setLoading] = useState(true);
@@ -11,20 +12,26 @@ export default function PublishIntentPage() {
   useEffect(() => {
     const fetchIntent = async () => {
       try {
+        
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
         const params = new URLSearchParams(window.location.search);
+        const mergedParams = new URLSearchParams();
+        params.forEach((value, key) => mergedParams.append(key, value));
+        hashParams.forEach((value, key) => mergedParams.append(key, value));
+        const newUrl = `/api/twitter/publish-intent?${(mergedParams.toString())}`;
 
-        const encodeParams = (params) => {
-          return Array.from(params.entries())
-            .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-            .join("&");
-        };
+        // const newUrl = `/api/twitter/publish-intent?${params}&${hashParams}`;
+        
+        // const encodeParams = (params) => {
+        //     return Array.from(params.entries())
+        //     .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+        //     .join("&");
+        // };
+        
+        // const encodedSearch = encodeParams(params);
+        // const encodedHash = encodeParams(hashParams);
 
-        const encodedSearch = encodeParams(params);
-        const encodedHash = encodeParams(hashParams);
 
-
-        const newUrl = `/api/twitter/publish-intent?${encodedSearch}&${encodedHash}`;
         console.log({newUrl});
 
         const response = await fetch(newUrl);
