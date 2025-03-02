@@ -8,7 +8,7 @@ const nextConfig = {
     return config;
   },
   images: {
-    domains: ["pbs.twimg.com"], // Allow Twitter-hosted images
+    domains: ["pbs.twimg.com", "s2.coinmarketcap.com"], // Allow Twitter-hosted images
   },
   async headers() {
     return [

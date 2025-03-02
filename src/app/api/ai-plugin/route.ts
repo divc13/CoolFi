@@ -4,6 +4,33 @@ import tokenData from "@/app/near-intent/config/tokens.json";
 
 export async function GET() {
 
+    const coinsArray = [
+        // From unified_tokens
+        { symbol: "USDC", name: "USD Coin", decimals: 6 },
+        { symbol: "ETH", name: "ETH", decimals: 18 },
+        { symbol: "AURORA", name: "Aurora", decimals: 18 },
+        { symbol: "TURBO", name: "Turbo", decimals: 18 },
+        
+        // From single_chain_tokens
+        { symbol: "NEAR", name: "Near", decimals: 24 },
+        { symbol: "BTC", name: "Bitcoin", decimals: 8 },
+        { symbol: "SOL", name: "Solana", decimals: 9 },
+        { symbol: "DOGE", name: "Dogecoin", decimals: 8 },
+        { symbol: "XRP", name: "XRP", decimals: 6 },
+        { symbol: "PEPE", name: "Pepe", decimals: 18 },
+        { symbol: "SHIB", name: "Shiba Inu", decimals: 18 },
+        { symbol: "LINK", name: "Chainlink", decimals: 18 },
+        { symbol: "UNI", name: "Uniswap", decimals: 18 },
+        { symbol: "ARB", name: "Arbitrum", decimals: 18 },
+        { symbol: "AAVE", name: "Aave", decimals: 18 },
+        { symbol: "GMX", name: "GMX", decimals: 18 },
+        { symbol: "MOG", name: "Mog Coin", decimals: 18 },
+        { symbol: "BRETT", name: "Brett", decimals: 18 },
+        { symbol: "SWEAT", name: "Sweat Economy", decimals: 18 },
+        { symbol: "WIF", name: "dogwifhat", decimals: 6 },
+        { symbol: "BOME", name: "BOOK OF MEME", decimals: 6 }
+      ];
+
     const pluginData = {
         openapi: "3.1.0",
         info: {
@@ -23,6 +50,8 @@ export async function GET() {
                 description: "A blockchain assistant that provides information, retrieves the user's account ID, interacts with Twitter, creates NEAR transaction payloads, and helps with crypto swaps with tree different apis: deposit, swap and withdraw. ",
                 instructions: `You assist with NEAR transactions, blockchain queries, account retrieval, Twitter interactions, and crypto swaps.You are provided with the twitter API's and so you can interact with the user on twitter.
 
+                You only support the cryptocurrencies mentioned in ${JSON.stringify(coinsArray)}. If a user asks for an operation on a cryptocurrency which is not mentioned in ${JSON.stringify(coinsArray)}, please deny all such operations. THIS IS IMPORTANT
+
                 For Retrieval of Account Details:
                 1. Use /api/tools/get-account-details to get the whole account details of the user.
                 2. Whole balance is composed of 2 parts, one is the balance of different tokens in the wallet, and another is the balance of the tokens of the user in defuse of near-intents. 
@@ -32,7 +61,7 @@ export async function GET() {
                 2. Use the 'generate-transaction' tool to execute the transaction.
                 
                 For Depositing Crypto into defuse or Near Intents:
-                1. For all cryptocurrencies in ${tokenData} other than bitcoin, Generate a transaction payload using "/api/tools/defuse-deposit".
+                1. For all cryptocurrencies in ${JSON.stringify(coinsArray)} other than bitcoin, Generate a transaction payload using "/api/tools/defuse-deposit".
                 2. If the crytocurrency to deposit in defuse or near intents is bitcoin or satoshi, then use "/api/tools/btc-defuse-deposit" to genrate transaction payload which is then relayed through "/api/tools/relay-transaction"
                 
                 For Swapping Crypto in Defuse or Near Intents:
@@ -54,8 +83,8 @@ export async function GET() {
                 Important Rules:
                 
                 1. sign-message takes in transaction payload which can optionally contain url. Dont miss out on the url.
-                2. Whenever you take in the amount related to any currency for any purpose, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi.
-                3. If a user asks any operation to be done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}.
+                2. Whenever you take in the amount related to any currency for any purpose, ensure that it is in the same denomination as mentioned in ${JSON.stringify(coinsArray)}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi.
+                3. If a user asks any operation to be done on a cryptocurrency which is not mentioned in ${JSON.stringify(coinsArray)}, please deny all such operations. We only support the cryptocurrencies mentioned in ${JSON.stringify(coinsArray)}.
 
                 Complete Swap Process (Deposit + Swap + Withdraw)
                 When performing a complete cryptocurrency swap (not using Twitter):
@@ -340,7 +369,7 @@ export async function GET() {
                             schema: {
                                 type: "string"
                             },
-                            description: `The token user wants to deposit. If possible understand and fill on your own. Do ask if obsecure. This must be one of the tokens from ${tokenData}. This is only the name of the token.`
+                            description: `The token user wants to deposit. If possible understand and fill on your own. Do ask if obsecure. This is only the name of the token.`
                         },
                         {
                             name: "amount",
@@ -408,7 +437,7 @@ export async function GET() {
                 get: {
                     operationId: "depositIntoDefuse",
                     summary: "function call for depositing crypto into defuse or near intents.",
-                    description: `Generates transaction to allow users to deposit their currency into defuse or near intents. Take the crypto currency to be deposited from the user. Also ask for the amount to be deposited. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}.
+                    description: `Generates transaction to allow users to deposit their currency into defuse or near intents. Take the crypto currency to be deposited from the user. Also ask for the amount to be deposited. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${coinsArray}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in coinsArray given in the instructions, please deny all such operations.
                     This method should not be called if the message is from twitter.
                     `,
                     parameters: [
@@ -428,7 +457,7 @@ export async function GET() {
                             schema: {
                                 type: "string"
                             },
-                            description: `The token user wants to deposit. If possible understand and fill on your own. Do ask if obsecure. This must be one of the tokens from ${tokenData}. This is only the name of the token.`
+                            description: `The token user wants to deposit. If possible understand and fill on your own. Do ask if obsecure. This is only the name of the token.`
                         },
                         {
                             name: "amount",
@@ -631,7 +660,7 @@ export async function GET() {
                 get: {
                     operationId: "swapCryptoInDefuse",
                     summary: "Retrieve a message to swap cryptocurrency.",
-                    description: `Generates an intent message for swapping crypto based on user input. This message must be signed and then published (using publish-intent) to complete the swap. Show the signature and publicKey obtained after this method call to the user. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}. This method should not be called if the message is from twitter.`,
+                    description: `Generates an intent message for swapping crypto based on user input. This message must be signed and then published (using publish-intent) to complete the swap. Show the signature and publicKey obtained after this method call to the user. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in coinsArray given in instructions. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. This method should not be called if the message is from twitter.`,
                     parameters: [
                         {
                             name: "accountId",
@@ -860,7 +889,7 @@ export async function GET() {
                 get: {
                     operationId: "defuseWithdraw",
                     summary: "Withdraws crypto from defuse or near intents.",
-                    description: `Generates an intent message for withdrawing crypto from near intents or defuse based on user input. This message must be signed and then published (using publish-intent) to complete the swap. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. If a user asks for done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}. This method should not be called if the message is from twitter.`,
+                    description: `Generates an intent message for withdrawing crypto from near intents or defuse based on user input. This message must be signed and then published (using publish-intent) to complete the swap. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in coinsArray given in instructions. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. This method should not be called if the message is from twitter.`,
                     parameters: [
                         {
                             name: "accountId",
@@ -2121,6 +2150,69 @@ export async function GET() {
                                                 }
                                             }
                                         }
+                                    }
+                                }
+                            }
+                        },
+                        "400": {
+                            description: "Bad request",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "500": {
+                            description: "Error response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "/api/tools/get-random-prediction": {
+                get: {
+                    operationId: "randomCryptoPrediction",
+                    summary: "Returns to user a random crypto prediction",
+                    description: "Returns to user a random crypto prediction.",
+                    parameters: [
+                        {
+                            name: "accountId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The NEAR account ID of the receiver"
+                        },
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Successful response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "string",
+                                        description: "The random crypto prediction which you need to tell the user."
                                     }
                                 }
                             }
