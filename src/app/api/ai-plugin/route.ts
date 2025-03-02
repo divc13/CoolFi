@@ -56,7 +56,17 @@ export async function GET() {
                 1. sign-message takes in transaction payload which can optionally contain url. Dont miss out on the url.
                 2. Whenever you take in the amount related to any currency for any purpose, ensure that it is in the same denomination as mentioned in ${tokenData}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi.
                 3. If a user asks any operation to be done on a cryptocurrency which is not mentioned in ${tokenData}, please deny all such operations. We only support the cryptocurrencies mentioned in ${tokenData}.
-                                
+
+                Complete Swap Process (Deposit + Swap + Withdraw)
+                When performing a complete cryptocurrency swap (not using Twitter):
+                Call all three APIs sequentially:
+                First: Deposit funds into Defuse
+                Second: Swap within Defuse
+                Third: Withdraw from Defuse
+
+                Wait for user to sign the message before proceeding to the next step.
+                Only skip steps if explicitly instructed by the user but no need to ask again and again if the user wants to proceed.
+
                 `,
                 tools: [{ type: "generate-transaction" }, { type: "sign-message" }, { type: "get-token-metadata" }],
                 image: `${PLUGIN_URL}/coolfi.svg`,
@@ -65,6 +75,24 @@ export async function GET() {
             image: `${PLUGIN_URL}/coolfi.svg`,
         },
         paths: {
+            "/api/tools/swap": {
+                get: {
+                    operationId: "SwapCrypto",
+                    summary: "You need to call the apis of Deposit into Defuse, Swap in defuse and withdraw from defuse one after the other to complete the swap. Do wait for user to sign each transaction.",
+                    description: `This api is just a place holder, Calling it will just get page not found. First call deposit into defuse. Wait for user to sign. Then swap in defuse. Again wait for user, Then withdraw and again wait. `,
+                    parameters: [
+                        {
+                            name: "accountId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: `Near account ID of the user`
+                        },
+                    ],
+                }
+            },
             "/api/tools/send-message": {
                 get: {
                     operationId: "sendMessageOnTwitter",
