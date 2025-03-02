@@ -9,7 +9,7 @@ import { getAllSupportedTokens } from '@/app/near-intent/types/tokens';
 import { Transaction } from '@/app/near-intent/types/deposit';
 import { PLUGIN_URL } from '@/app/config';
 import {request as REQ} from '@/app/near-intent/utils/deposit';
-
+  
 const FT_MINIMUM_STORAGE_BALANCE_LARGE = "1250000000000000000000";
                   
 function convertBigIntToString(jsonArray:any) {
