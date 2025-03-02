@@ -51,6 +51,7 @@ export async function GET() {
                 instructions: `You assist with NEAR transactions, blockchain queries, account retrieval, Twitter interactions, and crypto swaps.You are provided with the twitter API's and so you can interact with the user on twitter.
 
                 You only support the cryptocurrencies mentioned in ${JSON.stringify(coinsArray)}. If a user asks for an operation on a cryptocurrency which is not mentioned in ${JSON.stringify(coinsArray)}, please deny all such operations. THIS IS IMPORTANT
+                Dont change the units yourself. Decimals for each token token will be taken care of, and you dont need to change the currencies yourselves.
 
                 For Retrieval of Account Details:
                 1. Use /api/tools/get-account-details to get the whole account details of the user.
@@ -111,7 +112,7 @@ export async function GET() {
                 get: {
                     operationId: "SwapCryptoUsingTwitter",
                     summary: "Provides the twitter user a single link for the complete swap process. ",
-                    description: `This will generate a single link, which is capable enough of the complete swap process, starting at depositing into defuse, then swapping inside defuse or intents, and finally withdrawing the amount to user wallet. Note that the complete swap process is different from the swap inside defuse. This is a 3 staged design, but will be completed with a single link. The link generated should be sent to the user via twitter send-message api along with required description. This tool should only be called if the message is from twitter. `,
+                    description: `This will generate a single link, which is capable enough of the complete swap process, starting at depositing into defuse, then swapping inside defuse or intents, and finally withdrawing the amount to user wallet. Note that the complete swap process is different from the swap inside defuse. This is a 3 staged design, but will be completed with a single link. The link generated should be sent to the user via twitter send-message api along with required description. This tool should only be called if the message is from twitter. This method should not be called if the swap has to be made inside defuse.`,
                     parameters: [
                         {
                             name: "accountId",
@@ -223,8 +224,8 @@ export async function GET() {
             "/api/tools/swap": {
                 get: {
                     operationId: "SwapCrypto",
-                    summary: "You need to call the apis of Deposit, Swap and withdraw to complete the swap. Do wait for user to sign each transaction.",
-                    description: `This api is just a place holder, Calling it will just get page not found. First call deposit into defuse. Wait for user to sign. Then swap in defuse. Again wait for user, Then withdraw and again wait. This tool should not be called if the message is from twitter. Note that the complete swap process is different from the swap inside defuse.`,
+                    summary: "You need to call the apis of Deposit into Defuse, Swap in defuse and withdraw from defuse one after the other to complete the swap. Do wait for user to sign each transaction.",
+                    description: `This api is just a place holder, Calling it will just get page not found. First call deposit into defuse. Wait for user to sign. Then swap in defuse. Again wait for user, Then withdraw and again wait. This tool should not be called if the message is from twitter. This method should not be called if the swap has to be made inside defuse.`,
                     parameters: [
                         {
                             name: "accountId",
@@ -542,7 +543,7 @@ export async function GET() {
                     operationId: "swapCryptoInDefuseUsingTwitter",
                     summary: "Sends the sign-message link to the user for swapping crypto in defuse or near intents",
                     description: `This method should only be called if the query is from twitter. If the query is from twitter, it shall contain the conversation id and explicitly say that this is a message from twitter.  
-                    This method should be called only if the swap is told to be made inside defuse explcitly. Otherwise, the swap-crypto-twitter method should be used.
+                    This method should be called only if the swap is told to be made inside defuse. Otherwise, the swap-crypto-twitter method should be used.
                     Send the sign-message Link along with required description to the user on twitter using send-message api. If you dont have the user account id, ask for it on twitter using send-message. Donot call publish-intent yourself.`,
                     parameters: [
                         {
