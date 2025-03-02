@@ -136,6 +136,8 @@ export async function getDepositedBalances(
     nearClient: near.providers.Provider,
     network?: string
   ): Promise<TokenBalances> {
+
+    console.log("Here");
     // RPC call
     // Warning: `CodeResult` is not correct type for `call_function`, but it's closest we have.
     const networkId = network || "near";

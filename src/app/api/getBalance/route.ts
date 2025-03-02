@@ -1,9 +1,6 @@
 import { NextRequest } from "next/server";
 import axios from "axios";
 import tokensData from "@/app/near-intent/config/tokens.json"; // Import tokens.json directly
-import {connect} from "near-api-js";
-import { getDepositedBalances } from "@/app/near-intent/utils/deposit";
-import { settings } from "@/app/config";
 
 // Fetch token prices from CoinGecko
 async function getTokenPrices(tokenIds: string[]) {
@@ -92,14 +89,7 @@ export async function GET(req: NextRequest) {
       }))
       .filter((t:any) => t.amountUSD > 0); // Remove tokens with 0 USD balance
 
-      const nearConnection = await connect({
-        networkId: "mainnet",
-        nodeUrl: settings.nodeUrl,
-        });
-
-        const tokenBalancesDefuse = await getDepositedBalances(accountId, tokens, nearConnection.connection.provider, "near");
-
-    return Response.json({token_balance_wallet: tokensWithUSD, token_balance_defuse:  tokenBalancesDefuse},  { status: 200 });
+    return Response.json(tokensWithUSD, { status: 200 });
   } catch (error) {
     console.error("Error fetching balances:", error);
     return Response.json({ error: "Internal server error" }, { status: 500 });
