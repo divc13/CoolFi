@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import { parseNearAmount } from 'near-api-js/lib/utils/format';
 import { PLUGIN_URL } from '@/app/config';
-import { transactions } from 'near-api-js';
-export const FT_TRANSFER_GAS = `50${"0".repeat(12)}`
 
 export async function GET(request: Request) {
   try {
@@ -22,39 +20,39 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Invalid amount' }, { status: 400 });
     }
 
-    // const transactionPayload = {
-    //   signerId: accountId,
-    //   actions: [
-    //     {
-    //       type: 'functionCall',
-    //       methodName: 'ft_transfer',
-    //       params: {
-    //         receiverId: receiverId,
-    //         deposit: amountInYoctoNEAR,
-    //       },
-    //     },
-    //   ],
-    // };
-
-    const transactionPayload = [
-      {
-        signerId: accountId,
-        receiverId: receiverId,
-        actions: [{
-          type: "FunctionCall",
+    const transactionPayload = {
+      signerId: accountId,
+      actions: [
+        {
+          type: 'functionCall',
+          methodName: 'ft_transfer',
           params: {
-            methodName: "ft_transfer",
-            args: {
-              receiver_id: receiverId,
-              amount: amount.toString(),
-              msg: "",
-            },
-            // gas: 2220000000000000,
-            deposit: 1,
+            receiverId: receiverId,
+            deposit: amountInYoctoNEAR,
           },
-        }],
-      }
-    ];
+        },
+      ],
+    };
+
+    // const transactionPayload = [
+    //   {
+    //     signerId: accountId,
+    //     receiverId: receiverId,
+    //     actions: [{
+    //       type: "FunctionCall",
+    //       params: {
+    //         methodName: "ft_transfer",
+    //         args: {
+    //           receiver_id: receiverId,
+    //           amount: amount.toString(),
+    //           msg: "",
+    //         },
+    //         // gas: 2220000000000000,
+    //         deposit: 1,
+    //       },
+    //     }],
+    //   }
+    // ];
 
     const link = `https://wallet.bitte.ai/sign-transaction?transactions_data=${encodeURIComponent(JSON.stringify(transactionPayload))}&callbackUrl=${PLUGIN_URL}/status/succeess`;
 

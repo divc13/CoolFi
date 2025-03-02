@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-
-export let predictions: Record<string, number[]> = {};
+import { predictions, updatePredictions } from '@/app/services/predictions';
 
 const expectedCurrencies = ["DOGE", "NEAR", "BITCOIN", "ETH", "SOLANA", "PEPE", "MAGA", "XRP"];
 
@@ -25,7 +24,7 @@ export async function POST(req: Request) {
                 return NextResponse.json({ error: `Invalid data for ${currency}, expected an array of 4 numbers` }, { status: 400 });
             }
         }
-        predictions = body;
+        updatePredictions(body); // Update predictions globally
 
         return NextResponse.json({ message: "Predictions updated successfully" }, { status: 200 });
 
