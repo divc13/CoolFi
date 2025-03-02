@@ -227,7 +227,7 @@ export async function GET() {
                 get: {
                     operationId: "SwapCrypto",
                     summary: "You need to call the apis of Deposit into Defuse, Swap in defuse and withdraw from defuse one after the other to complete the swap. Do wait for user to sign each transaction.",
-                    description: `This api is just a place holder, Calling it will just get page not found. First call deposit into defuse. Wait for user to sign. Then swap in defuse. Again wait for user, Then withdraw and again wait. This tool should not be called if the message is from twitter. This method should not be called if the swap has to be made inside defuse.`,
+                    description: `This api is just a place holder, Calling it will just get page not found. First call deposit into defuse. Wait for user to sign. Then swap in defuse. Again wait for user, Then withdraw and again wait. This tool should not be called if the message is from twitter. This method should not be called if the swap has to be made inside defuse. This method should not be called if the swap has to be made inside defuse. There should be no extra unnecessary callbackurls to this string.`,
                     parameters: [
                         {
                             name: "accountId",
@@ -545,7 +545,7 @@ export async function GET() {
                     operationId: "swapCryptoInDefuseUsingTwitter",
                     summary: "Sends the sign-message link to the user for swapping crypto in defuse or near intents",
                     description: `This method should only be called if the query is from twitter. If the query is from twitter, it shall contain the conversation id and explicitly say that this is a message from twitter.  
-                    This method should be called only if the swap is told to be made inside defuse. Otherwise, the swap-crypto-twitter method should be used.
+                    This method should be called only if the swap is told to be made inside defuse. Otherwise, the swap-crypto-using-twitter method should be used.
                     Send the sign-message Link along with required description to the user on twitter using send-message api. If you dont have the user account id, ask for it on twitter using send-message. Donot call publish-intent yourself.`,
                     parameters: [
                         {
@@ -663,7 +663,7 @@ export async function GET() {
                 get: {
                     operationId: "swapCryptoInDefuse",
                     summary: "Retrieve a message to swap cryptocurrency.",
-                    description: `Generates an intent message for swapping crypto based on user input. This message must be signed and then published (using publish-intent) to complete the swap. Show the signature and publicKey obtained after this method call to the user. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in coinsArray given in instructions. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. This method should not be called if the message is from twitter.`,
+                    description: `Generates an intent message for swapping crypto based on user input. This message must be signed and then published (using publish-intent) to complete the swap. Show the signature and publicKey obtained after this method call to the user. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in coinsArray given in instructions. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. This method should not be called if the message is from twitter. Donot add callbackurl by yourself. This method should be called only if the swap is told to be made inside defuse. Otherwise, the swap-crypto method should be used.`,
                     parameters: [
                         {
                             name: "accountId",
@@ -727,10 +727,6 @@ export async function GET() {
                                                         description: "The unique identifier for the transaction. This is a base64 string. ",
                                                         example1 : "HXRpqKa9xCGMpB37KpfQjSinMVQKuN1WF2Au72Pqg9Y=",
                                                         example2: "zanFCPTWKvvV5oBhL1JnZj4p7cUkqt1+PPff4j6GwLA="
-                                                    },
-                                                    callbackUrl: {
-                                                        type: "string",
-                                                        description: "url to call back on success"
                                                     },
                                                 }
                                             },

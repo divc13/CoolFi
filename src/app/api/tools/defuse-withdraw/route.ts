@@ -14,6 +14,7 @@ async function withdrawFromDefuse(params: CrossChainSwapAndWithdrawParams): Prom
     try {
         const nonce = new Uint8Array(crypto.randomBytes(32));
         const nonceStr = Buffer.from(nonce).toString("base64");
+        
 
         const token = getTokenBySymbol(params.defuse_asset_identifier_out);
         console.log("Token:", token);
