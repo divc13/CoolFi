@@ -834,6 +834,15 @@ export async function GET() {
                             },
                             description: "The data for which the message was signed. This should be the exact message obtained from the swap API and used in the signing process."
                         },
+                        {
+                            name: "callback_url",
+                            in: "query",
+                            required: false,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The callback url which should be called a successful publish intent. This is an optional parameter."
+                        },
                     ],
                     responses: {
                         "200": {
