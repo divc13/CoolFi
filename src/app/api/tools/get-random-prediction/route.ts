@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import fs from "fs";
 import path from "path";
-import csv from "csv-parser";
+
 
 interface DataRow {
   Date: string;
