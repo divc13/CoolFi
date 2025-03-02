@@ -22,6 +22,7 @@ export async function GET(request: Request) {
     const recipient = json_data.recipient;
     const nonce = json_data.nonce;
     const quote_hash = json_data.quote_hash;
+    const callback_url = json_data.callback_url;
 
     if (!signature || !publicKey || !messageString || !recipient || !nonce || !accountId) {
       console.log('Missing parameters:', { signature, publicKey, messageString, recipient, nonce });
@@ -31,6 +32,7 @@ export async function GET(request: Request) {
 
     const nonceStr = encodeURIComponent(nonce);
     json_data.nonce = nonceStr;
+    if (callback_url) json_data.callback_url = encodeURIComponent(callback_url);
     const cb_url = `${PLUGIN_URL}/twitter/publish-intent?data=${(JSON.stringify(json_data))}`;
 
     console.log('Received parameters:', { signature, publicKey, messageString, recipient, nonce }, nonce.length);
@@ -42,6 +44,12 @@ export async function GET(request: Request) {
 
     console.log(messageStr);
     console.log(messageString);
+
+    (async () => {
+        console.log("Before delay");
+        await new Promise(resolve => setTimeout(resolve, 4000));
+        console.log("After 1 second delay");
+    })();
 
     // Publish intent
     const intent = await publishIntent({
@@ -63,7 +71,7 @@ export async function GET(request: Request) {
 
     if (intent.status === "OK") {
         const finalStatus = await pollIntentStatus(intent.intent_hash);
-        return NextResponse.json({finalStatus}, {status: 200});
+        return NextResponse.json({finalStatus , callback_url: callback_url}, {status: 200});
     }
     return NextResponse.json({intent}, {status: 400});
 

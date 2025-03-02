@@ -64,6 +64,9 @@ export async function GET() {
                 Second: Swap within Defuse
                 Third: Withdraw from Defuse
 
+                If the query is from twitter to make a swap process,
+                a link is generated using the /api/twitter/swap api, which must be sent to the user along with required description using the send-message tool. This one link is sufficient for all the three steps of the complete swap.
+
                 Wait for user to sign the message before proceeding to the next step.
                 Only skip steps if explicitly instructed by the user but no need to ask again and again if the user wants to proceed.
 
@@ -75,11 +78,11 @@ export async function GET() {
             image: `${PLUGIN_URL}/coolfi.svg`,
         },
         paths: {
-            "/api/tools/swap": {
+            "/api/twitter/swap": {
                 get: {
-                    operationId: "SwapCrypto",
-                    summary: "You need to call the apis of Deposit into Defuse, Swap in defuse and withdraw from defuse one after the other to complete the swap. Do wait for user to sign each transaction.",
-                    description: `This api is just a place holder, Calling it will just get page not found. First call deposit into defuse. Wait for user to sign. Then swap in defuse. Again wait for user, Then withdraw and again wait. `,
+                    operationId: "SwapCryptoUsingTwitter",
+                    summary: "Provides the twitter user a single link for the complete swap process. ",
+                    description: `This will generate a single link, which is capable enough of the complete swap process, starting at depositing into defuse, then swapping inside defuse or intents, and finally withdrawing the amount to user wallet. Note that the complete swap process is different from the swap inside defuse. This is a 3 staged design, but will be completed with a single link. The link generated should be sent to the user via twitter send-message api along with required description. This tool should only be called if the message is from twitter. `,
                     parameters: [
                         {
                             name: "accountId",
@@ -90,6 +93,146 @@ export async function GET() {
                             },
                             description: `Near account ID of the user`
                         },
+                        {
+                            name: "receiverId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The NEAR account ID of the receiver of funds. This can be the user himself or if specified then someone else."
+                        },
+                        {
+                            name: "tokenIn",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: `The token user wants to deposit. If possible understand and fill on your own. Do ask if obsecure. This must be one of the tokens from ${tokenData}. This is only the name of the token.`
+                        },
+                        {   
+                            name: "tokenOut",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The type of cryptocurrency the user is swapping from."
+                        },
+                        {
+                            name: "amount",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "the amount to deposit into defuse or near intents."
+                        },
+                        {
+                            name: "conversationId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The conversation id of the twitter chat"
+                        },
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Returns the link for the swap",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            link: {
+                                                type: "string",
+                                                description: "The link to send to the user on twitter. Send this to the user using send-message api along with required description"
+                                            },
+                                        },
+                                    }
+                                }
+                            }
+                        },
+                        "400": {
+                            description: "Bad request",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "500": {
+                            description: "Error response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "/api/tools/swap": {
+                get: {
+                    operationId: "SwapCrypto",
+                    summary: "You need to call the apis of Deposit into Defuse, Swap in defuse and withdraw from defuse one after the other to complete the swap. Do wait for user to sign each transaction.",
+                    description: `This api is just a place holder, Calling it will just get page not found. First call deposit into defuse. Wait for user to sign. Then swap in defuse. Again wait for user, Then withdraw and again wait. This tool should not be called if the message is from twitter.`,
+                    parameters: [
+                        {
+                            name: "accountId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: `Near account ID of the user`
+                        },
+                        {
+                            name: "receiverId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The NEAR account ID of the receiver of funds. This can be the user himself or if specified then someone else."
+                        },
+                        {
+                            name: "tokenIn",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: `The token user wants to deposit. If possible understand and fill on your own. Do ask if obsecure. This must be one of the tokens from ${tokenData}. This is only the name of the token.`
+                        },
+                        {
+                            name: "amount",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "the amount to deposit into defuse or near intents."
+                        },
                     ],
                 }
             },
@@ -97,7 +240,7 @@ export async function GET() {
                 get: {
                     operationId: "sendMessageOnTwitter",
                     summary: "function call for sending message to user on twitter.",
-                    description: `Sends message to user on twitter. Tkaes the conversation id and the message as the input, and sends the message to twitter on the corresponding conversation Id.`,
+                    description: `Sends message to user on twitter. Takes the conversation id and the message as the input, and sends the message to twitter on the corresponding conversation Id.`,
                     parameters: [
                         {
                             name: "conversationId",
@@ -370,6 +513,7 @@ export async function GET() {
                     operationId: "swapCryptoInDefuseUsingTwitter",
                     summary: "Sends the sign-message link to the user for swapping crypto in defuse or near intents",
                     description: `This method should only be called if the query is from twitter. If the query is from twitter, it shall contain the conversation id and explicitly say that this is a message from twitter.  
+                    This method should be called only if the swap is told to be made inside defuse explcitly. Otherwise, the swap-crypto-twitter method should be used.
                     Send the sign-message Link along with required description to the user on twitter using send-message api. If you dont have the user account id, ask for it on twitter using send-message. Donot call publish-intent yourself.`,
                     parameters: [
                         {
@@ -415,7 +559,16 @@ export async function GET() {
                             schema: {
                                 type: "string"
                             },
-                            description: "The type of cryptocurrency the user is swapping from."
+                            description: "The type of cryptocurrency the user is swapping to."
+                        },
+                        {
+                            name: "callback_url",
+                            in: "query",
+                            required: false,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The callback url that should be passed on to the publish intent method. This is an optional parameter."
                         },
                     ],
                     responses: {
@@ -514,7 +667,7 @@ export async function GET() {
                             schema: {
                                 type: "string"
                             },
-                            description: "The type of cryptocurrency the user is swapping from."
+                            description: "The type of cryptocurrency the user is swapping to."
                         },
                     ],
                     responses: {
@@ -869,7 +1022,7 @@ export async function GET() {
                             schema: {
                                 type: "string"
                             },
-                            description: "The callback url which should be called a successful publish intent. This is an optional parameter."
+                            description: "The callback url which should be called after a successful publish intent. This is an optional parameter."
                         },
                     ],
                     responses: {

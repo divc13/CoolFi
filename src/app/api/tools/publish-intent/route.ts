@@ -13,9 +13,6 @@ export async function GET(request: Request) {
     const recipient = searchParams.get('receiverId');
     const nonce = searchParams.get('nonce');
     const quote_hash = searchParams.get('quote_hash');
-    const call_back_url = searchParams.get('callback_url');
-
-    console.log(call_back_url);
 
     if (!signature || !publicKey || !messageString || !recipient || !nonce || !accountId) {
       console.log('Missing parameters:', { signature, publicKey, messageString, recipient, nonce });
@@ -55,7 +52,7 @@ export async function GET(request: Request) {
 
     if (intent.status === "OK") {
         const finalStatus = await pollIntentStatus(intent.intent_hash);
-        return NextResponse.json({finalStatus, callback_url: call_back_url});
+        return NextResponse.json({finalStatus});
     }
     return NextResponse.json(intent);
 

@@ -17,6 +17,7 @@ export async function GET(request: Request) {
     const tokenOutName = searchParams.get('tokenOut');
     const amountIn = searchParams.get('amountIn');
     const accountId = searchParams.get('accountId');
+    const callback_url = searchParams.get('callback_url');
 
     if (!accountId) {
         throw new Error("NEAR_ADDRESS not configured");
@@ -111,11 +112,19 @@ export async function GET(request: Request) {
         recipient
     };
 
-    const data = {
+    const data:any = {
         messageString,
         recipient,
         nonce: encodeURIComponent(Buffer.from(nonce).toString('base64')),
         quote_hash: qoute_hash
+    }
+
+    if (callback_url)
+    {
+        const fetch_cb_url = `${callback_url}&exact_amount_in=${Number(quote[best_quote_index].amount_out) / 10 ** out_token_decimal}`;
+        const cb_url_response = await fetch(fetch_cb_url);
+        const cb_url =  await cb_url_response.json();
+        data.callback_url = encodeURIComponent(`${cb_url.link}`);
     }
 
     console.log (Buffer.from(nonce).toString('base64'));

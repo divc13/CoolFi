@@ -19,36 +19,27 @@ export default function PublishIntentPage() {
         hashParams.forEach((value, key) => mergedParams.append(key, value));
         const newUrl = `/api/twitter/publish-intent?${(mergedParams.toString())}`;
 
-        // const newUrl = `/api/twitter/publish-intent?${params}&${hashParams}`;
-        
-        // const encodeParams = (params) => {
-        //     return Array.from(params.entries())
-        //     .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-        //     .join("&");
-        // };
-        
-        // const encodedSearch = encodeParams(params);
-        // const encodedHash = encodeParams(hashParams);
-
-
         console.log({newUrl});
 
         const response = await fetch(newUrl);
         const data = await response.json();
         const cb_url = data.callback_url;
 
+        console.log(cb_url);
+        console.log(response.status);
+
         if (response.status == 200) {
-            
+
             if (cb_url)
             {
-                redirect(cb_url);
+            router.push(cb_url);
             }
             else{
-                router.push("/status/success");
+            router.push("/status/success");
             }
 
         } else {
-          router.push("/status/failure");
+            router.push("/status/failure");
         }
       } catch (error) {
         console.error("Error:", error);
