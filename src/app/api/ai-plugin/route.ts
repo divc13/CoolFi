@@ -1555,15 +1555,15 @@ export async function GET() {
                             },
                             description: "'true' if amount is in bitcoin, 'false' if amount is in NEAR/satoshi. This is very important. But try to fill it on your own."
                         },
-                        {
-                            name: "callbackUrl",
-                            in: "query",
-                            required: true,
-                            schema: {
-                                type: "string"
-                            },
-                            description: `call https://wallet.bitte.ai/sign-transaction?transactions_data=:transactionPayload&callback_url=http://${PLUGIN_URL}/api/tools/relay-transaction?data=:transactionData . Do fill in transactionData and transactionPayload with all the required params.`
-                        },
+                        // {
+                        //     name: "callbackUrl",
+                        //     in: "query",
+                        //     required: true,
+                        //     schema: {
+                        //         type: "string"
+                        //     },
+                        //     description: `call https://wallet.bitte.ai/sign-transaction?transactions_data=:transactionPayload&callback_url=http://${PLUGIN_URL}/api/tools/relay-transaction?data=:transactionData . Do fill in transactionData and transactionPayload with all the required params.`
+                        // },
                     ],
                     responses: {
                         "200": {
@@ -1573,13 +1573,9 @@ export async function GET() {
                                     schema: {
                                         type: "object",
                                         properties: {
-                                            transactionPayload: {
+                                            link: {
                                                 type: "string",
-                                                // description: "payload needs to be signed  and relay it through relayTransaction. This is transactions_data.",
-                                            },
-                                            transactionData: {
-                                                type: "string",
-                                                // description: "This transactionData needs to be sent to relayTransaction (no need to sign this)",
+                                                description: "The user needs to open this link. Make sure to give him this link."
                                             },
                                         },
                                     },
@@ -1923,15 +1919,15 @@ export async function GET() {
                             },
                             description: "'true' if amount is in bitcoin, 'false' if amount is in NEAR. This is very important. But try to fill it on your own."
                         },
-                        {
-                            name: "callbackUrl",
-                            in: "query",
-                            required: true,
-                            schema: {
-                                type: "string"
-                            },
-                            description: `call https://wallet.bitte.ai/sign-transaction?transactions_data=:transactionPayload&callback_url=http://${PLUGIN_URL}/api/tools/relay-transaction?data=:transactionData . Do fill in transactionData and transactionPayload with all the required params.`
-                        },
+                        // {
+                        //     name: "callbackUrl",
+                        //     in: "query",
+                        //     required: true,
+                        //     schema: {
+                        //         type: "string"
+                        //     },
+                        //     description: `call https://wallet.bitte.ai/sign-transaction?transactions_data=:transactionPayload&callback_url=http://${PLUGIN_URL}/api/tools/relay-transaction?data=:transactionData . Do fill in transactionData and transactionPayload with all the required params.`
+                        // },
                     ],
                     responses: {
                         "200": {
@@ -1941,13 +1937,9 @@ export async function GET() {
                                     schema: {
                                         type: "object",
                                         properties: {
-                                            transactionPayload: {
+                                            link: {
                                                 type: "string",
-                                                // description: "payload needs to be signed  and relay it through relayTransaction. This is transactions_data.",
-                                            },
-                                            transactionData: {
-                                                type: "string",
-                                                // description: "This transactionData needs to be sent to relayTransaction (no need to sign this)",
+                                                description: "The user needs to open this link. Make sure to give him this link.",
                                             },
                                         },
                                     },

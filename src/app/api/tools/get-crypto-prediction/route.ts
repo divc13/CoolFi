@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
     }
     
     // Combine wallet and defuse balances for a comprehensive view
-    let allTokens: Record<string, TokenBalance> = {};
+    const allTokens: Record<string, TokenBalance> = {};
     
     // Process wallet tokens
     accountDetails.token_balance_wallet.forEach(token => {

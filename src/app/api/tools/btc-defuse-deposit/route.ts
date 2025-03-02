@@ -4,6 +4,7 @@ import { Wallet } from '@/app/services/near-wallet';
 import { MPC_CONTRACT } from '@/app/services/kdf/mpc';
 import { convertBitcoin } from '@/app/services/utils';
 import { request as REQ } from '@/app/near-intent/utils/deposit';
+import { PLUGIN_URL } from '@/app/config';
 
 export async function GET(request: Request) {
   try {
@@ -87,7 +88,9 @@ export async function GET(request: Request) {
 
     console.log(transactionData);
 
-    return NextResponse.json({ transactionPayload: encodeURI(JSON.stringify(TransactionToSign)), transactionData: transactionData });
+    const link = `https://wallet.bitte.ai/sign-transaction?transactions_data=${encodeURI(JSON.stringify(TransactionToSign))}&callback_url=http://${PLUGIN_URL}/api/tools/relay-transaction?data=${transactionData}`;
+
+    return NextResponse.json({ link });
 
   } catch (error) {
     console.error('Error generating NEAR account details:', error);
