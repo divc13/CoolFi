@@ -29,8 +29,8 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'some required parameters are missing' }, { status: 400 });
     }
 
-    // const nonceStr = decodeURIComponent(nonce);
-    // json_data.nonce = nonceStr;
+    const nonceStr = encodeURIComponent(nonce);
+    json_data.nonce = nonceStr;
     const cb_url = `${PLUGIN_URL}/twitter/publish-intent?data=${(JSON.stringify(json_data))}`;
 
     console.log('Received parameters:', { signature, publicKey, messageString, recipient, nonce }, nonce.length);
@@ -49,7 +49,7 @@ export async function GET(request: Request) {
         signed_data: {
             payload: {
                 message: messageStr,
-                nonce: json_data.nonce,
+                nonce: nonce,
                 recipient,
                 callbackUrl: cb_url,
             },
@@ -66,6 +66,8 @@ export async function GET(request: Request) {
         return NextResponse.json({finalStatus}, {status: 200});
     }
     return NextResponse.json({intent}, {status: 400});
+
+    // return NextResponse.json({status: 200});
 
   } catch (error) {
     console.error('Error generating NEAR account details:', error);
