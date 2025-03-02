@@ -3,6 +3,7 @@ import { Bitcoin } from '@/app/services/bitcoin';
 import { Wallet } from '@/app/services/near-wallet';
 import { MPC_CONTRACT } from '@/app/services/kdf/mpc';
 import { convertBitcoin } from '@/app/services/utils';
+import { PLUGIN_URL } from '@/app/config';
 
 export async function GET(request: Request) {
   try {
