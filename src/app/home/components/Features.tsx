@@ -208,7 +208,6 @@ export default function Features() {
                     },
                   ]}
                 >
-                  {/* {icon} */}
 
                   <Typography variant="h5">{title}</Typography>
                   <Typography variant="subtitle2">{description}</Typography>

@@ -19,7 +19,6 @@ import Link from "next/link";
 const CryptoTweets = ({ tweets }: { tweets: Tweet[] }) => {
   const theme = useTheme();
 
-  // ✅ Format tweet timestamps correctly
   const formatTimestamp = (timestamp?: number): string => {
     if (!timestamp) return "Unknown Date";
     const date = new Date(timestamp < 10000000000 ? timestamp * 1000 : timestamp);
@@ -49,7 +48,6 @@ const CryptoTweets = ({ tweets }: { tweets: Tweet[] }) => {
                 }}
               >
                 <CardContent sx={{ p: 1.5 }}>
-                  {/* ✅ User Info */}
                   <Box display="flex" alignItems="center" mb={1}>
                     <Avatar src={tweet.photos[0]?.url || ""} alt={tweet.username} sx={{ width: 36, height: 36, mr: 1 }} />
                     <Box>
@@ -67,12 +65,10 @@ const CryptoTweets = ({ tweets }: { tweets: Tweet[] }) => {
                     </Link>
                   </Box>
 
-                  {/* ✅ Tweet Content */}
                   <Typography variant="body2" sx={{ mb: 1, fontSize: "0.9rem", lineHeight: 1.3 }}>
                     {tweet.text}
                   </Typography>
 
-                  {/* ✅ Tweet Media */}
                   {tweet.photos.length > 0 && (
                     <Box
                       sx={{
@@ -96,7 +92,6 @@ const CryptoTweets = ({ tweets }: { tweets: Tweet[] }) => {
                     </Box>
                   )}
 
-                  {/* ✅ Tweet Metrics */}
                   <Box
                     display="flex"
                     justifyContent="space-between"

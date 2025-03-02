@@ -89,9 +89,9 @@ export async function GET() {
                 Complete Swap Process (Deposit + Swap + Withdraw)
                 When performing a complete cryptocurrency swap (not using Twitter):
                 Call all three APIs sequentially:
-                First: Deposit funds into Defuse
-                Second: Swap within Defuse
-                Third: Withdraw from Defuse
+                First: Deposit funds
+                Second: Swap 
+                Third: Withdraw
 
                 If the query is from twitter to make a swap process,
                 a link is generated using the /api/twitter/swap api, which must be sent to the user along with required description using the send-message tool. This one link is sufficient for all the three steps of the complete swap.
@@ -223,8 +223,8 @@ export async function GET() {
             "/api/tools/swap": {
                 get: {
                     operationId: "SwapCrypto",
-                    summary: "You need to call the apis of Deposit into Defuse, Swap in defuse and withdraw from defuse one after the other to complete the swap. Do wait for user to sign each transaction.",
-                    description: `This api is just a place holder, Calling it will just get page not found. First call deposit into defuse. Wait for user to sign. Then swap in defuse. Again wait for user, Then withdraw and again wait. This tool should not be called if the message is from twitter.`,
+                    summary: "You need to call the apis of Deposit, Swap and withdraw to complete the swap. Do wait for user to sign each transaction.",
+                    description: `This api is just a place holder, Calling it will just get page not found. First call deposit into defuse. Wait for user to sign. Then swap in defuse. Again wait for user, Then withdraw and again wait. This tool should not be called if the message is from twitter. Note that the complete swap process is different from the swap inside defuse.`,
                     parameters: [
                         {
                             name: "accountId",
@@ -2189,11 +2189,11 @@ export async function GET() {
                     }
                 }
             },
-            "/api/tools/get-random-prediction": {
+            "/api/tools/get-crypto-prediction": {
                 get: {
                     operationId: "randomCryptoPrediction",
                     summary: "Returns to user a random crypto prediction",
-                    description: "Returns to user a random crypto prediction.",
+                    description: "Returns to user a random crypto prediction. Keep this as detailed as possible.",
                     parameters: [
                         {
                             name: "accountId",

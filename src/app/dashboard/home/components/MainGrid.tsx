@@ -17,7 +17,6 @@ export default function MainGrid() {
       </Typography>
     
       <Grid container spacing={2} sx={{ minHeight: "100%", alignItems: "stretch" }}>
-  {/* Left: Composition (Takes Half of the Screen on Medium Screens & Above) */}
   <Grid 
     size={{ xs: 12, md: 6 }} 
     sx={{ display: "flex", flexDirection: "column", height: "100%" }}
@@ -25,7 +24,6 @@ export default function MainGrid() {
     <Composition />
   </Grid>
 
-  {/* Right: Highlighted Cards (Stacked, Matching Composition's Height) */}
   <Grid 
     size={{ xs: 12, md: 6 }} 
     container 

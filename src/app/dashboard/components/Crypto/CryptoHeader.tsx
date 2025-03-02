@@ -24,7 +24,6 @@ const CryptoHeader = ({
   return (
     <Paper elevation={3} sx={{ p: 2, mb: 2, borderRadius: 2 }}>
       <Grid container alignItems="center" spacing={2}>
-        {/* ✅ Coin Image & Name */}
         <Grid item xs={12} md={8} sx={{ display: "flex", alignItems: "center" }}>
           <Avatar src={coinImage} alt={coinName} sx={{ width: 45, height: 45, mr: 2 }} />
           <Box>
@@ -33,7 +32,6 @@ const CryptoHeader = ({
           </Box>
         </Grid>
 
-        {/* ✅ Toggle Buttons (Aligned Right) */}
         <Grid item xs={12} md={4} sx={{ display: "flex", justifyContent: "flex-end" }}>
           <ToggleButtonGroup value={selectedPeriod} exclusive onChange={handlePeriodChange}>
             {TIME_PERIODS.map((period) => (

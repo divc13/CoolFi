@@ -28,12 +28,10 @@ export default function SuccessPage() {
             mt: 4,
         }}
       >
-        {/* Large Green Check */}
         <Box display="flex" justifyContent="center" mb={2}>
           <CheckCircle sx={{ fontSize: 150, color: "green" }} />
         </Box>
 
-        {/* Success Message */}
         <Typography variant="h4" fontWeight="bold" gutterBottom>
           Success!
         </Typography>

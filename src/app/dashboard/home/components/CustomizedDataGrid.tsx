@@ -57,9 +57,7 @@ export default function CustomizedDataGrid() {
   {loading ? (
     <CircularProgress />
   ) : (
-    // ✅ Outer container enables horizontal scrolling
     <Box sx={{ width: "100%", overflowX: "auto", display: "flex" }}>
-      {/* ✅ Inner wrapper allows shrinking */}
       <Box sx={{ flexShrink: 1, width: "100%", minWidth: "300px", overflowX: "scroll" }}>
        
         <DataGrid
@@ -73,9 +71,9 @@ export default function CustomizedDataGrid() {
         //   disableColumnResize
           density="comfortable"
           sx={{
-            width: "100%",  // ✅ Allows full width inside parent
-            minWidth: "400px", // ✅ Ensures it doesn’t break
-            maxWidth: "100%", // ✅ Prevents it from exceeding parent
+            width: "100%",
+            minWidth: "400px",
+            maxWidth: "100%",
             overflowX: "scroll",
             cursor: "pointer",
             contain: "inline-size"

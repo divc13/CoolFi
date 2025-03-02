@@ -26,7 +26,6 @@ export default function layout({
               overflowX: 'hidden' }}>
         <SideMenu />
         <AppNavbar />
-        {/* Main content */}
         <Box
           component="main"
           sx={(theme) => ({
@@ -45,7 +44,6 @@ export default function layout({
               mt: { xs: 8, md: 4 },
             }}
           >
-            {/* <Header /> */}
             {children}
           </Stack>
         </Box>

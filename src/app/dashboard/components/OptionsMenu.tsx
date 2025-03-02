@@ -19,10 +19,10 @@ export default function OptionsMenu() {
     <IconButton 
       onClick={handleSignOut} 
       sx={{ 
-        width: 40, height: 40, // ✅ Small square button
-        borderRadius: 1, // ✅ Slightly rounded edges
-        backgroundColor: "grey.200", // ✅ Light grey background
-        "&:hover": { backgroundColor: "grey.300" } // ✅ Slightly darker on hover
+        width: 40, height: 40,
+        borderRadius: 1,
+        backgroundColor: "grey.200",
+        "&:hover": { backgroundColor: "grey.300" }
       }}
     >
       <LogoutRoundedIcon fontSize="small" />

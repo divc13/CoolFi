@@ -37,7 +37,6 @@ export default function Footer() {
           justifyContent: 'space-between',
           pt: { xs: 4, sm: 0 },
           width: '100%',
-        //   borderTop: '1px solid',
           borderColor: 'divider',
         }}
       >

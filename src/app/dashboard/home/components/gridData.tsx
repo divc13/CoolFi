@@ -4,15 +4,13 @@ import { SparkLineChart } from '@mui/x-charts/SparkLineChart';
 import axios from 'axios';
 import tokensJson from '@/app/near-intent/config/tokens.json';
 
-// ✅ Extract CoinGecko IDs from tokens.json
 const tokens = [
   ...tokensJson.tokens.mainnet.unified_tokens,
   ...tokensJson.tokens.mainnet.single_chain_tokens
 ];
 
-const CRYPTO_IDS = tokens.map(token => token.cgId).filter(id => id); // Extract CoinGecko IDs
+const CRYPTO_IDS = tokens.map(token => token.cgId).filter(id => id);
 
-// ✅ Fetch Crypto Data with Retry Logic (Max 3 Attempts)
 const fetchCryptoData = async (maxRetries = 3, retryDelay = 2000) => {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -21,8 +19,8 @@ const fetchCryptoData = async (maxRetries = 3, retryDelay = 2000) => {
       const response = await axios.get("https://api.coingecko.com/api/v3/coins/markets", {
         params: {
           vs_currency: "usd",
-          ids: CRYPTO_IDS.join(","), // Fetch only specified cryptos
-          sparkline: true, // Include 7-day price trend data
+          ids: CRYPTO_IDS.join(","),
+          sparkline: true,
         },
       });
 
@@ -43,7 +41,6 @@ const fetchCryptoData = async (maxRetries = 3, retryDelay = 2000) => {
   }
 };
 
-// ✅ Render Sparkline Chart in Table Cell
 function renderSparklineCell(params: any) {
   const priceTrend = params.value || [];
 
@@ -66,7 +63,6 @@ function renderSparklineCell(params: any) {
   );
 }
 
-// ✅ Render Crypto Avatar
 function renderCryptoAvatar(params: any) {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
@@ -79,7 +75,6 @@ function renderCryptoAvatar(params: any) {
   );
 }
 
-// ✅ Table Columns Definition
 export const columns: GridColDef[] = [
   {
     field: 'symbol',
@@ -148,16 +143,6 @@ export const columns: GridColDef[] = [
     valueFormatter: (params:any) =>
       params ? `${params.toLocaleString()}` : 'N/A',
   },
-//   {
-//     field: 'max_supply',
-//     headerName: 'Max Supply',
-//     flex: 1.5,
-//     minWidth: 150,
-//     align: 'center',
-//     headerAlign: 'center',
-//     valueFormatter: (params) =>
-//       params ? `${params.toLocaleString()}` : 'N/A',
-//   },
   {
     field: 'sparkline',
     headerName: 'Price Trend (7d)',

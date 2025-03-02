@@ -22,20 +22,18 @@ const CryptoPage = ({ coinId = "bitcoin" }) => {
   const retryFetch = async (fetchFunction, retries = 3, delay = 1000) => {
     for (let attempt = 0; attempt <= retries; attempt++) {
       try {
-        return await fetchFunction(); // ✅ Execute the function correctly
+        return await fetchFunction();
       } catch (error) {
         console.warn(`Attempt ${attempt + 1} failed: ${error}`);
-        if (attempt === retries) throw error; // ✅ Fail only after max retries
-        await new Promise((resolve) => setTimeout(resolve, delay * (2 ** attempt))); // ✅ Exponential backoff
+        if (attempt === retries) throw error;
+        await new Promise((resolve) => setTimeout(resolve, delay * (2 ** attempt)));
       }
     }
   };
   
-  // ✅ Fetch Coin Details
   const fetchCryptoDetails = useCallback(async () => {
     setLoadingPage(true);
     try {
-      // ✅ Ensure `retryFetch` executes the function properly
       const detailsResponse = await retryFetch(() =>
         axios.get(`${COINGECKO_API_URL}/coins/${coinId}`)
       );
@@ -43,7 +41,6 @@ const CryptoPage = ({ coinId = "bitcoin" }) => {
       const coinData = detailsResponse.data;
       setCoinDetails(coinData);
   
-      // ✅ Special case for NEAR Protocol
       if (coinId.toLowerCase() === "near") {
         setCoinDetails((prev) => ({
           ...prev,
@@ -54,7 +51,6 @@ const CryptoPage = ({ coinId = "bitcoin" }) => {
         }));
       }
   
-      // ✅ Fetch Tweets with retry
       const coinName = coinData?.name || coinId;
       const tweetsResponse = await retryFetch(() =>
         axios.get(`/api/getTweets?coin=${encodeURIComponent(coinName)}`)
@@ -67,9 +63,8 @@ const CryptoPage = ({ coinId = "bitcoin" }) => {
     } finally {
       setLoadingPage(false);
     }
-  }, [coinId]); // ✅ Ensuring dependencies are correctly managed
+  }, [coinId]);
   
-  // ✅ Fetch Price Data
   const fetchPriceData = useCallback(async () => {
     setLoadingChart(true);
     try {
@@ -93,7 +88,6 @@ const CryptoPage = ({ coinId = "bitcoin" }) => {
     }
   }, [coinId, selectedPeriod]);
   
-  // ✅ Ensure fetch functions are not re-created every render
   useEffect(() => {
     fetchCryptoDetails();
   }, [fetchCryptoDetails]);
@@ -101,59 +95,6 @@ const CryptoPage = ({ coinId = "bitcoin" }) => {
   useEffect(() => {
     fetchPriceData();
   }, [fetchPriceData]);
-  
-  
-
-
-//   // ✅ Fetch Coin Details (Only on first load)
-//   const fetchCryptoDetails = useCallback(async () => {
-//     try {
-//       setLoadingPage(true);
-//       const detailsResponse = await axios.get(`${COINGECKO_API_URL}/coins/${coinId}`);
-//       const coinData = detailsResponse.data;
-//       setCoinDetails(coinData);
-
-//       // Fetch tweets using **coin name** instead of coinId
-//       const coinName = coinData?.name || coinId;
-
-//         if(coinId.toLowerCase() === "near")
-//         {
-//             coinData.description.en = "NEAR Protocol is a user-friendly blockchain platform that makes it easy for developers to build decentralized applications and for users to interact with them. It solves key challenges around usability, scalability, and security through innovative features like human-readable account names, predictable pricing, and dynamic sharding. Think of it as a community-run cloud platform where apps can securely store and move digital assets like money and data without relying on big tech companies. Since its launch, NEAR has grown into one of the leading Layer 1 blockchain platforms, processing millions of transactions daily with near-instant finality."
-//             setCoinDetails(coinData);
-//         }
-
-//       const tweetsResponse = await axios.get(`/api/getTweets?coin=${encodeURIComponent(coinName)}`);
-//       setTweets(tweetsResponse.data?.tweets || []);
-//     } catch {
-//       setError({ show: true, message: "Failed to load crypto details" });
-//     } finally {
-//       setLoadingPage(false);
-//     }
-//   }, [coinId]);
-
-//   // ✅ Fetch Price Data (On Timeframe Change)
-//   const fetchPriceData = useCallback(async () => {
-//     try {
-//       setLoadingChart(true);
-//       const priceResponse = await axios.get(`${COINGECKO_API_URL}/coins/${coinId}/market_chart`, {
-//         params: { vs_currency: "usd", days: selectedPeriod },
-//       });
-
-//       setPriceData(priceResponse.data.prices.map(([timestamp, price]: [number, number]) => ({ timestamp, price })));
-//     } catch {
-//       setError({ show: true, message: "Failed to load price data" });
-//     } finally {
-//       setLoadingChart(false);
-//     }
-//   }, [coinId, selectedPeriod]);
-
-//   useEffect(() => {
-//     fetchCryptoDetails();
-//   }, [fetchCryptoDetails]);
-
-//   useEffect(() => {
-//     fetchPriceData();
-//   }, [fetchPriceData]);
 
   return (
     <Container maxWidth="xl" sx={{ width: "100%", px: { xs: 1, sm: 2, md: 4, lg: 6 }, py: 3, gap:2 }}>
@@ -165,7 +106,6 @@ const CryptoPage = ({ coinId = "bitcoin" }) => {
         </Box>
       ) : (
         <Grid container spacing={2} sx={{ width: "100%", margin: "auto", mb: 0 }}>
-          {/* ✅ Left Section (Chart & Stats) */}
           <Grid item xs={12} md={8} sx={{ overflow: "hidden" }}>
             <CryptoHeader
               coinName={coinDetails?.name || "Unknown"}
@@ -196,7 +136,6 @@ const CryptoPage = ({ coinId = "bitcoin" }) => {
               </Grid>
             </Grid>
 
-            {/* ✅ Coin Description */}
             <Paper elevation={3} sx={{ p: 3, mt: 3,mb:3, borderRadius: 2 }}>
               <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold" }}>
                 About {coinDetails?.name}
@@ -206,7 +145,6 @@ const CryptoPage = ({ coinId = "bitcoin" }) => {
             <Copyright />
           </Grid>
 
-          {/* ✅ Right Section (Scrollable Tweets) */}
           <Grid item xs={12} md={4}>
             <Box sx={{ mb: 2, position: "sticky", top: 0, backgroundColor: "background.paper", zIndex: 2, p: 2, borderRadius: "12px", boxShadow: 2, textAlign: "center" }}>
               <Typography variant="h6" sx={{ fontWeight: "bold" }}>Recent Tweets</Typography>

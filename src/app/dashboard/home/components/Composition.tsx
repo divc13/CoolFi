@@ -11,11 +11,10 @@ import Stack from "@mui/material/Stack";
 import LinearProgress, { linearProgressClasses } from "@mui/material/LinearProgress";
 import Button from "@mui/material/Button";
 import { useTheme } from "@mui/material/styles";
-import { useBitteWallet } from "@bitte-ai/react"; // Wallet Hook
+import { useBitteWallet } from "@bitte-ai/react";
 import Image from "next/image";
 import "@near-wallet-selector/modal-ui/styles.css"
 
-// ✅ Function to render text inside the Pie Chart
 function PieCenterLabel({ totalValue }: { totalValue: number }) {
   const { width, height, left, top } = useDrawingArea();
   const primaryY = top + height / 2 - 10;
@@ -34,7 +33,7 @@ function PieCenterLabel({ totalValue }: { totalValue: number }) {
         fontWeight="bold"
         fill={textColor}
       >
-        ${totalValue.toLocaleString()} {/* ✅ Dynamic Total */}
+        ${totalValue.toLocaleString()}
       </text>
       <text
         x={left + width / 2}
@@ -50,7 +49,6 @@ function PieCenterLabel({ totalValue }: { totalValue: number }) {
   );
 }
 
-// ✅ Main Composition Component
 export default function Composition() {
   const { isConnected, connect, activeAccountId } = useBitteWallet(); // Wallet Hook
   const [fundData, setFundData] = useState<any>([]);
@@ -59,7 +57,6 @@ export default function Composition() {
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === "dark";
 
-  // ✅ Fetch balance from API if wallet is connected
   useEffect(() => {
     if (!isConnected || !activeAccountId) return;
 
@@ -88,7 +85,6 @@ export default function Composition() {
       });
   }, [isConnected, activeAccountId]);
 
-  // ✅ If not connected, show "Connect Wallet" prompt
   if (!isConnected) {
     return (
 
@@ -97,14 +93,14 @@ export default function Composition() {
   sx={{ 
     display: "flex", 
     flexDirection: "column", 
-    alignItems: "center",  // ✅ Centers content horizontally
-    justifyContent: "center",  // ✅ Centers content vertically
+    alignItems: "center",
+    justifyContent: "center",
     flexGrow: 1, 
     gap:0,
     p: 5, 
-    minHeight: "100%",  // ✅ Ensures expansion in case height is undefined
-    width: "100%", // ✅ Prevents shrinkage
-    textAlign: "center", // ✅ Ensures text is always centered
+    minHeight: "100%",
+    width: "100%",
+    textAlign: "center",
     bgcolor: isDarkMode ? "#010101" : "#f9f9f9",
   }}
 >
@@ -127,7 +123,6 @@ export default function Composition() {
       );
   }
 
-  // ✅ Show loading state
   if (loading) {
     return (
       <Card variant="outlined" sx={{ mt: 5 }}>
@@ -136,30 +131,26 @@ export default function Composition() {
     );
   }
 
-  // ✅ Extract top 5 assets based on USD value
   const top5Assets = fundData
     .sort((a:any, b:any) => b.value - a.value)
     .slice(0, 5)
     .map((asset:any) => ({
       name: asset.label,
-      value: ((asset.value / totalValue) * 100).toFixed(2), // Convert to percentage
+      value: ((asset.value / totalValue) * 100).toFixed(2),
       flag: <Image src={asset.icon} width={32} height={32} alt={asset.label} />,
-      color: "hsl(220, 25%, 65%)", // Adjust color shades if needed
+      color: "hsl(220, 25%, 65%)",
     }));
 
   return (
     <Card variant="outlined" sx={{ display: "flex", flexDirection: "column", gap: 3, flexGrow: 1, p: 3, height: "100%", backgroundColor:"" }}>
       <CardContent>
-        {/* ✅ Centered Title */}
         <Box textAlign="center" mb={3}>
           <Typography component="h2" variant="h6" gutterBottom>
             Composition of Your Wallet
           </Typography>
         </Box>
 
-        {/* ✅ FLEX CONTAINER for Chart & Bars */}
         <Box sx={{ display: "flex", gap: 5, alignItems: "center", justifyContent: "center",flexWrap: "wrap", minWidth: 0 }}>
-          {/* ✅ Pie Chart (Left) */}
           <Box sx={{ flexShrink: 0 }}>
             <PieChart
               colors={["#6D83F2", "#A084E8", "#C084FC", "#84C5F4", "#6AD4DD"]}
@@ -184,7 +175,6 @@ export default function Composition() {
             </PieChart>
           </Box>
 
-          {/* ✅ Top 5 Progress Bars (Right) */}
           <Box sx={{ flexGrow: 1, minWidth: 120 }}>
             {top5Assets.map((asset, index) => (
               <Stack key={index} direction="row" sx={{ alignItems: "center", gap: 2, pb: 2 }}>
@@ -202,7 +192,7 @@ export default function Composition() {
                     variant="determinate"
                     value={parseFloat(asset.value)}
                     sx={{
-                      height: 6, // ✅ Increased bar height for better visibility
+                      height: 6,
                       borderRadius: 5,
                       [`& .${linearProgressClasses.bar}`]: { backgroundColor: asset.color },
                     }}
