@@ -24,7 +24,7 @@ const readFilteredRows = (csvFilePath: string): Promise<DataRow[]> => {
       .on("end", () => resolve(results))
       .on("error", (err) => reject(err));
   });
-};
+} ;
 
 
 export async function GET() {
