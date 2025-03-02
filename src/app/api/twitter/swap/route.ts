@@ -42,12 +42,13 @@ const depositIntoDefuse = async (tokenIds: string[], amount: bigint, accountId: 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const conversationId = searchParams.get('conversationId');
     const tokenInName = searchParams.get('tokenIn');
+    const tokenOutName = searchParams.get('tokenOut');
     const amount = searchParams.get('amount');
     const accountId = searchParams.get('accountId');
+    const receiverId = searchParams.get('receiverId');
 
-    if (tokenInName === null || amount === null || conversationId === null) {
+    if (tokenInName === null || amount === null) {
         return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
     }
 
@@ -115,7 +116,23 @@ export async function GET(request: Request) {
         modified_txns.push(mod_txn);
     }
 
-    const link = `https://wallet.bitte.ai/sign-transaction?transactions_data=${encodeURI(JSON.stringify(modified_txns))}&callback_url=${PLUGIN_URL}/status/success`;
+    const cb_inner = `${PLUGIN_URL}/api/twitter/defuse-withdraw?accountId=${accountId}&defuse_asset_identifier_in=${tokenOutName}&receiverId=${receiverId}`;
+
+    const fetch_cb_url = `${PLUGIN_URL}/api/twitter/defuse-swap?accountId=${accountId}&amountIn=${amount}&tokenIn=${tokenInName}&tokenOut=${tokenOutName}&callback_url=${encodeURIComponent(cb_inner)}`
+
+    const cb_url_response = await fetch(fetch_cb_url);
+    const cb_url =  await cb_url_response.json();
+
+    var link:any;
+    if (cb_url && cb_url.link)
+    {
+        link = `https://wallet.bitte.ai/sign-transaction?transactions_data=${encodeURI(JSON.stringify(modified_txns))}&callback_url=${encodeURIComponent(cb_url.link)}`;
+    }
+
+    else {
+        link = `https://wallet.bitte.ai/sign-transaction?transactions_data=${encodeURI(JSON.stringify(modified_txns))}&callback_url=${PLUGIN_URL}/status/success`;
+    }
+
 
     console.log({ link });
 
