@@ -1,4 +1,3 @@
-
 # CoolFi: What's cooler than being Cool?
 
 Quick Start
@@ -43,6 +42,8 @@ pnpm run dev
 ```
 
 API Endpoints are available at /.well-known/ai-plugin.json
+
+* [ ] Note: It is preferable to use Meteor Wallet over myNearWallet for better execution of the features.
 
 ## Contributing
 

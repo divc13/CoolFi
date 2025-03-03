@@ -52,7 +52,7 @@ export class Bitcoin {
     return { utxos, psbt };
   }
 
-  requestSignatureToMPC = async ({
+  requestSignatureToMPC =           async ({
     wallet,
     path,
     psbt,
@@ -206,6 +206,7 @@ export class Bitcoin {
       utxos: utxos,
       publicKey: publicKey,
       signature: signature,
+
     });
   };
 
