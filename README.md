@@ -1,3 +1,4 @@
+
 # CoolFi: What's cooler than being Cool?
 
 Quick Start

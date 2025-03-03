@@ -88,7 +88,7 @@ export async function GET(request: Request) {
 
     console.log(transactionData);
 
-    const link = `https://wallet.bitte.ai/sign-transaction?transactions_data=${encodeURI(JSON.stringify(TransactionToSign))}&callback_url=http://${PLUGIN_URL}/api/tools/relay-transaction?data=${transactionData}`;
+    const link = `https://wallet.bitte.ai/sign-transaction?transactions_data=${encodeURI(JSON.stringify(TransactionToSign))}&callback_url=${PLUGIN_URL}/api/tools/relay-transaction?data=${transactionData}`;
 
     return NextResponse.json({ link });
 
