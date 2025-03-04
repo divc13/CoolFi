@@ -12,9 +12,9 @@ export default function PublishIntentPage() {
   useEffect(() => {
     const fetchIntent = async () => {
       try {
-        const queryParams = new URLSearchParams(window.location.search);
+        // const queryParams = new URLSearchParams(window.location.search);
 
-        const newUrl = `/api/twitter/relay-transaction?${queryParams}`;
+        const newUrl = `/api/twitter/relay-transaction${window.location.search}`;
 
         const response = await fetch(newUrl);
         const data = await response.json();

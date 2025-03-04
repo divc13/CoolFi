@@ -83,7 +83,7 @@ export async function GET(request: Request) {
     const transactionData = JSON.stringify({pbst: btoa(psbt.toBase64()), utxos: utxos, receiverId: recepient, amount: amount});
 
     console.log(transactionData);
-    const link = `https://wallet.bitte.ai/sign-transaction?transactions_data=${encodeURI(JSON.stringify(TransactionToSign))}&callbackUrl=${PLUGIN_URL}/api/tools/relay-transaction?data=${transactionData}`;
+    const link = `https://wallet.bitte.ai/sign-transaction?transactions_data=${encodeURI(JSON.stringify(TransactionToSign))}&callback_url=${PLUGIN_URL}/api/tools/relay-transaction?data=${transactionData}`;
     console.log({link});
 
     return NextResponse.json({ link });
