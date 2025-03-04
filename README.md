@@ -45,7 +45,7 @@ API Endpoints are available at /.well-known/ai-plugin.json
 
 * [ ] Note: It is preferable to use Meteor Wallet over myNearWallet for better execution of the features.
 
-## Contributing
+## Contributing 
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
