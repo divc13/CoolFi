@@ -47,7 +47,7 @@ export async function GET() {
             "account-id": ACCOUNT_ID,
             assistant: {
                 name: "CoolFi AI",
-                description: "A blockchain assistant that provides information, retrieves the user's account ID, interacts with Twitter, creates NEAR transaction payloads, and helps with crypto swaps with tree different apis: deposit, swap and withdraw. ",
+                description: "A blockchain assistant that provides information, retrieves the user's account ID, interacts with Twitter, creates NEAR transaction payloads, and helps with crypto swaps with tree different apis: swap, deposit then withdraw. ",
                 instructions: `You assist with NEAR transactions, blockchain queries, account retrieval, Twitter interactions, and crypto swaps.You are provided with the twitter API's and so you can interact with the user on twitter.
 
                 You only support the cryptocurrencies mentioned in ${JSON.stringify(coinsArray)}. If a user asks for an operation on a cryptocurrency which is not mentioned in ${JSON.stringify(coinsArray)}, please deny all such operations. THIS IS IMPORTANT
@@ -87,12 +87,13 @@ export async function GET() {
                 2. Whenever you take in the amount related to any currency for any purpose, ensure that it is in the same denomination as mentioned in ${JSON.stringify(coinsArray)}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi.
                 3. If a user asks any operation to be done on a cryptocurrency which is not mentioned in ${JSON.stringify(coinsArray)}, please deny all such operations. We only support the cryptocurrencies mentioned in ${JSON.stringify(coinsArray)}.
 
-                Complete Swap Process (Deposit + Swap + Withdraw)
+                Complete Swap Process (Swap + Deposit + Withdraw)
                 When performing a complete cryptocurrency swap (not using Twitter):
-                Call all three APIs sequentially:
-                First: Deposit funds
-                Second: Swap 
+                Call all three APIs step by step:
+                First: Swap 
+                Second: Deposit funds
                 Third: Withdraw
+                Make sure to wait for user to complete the previous step and then call the next api
 
                 If the query is from twitter to make a swap process,
                 a link is generated using the /api/twitter/swap api, which must be sent to the user along with required description using the send-message tool. This one link is sufficient for all the three steps of the complete swap.
@@ -226,8 +227,8 @@ export async function GET() {
             "/api/tools/swap": {
                 get: {
                     operationId: "SwapCrypto",
-                    summary: "You need to call the apis of Deposit into Defuse, Swap in defuse and withdraw from defuse one after the other to complete the swap. Do wait for user to sign each transaction.",
-                    description: `This api is just a place holder, Calling it will just get page not found. First call deposit into defuse. Wait for user to sign. Then swap in defuse. Again wait for user, Then withdraw and again wait. This tool should not be called if the message is from twitter. This method should not be called if the swap has to be made inside defuse. This method should not be called if the swap has to be made inside defuse. There should be no extra unnecessary callbackurls to this string.`,
+                    summary: "You need to call the apis of Swap in defuse, Deposit into Defuse, and withdraw from defuse one after the other to complete the swap. Do wait for user to sign each transaction.",
+                    description: `This api is just a place holder, Calling it will just get page not found. First call swap in defuse. Wait for user to sign. Then deposit into defuse. Again wait for user, Then withdraw and again wait. This tool should not be called if the message is from twitter. This method should not be called if the swap has to be made inside defuse. This method should not be called if the swap has to be made inside defuse. There should be no extra unnecessary callbackurls to this string.`,
                     parameters: [
                         {
                             name: "accountId",
@@ -471,6 +472,15 @@ export async function GET() {
                             },
                             description: "the amount to deposit into defuse or near intents."
                         },
+                        {
+                            name: "publicKey",
+                            in: "query",
+                            required: false,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The ed25519 public key from the signing result. Example format: 'ed25519:HeaBJ...'. Do not encode or decode any thing by your own. Take this value from the result of sign-message. Do not default to some example given or user wallet. This is basically the public key for the user who signed the message."
+                        },
                     ],
                     responses: {
                         "200": {
@@ -663,7 +673,7 @@ export async function GET() {
                 get: {
                     operationId: "swapCryptoInDefuse",
                     summary: "Retrieve a message to swap cryptocurrency.",
-                    description: `Generates an intent message for swapping crypto based on user input. This message must be signed and then published (using publish-intent) to complete the swap. Show the signature and publicKey obtained after this method call to the user. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in coinsArray given in instructions. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. This method should not be called if the message is from twitter. Donot add callbackurl by yourself. This method should be called only if the swap is told to be made inside defuse. Otherwise, the swap-crypto method should be used.`,
+                    description: `Generates an intent message for swapping crypto based on user input. This message must be signed and then deposit should be called and then message should be published (using publish-intent) to complete the swap. Show the signature and publicKey obtained after this method call to the user. Whenever you take in the amount related to any currency, ensure that it is in the same denomination as mentioned in coinsArray given in instructions. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi. This method should not be called if the message is from twitter. Donot add callbackurl by yourself. This method should be called only if the swap is told to be made inside defuse. Otherwise, the swap-crypto method should be used.`,
                     parameters: [
                         {
                             name: "accountId",
