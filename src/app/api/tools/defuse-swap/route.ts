@@ -100,7 +100,7 @@ export async function GET(request: Request) {
         )]
     };
 
-    const messageString = JSON.stringify(intentMessage);
+    const messageString = encodeURIComponent(JSON.stringify(intentMessage));
     const nonce = new Uint8Array(crypto.randomBytes(32));
     const recipient = "intents.near";
     const qoute_hash = quote[best_quote_index].quote_hash;
@@ -109,7 +109,7 @@ export async function GET(request: Request) {
         {
             transactionPayload: {
                 messageString, 
-                nonce: Buffer.from(nonce).toString('base64'), 
+                nonce: (Buffer.from(nonce).toString('base64')), 
                 recipient
             },
             qoute_hash,
