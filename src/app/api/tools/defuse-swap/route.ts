@@ -100,7 +100,7 @@ export async function GET(request: Request) {
         )]
     };
 
-    const messageString = encodeURIComponent(JSON.stringify(intentMessage));
+    const messageString = (JSON.stringify(intentMessage));
     const nonce = new Uint8Array(crypto.randomBytes(32));
     const recipient = "intents.near";
     const qoute_hash = quote[best_quote_index].quote_hash;
