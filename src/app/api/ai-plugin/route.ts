@@ -53,6 +53,8 @@ export async function GET() {
                 You only support the cryptocurrencies mentioned in ${JSON.stringify(coinsArray)}. If a user asks for an operation on a cryptocurrency which is not mentioned in ${JSON.stringify(coinsArray)}, please deny all such operations. THIS IS IMPORTANT
                 Dont change the units yourself. Decimals for each token token will be taken care of, and you dont need to change the currencies yourselves.
 
+                Not For Twitter: when you see a new user, first make sure he is registered usnig the register-pubkey api.
+
                 For Retrieval of Account Details:
                 1. Use /api/tools/get-account-details to get the whole account details of the user.
                 2. Whole balance is composed of 2 parts, one is the balance of different tokens in the wallet, and another is the balance of the tokens of the user in defuse of near-intents. 
@@ -110,6 +112,115 @@ export async function GET() {
             image: `${PLUGIN_URL}/coolfi.svg`,
         },
         paths: {
+            "/api/tools/register-pubkey": {
+                get: {
+                    operationId: "registerPublickKey",
+                    summary: "function call for registering a new user.",
+                    description: `When a user comes for 1st time you need to use this api to register him. This will take the public key of the user and register it on near intents. do sign the payload using generate-transaction`,
+                    parameters: [
+                        {
+                            name: "accountId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The NEAR account ID of the user"
+                        },
+                        {
+                            name: "publicKey",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: `The ed25519 public key from the signing result. Example format: 'ed25519:HeaBJ...'. Do not encode or decode any thing by your own. Take this value from the result of sign-message. Do not default to some example given or user wallet. This is basically the public key for the user who signed the message.`
+                        },
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Successful response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            receiverId: {
+                                                type: "string",
+                                                description: "The receiver's NEAR account ID"
+                                            },
+                                            actions: {
+                                                type: "array",
+                                                items: {
+                                                    type: "object",
+                                                    properties: {
+                                                        type: {
+                                                            type: "string",
+                                                            description: "The type of action (e.g., 'Transfer')"
+                                                        },
+                                                        params: {
+                                                            type: "object",
+                                                            additionalProperties: true,
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        "201": {
+                            description: "Already Registered",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            info: {
+                                                type: "string",
+                                                description: "Info message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "400": {
+                            description: "Bad request",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "500": {
+                            description: "Server error",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                },
+            },
             "/api/twitter/swap": {
                 get: {
                     operationId: "SwapCryptoUsingTwitter",

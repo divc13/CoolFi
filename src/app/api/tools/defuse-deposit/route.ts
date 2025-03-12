@@ -36,7 +36,7 @@ function convertBigIntToString(jsonArray:any) {
     ));
 }
 
-const depositIntoDefuse = async (tokenIds: string[], amount: bigint, accountId: string, publicKey:string|null) : Promise<Transaction["NEAR"][]> => {
+const depositIntoDefuse = async (tokenIds: string[], amount: bigint, accountId: string) : Promise<Transaction["NEAR"][]> => {
     const contractId = tokenIds[0].replace('nep141:', '');
 
     const nep141balance = await getNearNep141StorageBalance({
@@ -54,26 +54,6 @@ const depositIntoDefuse = async (tokenIds: string[], amount: bigint, accountId: 
         transaction = createBatchDepositNearNep141Transaction(contractId, amount, !(nep141balance >= BigInt(FT_MINIMUM_STORAGE_BALANCE_LARGE)), BigInt(FT_MINIMUM_STORAGE_BALANCE_LARGE));
     }
 
-    if (publicKey && publicKey.length != 0)
-    {
-        const existingKeys = await getPublicKeysOf(accountId);
-        if (!existingKeys.has(publicKey)) {
-            console.log(`Public key ${publicKey} not found, registering...`);
-
-            transaction[0].actions.unshift(
-                transactions.functionCall(
-                        "add_public_key",
-                        {
-                            account_id: "intents.near",
-                            public_key: publicKey
-                        },
-                        BigInt(FT_DEPOSIT_GAS),
-                        BigInt(1)
-                )
-            )
-        }
-    }
-
     return transaction;
 }
 
@@ -83,7 +63,6 @@ export async function GET(request: Request) {
     const tokenInName = searchParams.get('tokenIn');
     const amount = searchParams.get('amount');
     const accountId = searchParams.get('accountId');
-    const publicKey = searchParams.get('publicKey');
 
     if (tokenInName === null || amount === null) {
         return NextResponse.json({ error: 'Missing required parameters' }, { status: 400 });
@@ -118,7 +97,7 @@ export async function GET(request: Request) {
 
     const amountInBigInt = convertAmountToDecimals(amount, defuseTokenIn);
     
-    var transactions: Transaction["NEAR"][] = await depositIntoDefuse([defuseAssetIdIn], amountInBigInt, accountId, publicKey);
+    var transactions: Transaction["NEAR"][] = await depositIntoDefuse([defuseAssetIdIn], amountInBigInt, accountId);
     transactions = await convertBigIntToString(transactions);
 
     return NextResponse.json({ transactions });
