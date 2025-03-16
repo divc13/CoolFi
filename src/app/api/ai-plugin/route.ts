@@ -48,12 +48,14 @@ export async function GET() {
             assistant: {
                 name: "CoolFi AI",
                 description: "A blockchain assistant that provides information, retrieves the user's account ID, interacts with Twitter, creates NEAR transaction payloads, and helps with crypto swaps with tree different apis: deposit, swap and withdraw. ",
-                instructions: `You assist with NEAR transactions, blockchain queries, account retrieval, Twitter interactions, and crypto swaps.You are provided with the twitter API's and so you can interact with the user on twitter.
+                instructions: `You assist with NEAR transactions, blockchain queries, account retrieval, Twitter interactions, and crypto swaps. You are provided with the twitter API's and so you can interact with the user on twitter.
 
                 You only support the cryptocurrencies mentioned in ${JSON.stringify(coinsArray)}. If a user asks for an operation on a cryptocurrency which is not mentioned in ${JSON.stringify(coinsArray)}, please deny all such operations. THIS IS IMPORTANT
                 Dont change the units yourself. Decimals for each token token will be taken care of, and you dont need to change the currencies yourselves.
 
-                Not For Twitter: when you see a new user, first make sure he is registered usnig the register-pubkey api.
+                When you see a new user or a new session, first make sure he is registered using the register-pubkey api.
+                Make sure to check if the user is registered before swap or withdraw or even complete swap. If not registered, use the register-pubkey api.
+
 
                 For Retrieval of Account Details:
                 1. Use /api/tools/get-account-details to get the whole account details of the user.
@@ -89,20 +91,15 @@ export async function GET() {
                 2. Whenever you take in the amount related to any currency for any purpose, ensure that it is in the same denomination as mentioned in ${JSON.stringify(coinsArray)}. For example, If the cryptocurrency is BTC, then the amount should be in BTC, not satoshi.
                 3. If a user asks any operation to be done on a cryptocurrency which is not mentioned in ${JSON.stringify(coinsArray)}, please deny all such operations. We only support the cryptocurrencies mentioned in ${JSON.stringify(coinsArray)}.
 
-                Complete Swap Process (Deposit + Swap + Withdraw)
+                When Doing Complete Swap Process, it is always done by a single link by wither tools/swap or twitter/swap.
                 When performing a complete cryptocurrency swap (not using Twitter):
-                Call all three APIs sequentially:
-                First: Deposit funds
-                Second: Swap 
-                Third: Withdraw
+                a link is generated using the /api/tools/swap api. This one link is sufficient for all the three steps of the complete swap.
 
                 If the query is from twitter to make a swap process,
                 a link is generated using the /api/twitter/swap api, which must be sent to the user along with required description using the send-message tool. This one link is sufficient for all the three steps of the complete swap.
-
-                Wait for user to sign the message before proceeding to the next step.
-                Only skip steps if explicitly instructed by the user but no need to ask again and again if the user wants to proceed.
                 
                 In Case of a request from Twitter, Do ask for accountId if you dont know it.
+                Always make sure the user's publicKey is registered before calling complete swap to make sure swap wont fail.
 
                 `,
                 tools: [{ type: "generate-transaction" }, { type: "sign-message" }, { type: "get-token-metadata" }],
@@ -114,9 +111,9 @@ export async function GET() {
         paths: {
             "/api/tools/register-pubkey": {
                 get: {
-                    operationId: "registerPublickKey",
+                    operationId: "registerPublicKey",
                     summary: "function call for registering a new user.",
-                    description: `When a user comes for 1st time you need to use this api to register him. This will take the public key of the user and register it on near intents. do sign the payload using generate-transaction`,
+                    description: `When a user comes for 1st time you need to use this api to register him. This will take the public key of the user and register it on near intents. do sign the payload using generate-transaction. You can also use this before publishing an intent to make sure it wont fail. Can also be used if this is a new session. You can get the public key by asking user to sign a message to register public key.`,
                     parameters: [
                         {
                             name: "accountId",
@@ -224,7 +221,7 @@ export async function GET() {
             "/api/twitter/swap": {
                 get: {
                     operationId: "SwapCryptoUsingTwitter",
-                    summary: "Provides the twitter user a single link for the complete swap process. ",
+                    summary: "Provides the twitter user a single link for the complete swap process.",
                     description: `This will generate a single link, which is capable enough of the complete swap process, starting at depositing into defuse, then swapping inside defuse or intents, and finally withdrawing the amount to user wallet. Note that the complete swap process is different from the swap inside defuse. This is a 3 staged design, but will be completed with a single link. The link generated should be sent to the user via twitter send-message api along with required description. This tool should only be called if the message is from twitter. This method should not be called if the swap has to be made inside defuse.`,
                     parameters: [
                         {
@@ -292,7 +289,7 @@ export async function GET() {
                                         properties: {
                                             link: {
                                                 type: "string",
-                                                description: "The link to send to the user on twitter. Send this to the user using send-message api along with required description"
+                                                description: "The link to send to the user on twitter. Send this to the user using send-message api along with required description."
                                             },
                                         },
                                     }
@@ -337,8 +334,8 @@ export async function GET() {
             "/api/tools/swap": {
                 get: {
                     operationId: "SwapCrypto",
-                    summary: "You need to call the apis of Deposit into Defuse, Swap in defuse and withdraw from defuse one after the other to complete the swap. Do wait for user to sign each transaction.",
-                    description: `This api is just a place holder, Calling it will just get page not found. First call deposit into defuse. Wait for user to sign. Then swap in defuse. Again wait for user, Then withdraw and again wait. This tool should not be called if the message is from twitter. This method should not be called if the swap has to be made inside defuse. This method should not be called if the swap has to be made inside defuse. There should be no extra unnecessary callbackurls to this string.`,
+                    summary: "Provides the user a single link for the complete swap process.",
+                    description: `This will generate a single link, which is capable enough of the complete swap process, starting at depositing into defuse, then swapping inside defuse or intents, and finally withdrawing the amount to user wallet. This tool should not be called if the message is from twitter. This method should not be called if the swap has to be made inside defuse.`,
                     parameters: [
                         {
                             name: "accountId",
@@ -377,6 +374,56 @@ export async function GET() {
                             description: "the amount to deposit into defuse or near intents."
                         },
                     ],
+                    responses: {
+                        "200": {
+                            description: "Returns the link for the swap",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            link: {
+                                                type: "string",
+                                                description: "The link to send to the user on twitter. Send this to the user using send-message api along with required description."
+                                            },
+                                        },
+                                    }
+                                }
+                            }
+                        },
+                        "400": {
+                            description: "Bad request",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "500": {
+                            description: "Error response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             },
             "/api/tools/send-message": {
