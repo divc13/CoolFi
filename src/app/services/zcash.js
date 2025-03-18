@@ -1,33 +1,49 @@
 import * as ethers from 'ethers';
-import { fetchJson } from './utils';
+import { fetchJsonZEC, fetchJson } from './utils';
 import * as bitcoinJs from 'bitcoinjs-lib';
-import { generateBtcAddress } from './kdf/btc';
+import { generateZcashT1Address } from './kdf/zec';
 import { MPC_CONTRACT } from './kdf/mpc';
+import {settings} from "@/app/config"; 
 
-export class Bitcoin {
-  name = 'Bitcoin';
-  currency = 'sats';
+export class ZCash{
+  name = 'ZCash';
+  currency = 'zats';
 
   constructor(networkId) {
     this.networkId = networkId;
-    this.name = `Bitcoin ${networkId === 'testnet' ? 'Testnet' : 'Mainnet'}`;
-    this.explorer = `https://blockstream.info/${networkId === 'testnet' ? 'testnet' : ''}`;
+    this.name = `Zcash ${networkId === 'testnet' ? 'Testnet' : 'Mainnet'}`;
+    this.explorer = `https://rest.cryptoapis.io/${networkId === 'testnet' ? 'testnet' : ''}`;
   }
 
   deriveAddress = async (accountId, derivation_path) => {
-    const { address, publicKey } = await generateBtcAddress({
-      accountId: accountId,
-      path: derivation_path,
-      isTestnet: this.networkId === 'testnet' ? true : false,
-      addressType: 'segwit'
-    });
+    const { address, publicKey } = await generateZcashT1Address(
+      accountId,
+      derivation_path,
+      // isTestnet: this.networkId === 'testnet' ? true : false,
+      // addressType: 'segwit'
+    );
     return { address, publicKey };
   }
 
   getUtxos = async ({ address }) => {
-    const bitcoinRpc = `https://blockstream.info${this.networkId === 'testnet' ? '/testnet' : ''}/api`;
+    const bitcoinRpc = `https://rest.cryptoapis.io/addresses-latest/utxo/zcash/${this.networkId === 'testnet' ? 'testnet' : 'mainnet'}`;
     try {
-      const utxos = await fetchJson(`${bitcoinRpc}/address/${address}/utxo`);
+      var utxos = await fetchJsonZEC(`${bitcoinRpc}/${address}/unspent-outputs`);
+      
+      console.log(utxos);
+      
+      utxos = utxos.data.items;
+      for (var utxo of utxos)
+      {
+        var factor = 1;
+        if (utxo.value.unit == "ZEC")
+        {
+            factor = 100000000;
+        }
+        utxo.value = (Number(utxo.value.amount) * factor);
+        utxo.txid = utxo.transactionId;
+        utxo.vout = utxo.index;
+      }
       console.log(utxos);
       return utxos;
     } catch (e) { console.log('e', e) }
@@ -177,21 +193,6 @@ export class Bitcoin {
     return psbt; // Return the generated signature
   };
 
-  reconstructSignedTransactionFromSessionStorage = async (signature) => {
-    const { from, to, amount, utxos, publicKey } = JSON.parse(
-      sessionStorage.getItem("btc_transaction")
-    );
-
-    const psbt = await constructPsbt(from, utxos, to, amount, this.networkId);
-
-    return this.reconstructSignedTransaction({
-      psbt,
-      utxos,
-      signature,
-      publicKey,
-    });
-  };
-
   reconstructSignedTransactionFromCallback = async (signature, from, utxos, to, amount, publicKey) => {
     // const { from, to, amount, utxos, publicKey } = JSON.parse(
     //   sessionStorage.getItem("btc_transaction")
@@ -213,10 +214,23 @@ export class Bitcoin {
 
   broadcastTX = async (signedTransaction) => {
     // broadcast tx
-    const bitcoinRpc = `https://blockstream.info${this.networkId === 'testnet' ? '/testnet' : ''}/api`;
+    const bitcoinRpc = `https://rest.crypto.apis/${this.networkId === 'testnet' ? '/testnet' : ''}/api`;
     const res = await fetch(`${bitcoinRpc}/tx`, {
       method: 'POST',
-      body: signedTransaction.extractTransaction().toHex(),
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': settings.crypto_api_key,
+       },
+      body: JSON.stringify(
+        {
+            "data":
+            {
+                "item": {
+                    "signedTransactionHex": signedTransaction.extractTransaction().toHex(),
+                }
+            }
+        }
+      )
     });
     console.log(res);
     console.log(signedTransaction.extractTransaction().toHex());
@@ -227,12 +241,6 @@ export class Bitcoin {
       throw Error(res);
     }
   }
-}
-
-async function getFeeRate(networkId, blocks = 6) {
-  const bitcoinRpc = `https://blockstream.info${networkId === 'testnet' ? '/testnet' : ''}/api`;
-  const rate = await fetchJson(`${bitcoinRpc}/fee-estimates`);
-  return rate[blocks].toFixed(0);
 }
 
 async function constructPsbt(
@@ -267,15 +275,19 @@ async function constructPsbt(
 
       if (scriptHex.startsWith('76a914')) {
         console.log('legacy');
-        const bitcoinRpc = `https://blockstream.info${networkId === 'testnet' ? '/testnet' : ''}/api`;
-        const nonWitnessUtxo = await fetch(`${bitcoinRpc}/tx/${utxo.txid}/hex`).then(result => result.text())
+        // const nonWitnessUtxo = await fetch(`${bitcoinRpc}/tx/${utxo.txid}/hex`).then(result => result.text())
+        const url = `https://mainnet.zcashexplorer.app/transactions/${utxo.txid}/raw`;
 
-        console.log('nonWitnessUtxo hex:', nonWitnessUtxo)
+        console.log(url);
+        var nonWitnessUtxo = await fetchJson(url);
+
+        console.log({nonWitnessUtxo});
+        console.log('nonWitnessUtxo hex:', nonWitnessUtxo.hex);
         // Legacy P2PKH input (non-SegWit)
         inputOptions = {
           hash: utxo.txid,
           index: utxo.vout,
-          nonWitnessUtxo: Buffer.from(nonWitnessUtxo, 'hex'), // Provide the full transaction hex
+          nonWitnessUtxo: Buffer.from(nonWitnessUtxo.hex, 'hex'), // Provide the full transaction hex
           // sequence: 4294967295, // Enables RBF
         };
       } else if (scriptHex.startsWith('0014')) {
@@ -318,9 +330,7 @@ async function constructPsbt(
   });
 
   // Calculate fee (replace with real fee estimation)
-  const feeRate = await getFeeRate(networkId);
-  const estimatedSize = utxos.length * 148 + 2 * 34 + 10;
-  const fee = (estimatedSize * feeRate).toFixed(0);
+  const fee = (settings.zcash_fee * 100000000).toFixed(0);
   const change = totalInput - sats - fee;
 
   // Add change output if necessary
@@ -335,9 +345,9 @@ async function constructPsbt(
 };
 
 async function fetchTransaction(networkId, transactionId) {
-  const bitcoinRpc = `https://blockstream.info${networkId === 'testnet' ? '/testnet' : ''}/api`;
+  const bitcoinRpc = `https://mainnet.zcashexplorer.app/transactions/${transactionId}/raw`;
 
-  const data = await fetchJson(`${bitcoinRpc}/tx/${transactionId}`);
+  const data = await fetchJson(`${bitcoinRpc}`);
   const tx = new bitcoinJs.Transaction();
 
   if (!data || !tx) throw new Error('Failed to fetch transaction')
@@ -348,15 +358,15 @@ async function fetchTransaction(networkId, transactionId) {
     const txHash = Buffer.from(vin.txid, 'hex').reverse();
     const vout = vin.vout;
     const sequence = vin.sequence;
-    const scriptSig = vin.scriptsig
-      ? Buffer.from(vin.scriptsig, 'hex')
+    const scriptSig = vin.scriptSig
+      ? Buffer.from(vin.scriptSig.hex, 'hex')
       : undefined;
     tx.addInput(txHash, vout, sequence, scriptSig);
   });
 
   data.vout.forEach((vout) => {
-    const value = vout.value;
-    const scriptPubKey = Buffer.from(vout.scriptpubkey, 'hex');
+    const value = Math.floor(vout.value * 100000000);
+    const scriptPubKey = Buffer.from(vout.scriptPubKey.hex, 'hex');
     tx.addOutput(scriptPubKey, value);
   });
 
@@ -366,6 +376,8 @@ async function fetchTransaction(networkId, transactionId) {
       tx.setWitness(index, witness);
     }
   });
+
+  console.log(tx);
 
   return tx;
 }

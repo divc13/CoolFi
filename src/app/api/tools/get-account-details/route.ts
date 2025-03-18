@@ -6,6 +6,7 @@ import { getDepositedBalances } from "@/app/near-intent/utils/deposit";
 import { settings } from "@/app/config";
 import { convertAmountToDecimals, getAllSupportedTokens, getTokenByDefuseId, getTokenBySymbol, SingleChainToken, UnifiedToken } from "./token";
 import { Bitcoin } from '@/app/services/bitcoin'
+import { ZCash } from "@/app/services/zcash";
 
 function convertBigIntToString(jsonArray:any) {
     return JSON.parse(JSON.stringify(jsonArray, (_, value) =>
@@ -27,6 +28,25 @@ async function get_btc_balance(accountId: string) {
     console.log("Public Key: ", publicKey);
 
     const balance = await BTC.getBalance({ address });
+
+    return balance;
+
+}
+
+async function get_zec_balance(accountId: string) {
+    
+    const path = "";
+
+    const ZEC = new ZCash("mainnet");
+    const { address, publicKey } = await ZEC.deriveAddress(
+      accountId,
+      path
+    );
+
+    console.log("Address: ", address);
+    console.log("Public Key: ", publicKey);
+
+    const balance = await ZEC.getBalance({ address });
 
     return balance;
 
@@ -172,16 +192,17 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    const zec_balance = await get_zec_balance(accountId);
     const btc_balance = await get_btc_balance(accountId);
     const token_balances = await get_token_data(accountId);
     const defuse_balances = await get_defuse_balance(accountId);
 
+    console.log("ZEC Balance: ", zec_balance);
     console.log("BTC Balance: ", btc_balance);
     console.log("Token Balances: ", token_balances);
     console.log("Defuse Balances: ", defuse_balances);
 
-
-    return Response.json({token_balance_wallet: token_balances, satoshi: btc_balance, token_balance_defuse: defuse_balances},  { status: 200 });
+    return Response.json({token_balance_wallet: token_balances, satoshi: btc_balance, zec: zec_balance / 100000000, token_balance_defuse: defuse_balances},  { status: 200 });
   } 
   catch (error) {
     console.error("Error fetching balances:", error);

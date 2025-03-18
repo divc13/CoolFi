@@ -28,7 +28,8 @@ export async function GET() {
         { symbol: "BRETT", name: "Brett", decimals: 18 },
         { symbol: "SWEAT", name: "Sweat Economy", decimals: 18 },
         { symbol: "WIF", name: "dogwifhat", decimals: 6 },
-        { symbol: "BOME", name: "BOOK OF MEME", decimals: 6 }
+        { symbol: "BOME", name: "BOOK OF MEME", decimals: 6 },
+        { symbol: "ZEC", name: "ZCash", decimals: 8 }
       ];
 
     const pluginData = {
@@ -1380,6 +1381,10 @@ export async function GET() {
                                                 type: "string",
                                                 description: "The user's number of satoshi details in the user wallet",
                                             },
+                                            zec: {
+                                                type: "string",
+                                                description: "The user's number of zec in the user wallet. This is the balance in zec. Donot change the number by yourself.",
+                                            },
                                             token_balance_defuse: {
                                                 type: "string",
                                                 description: "This is the amount of different tokens deposited into in defuse or near intents. This is different from the wallet balance.",
@@ -1455,6 +1460,10 @@ export async function GET() {
                                             satoshi: {
                                                 type: "string",
                                                 description: "The user's number of satoshi details in the user wallet",
+                                            },
+                                            zec: {
+                                                type: "string",
+                                                description: "The user's number of zec in the user wallet. This is the balance in zec. Donot change the number by yourself.",
                                             },
                                             token_balance_defuse: {
                                                 type: "string",
@@ -2029,6 +2038,198 @@ export async function GET() {
                                 type: "string"
                             },
                             description: "'true' if amount is in bitcoin, 'false' if amount is in NEAR. This is very important. But try to fill it on your own."
+                        },
+                        // {
+                        //     name: "callbackUrl",
+                        //     in: "query",
+                        //     required: true,
+                        //     schema: {
+                        //         type: "string"
+                        //     },
+                        //     description: `call https://wallet.bitte.ai/sign-transaction?transactions_data=:transactionPayload&callback_url=http://${PLUGIN_URL}/api/tools/relay-transaction?data=:transactionData . Do fill in transactionData and transactionPayload with all the required params.`
+                        // },
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Successful response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            link: {
+                                                type: "string",
+                                                description: "The user needs to open this link. Make sure to give him this link.",
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        "400": {
+                            description: "Bad request",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "500": {
+                            description: "Server error",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                },
+            },
+
+            "/api/twitter/zec-defuse-deposit": {
+                get: {
+                    operationId: "zecDefuseDepositUsingTwitter",
+                    summary: "Deposits ZCash into defuse",
+                    description: `This method should only be called if the query is from twitter. If the query is from twitter, it shall contain the conversation id and explicitly say that this is a message from twitter. If you dont have the user account id, ask for it on twitter using send-message.,
+                    Generates transaction link to deposit bitcoin into defuse or near intents. Take the amount in ZEC, and not in zatoshi from the users. Send the transaction Link along with required description to the user on twitter using send-message api.`,
+                    parameters: [
+                        {
+                            name: "conversationId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The conversation id of the twitter chat"
+                        },
+                        {
+                            name: "accountId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The NEAR account ID of the user"
+                        },
+                        {
+                            name: "amount",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "amount to transfer. This can be either in zcash or zatoshi. If possible understand and fill on your own."
+                        },
+                        {
+                            name: "isAmountInZEC",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "'true' if amount is in zec, 'false' if amount is in NEAR. This is very important. But try to fill it on your own."
+                        },
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Successful response",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            link: {
+                                                type: "string",
+                                                description: "The link to send to the user on twitter"
+                                            },
+                                        },
+                                    }
+                                }
+                            }
+                        },
+                        "400": {
+                            description: "Bad request",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "500": {
+                            description: "Server error",
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "object",
+                                        properties: {
+                                            error: {
+                                                type: "string",
+                                                description: "Error message"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                },
+            },
+            "/api/tools/zec-defuse-deposit": {
+                get: {
+                    operationId: "zecDefuseDeposit",
+                    summary: "Deposits zcash into defuse",
+                    description: "Generates transaction to deposit zec into defuse or near intents. Take the amount in ZEC, and not in zatoshi from the users. After getting the response: 1) Make a link to https://wallet.bitte.ai/sign-transaction endpoint (I want you to make me sign the transaction using this endpoint instead of generate-transaction). Do fill in :transactionData with the data coming in response. This method should not be called if the message is from twitter.",
+                    parameters: [
+                        {
+                            name: "accountId",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "The NEAR account ID of the user"
+                        },
+                        {
+                            name: "amount",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "amount to transfer. This can be either in Zcash or zatoshi. If possible understand and fill on your own."
+                        },
+                        {
+                            name: "isAmountInZEC",
+                            in: "query",
+                            required: true,
+                            schema: {
+                                type: "string"
+                            },
+                            description: "'true' if amount is in ZEC, 'false' if amount is in NEAR. This is very important. But try to fill it on your own."
                         },
                         // {
                         //     name: "callbackUrl",

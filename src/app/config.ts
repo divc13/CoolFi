@@ -20,6 +20,8 @@ interface RuntimeSettings {
     twitterApiSecretKey: string;
     twitterAccessToken: string;
     twitterAccessTokenSecret: string;
+    crypto_api_key:string;
+    zcash_fee: number;
 }
 
 function getRuntimeSettings(): RuntimeSettings {
@@ -34,6 +36,7 @@ function getRuntimeSettings(): RuntimeSettings {
         "TWITTER_ACCESS_TOKEN_SECRET",
         "BITTE_API_KEY",
         "BITTE_API_URL",
+        "CRYPTO_API_KEY",
     ];
 
     for (const envVar of requiredEnvVars) {
@@ -48,6 +51,7 @@ function getRuntimeSettings(): RuntimeSettings {
         nodeUrl: `https://rpc.mainnet.near.org`,
         polling_interval_ms: Number(process.env.POLLING_INTERVAL_MS) || 2000,
         max_polling_time_ms: Number(process.env.MAX_POLLING_TIME_MS) || 30000,
+        zcash_fee: Number(process.env.ZCASH_FEE) || 0.0001,
         ft_minimum_storage_balance_large: process.env.FT_MINIMUM_STORAGE_BALANCE_LARGE || "1250000000000000000000",
         defuseRPCUrl: process.env.DEFUSE_RPC_URL || "https://solver-relay-v2.chaindefuser.com/rpc",
         SLIPPAGE: process.env.NEAR_SLIPPAGE ? parseInt(process.env.NEAR_SLIPPAGE) : 1,
@@ -62,6 +66,7 @@ function getRuntimeSettings(): RuntimeSettings {
         twitterApiSecretKey: process.env.TWITTER_API_SECRET_KEY || "",
         twitterAccessToken: process.env.TWITTER_ACCESS_TOKEN || "",
         twitterAccessTokenSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET || "",
+        crypto_api_key: process.env.CRYPTO_API_KEY || "",
     };
 }
 
